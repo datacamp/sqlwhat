@@ -1269,6 +1269,11 @@ class plsqlVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by plsqlParser#ParenExpr.
+    def visitParenExpr(self, ctx:plsqlParser.ParenExprContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by plsqlParser#MemberExpr.
     def visitMemberExpr(self, ctx:plsqlParser.MemberExprContext):
         return self.visitChildren(ctx)
@@ -1341,6 +1346,11 @@ class plsqlVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by plsqlParser#BinaryExpr.
     def visitBinaryExpr(self, ctx:plsqlParser.BinaryExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by plsqlParser#ParenBinaryExpr.
+    def visitParenBinaryExpr(self, ctx:plsqlParser.ParenBinaryExprContext):
         return self.visitChildren(ctx)
 
 

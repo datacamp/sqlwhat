@@ -2276,6 +2276,15 @@ class plsqlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by plsqlParser#ParenExpr.
+    def enterParenExpr(self, ctx:plsqlParser.ParenExprContext):
+        pass
+
+    # Exit a parse tree produced by plsqlParser#ParenExpr.
+    def exitParenExpr(self, ctx:plsqlParser.ParenExprContext):
+        pass
+
+
     # Enter a parse tree produced by plsqlParser#MemberExpr.
     def enterMemberExpr(self, ctx:plsqlParser.MemberExprContext):
         pass
@@ -2408,6 +2417,15 @@ class plsqlListener(ParseTreeListener):
 
     # Exit a parse tree produced by plsqlParser#BinaryExpr.
     def exitBinaryExpr(self, ctx:plsqlParser.BinaryExprContext):
+        pass
+
+
+    # Enter a parse tree produced by plsqlParser#ParenBinaryExpr.
+    def enterParenBinaryExpr(self, ctx:plsqlParser.ParenBinaryExprContext):
+        pass
+
+    # Exit a parse tree produced by plsqlParser#ParenBinaryExpr.
+    def exitParenBinaryExpr(self, ctx:plsqlParser.ParenBinaryExprContext):
         pass
 
 
