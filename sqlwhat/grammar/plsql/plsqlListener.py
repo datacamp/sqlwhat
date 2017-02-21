@@ -1475,6 +1475,15 @@ class plsqlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by plsqlParser#IgnoreTableview_name.
+    def enterIgnoreTableview_name(self, ctx:plsqlParser.IgnoreTableview_nameContext):
+        pass
+
+    # Exit a parse tree produced by plsqlParser#IgnoreTableview_name.
+    def exitIgnoreTableview_name(self, ctx:plsqlParser.IgnoreTableview_nameContext):
+        pass
+
+
     # Enter a parse tree produced by plsqlParser#Alias_expr.
     def enterAlias_expr(self, ctx:plsqlParser.Alias_exprContext):
         pass
@@ -1904,6 +1913,15 @@ class plsqlListener(ParseTreeListener):
 
     # Exit a parse tree produced by plsqlParser#for_update_options.
     def exitFor_update_options(self, ctx:plsqlParser.For_update_optionsContext):
+        pass
+
+
+    # Enter a parse tree produced by plsqlParser#limit_clause.
+    def enterLimit_clause(self, ctx:plsqlParser.Limit_clauseContext):
+        pass
+
+    # Exit a parse tree produced by plsqlParser#limit_clause.
+    def exitLimit_clause(self, ctx:plsqlParser.Limit_clauseContext):
         pass
 
 

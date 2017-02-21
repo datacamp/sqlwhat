@@ -824,6 +824,11 @@ class plsqlVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by plsqlParser#IgnoreTableview_name.
+    def visitIgnoreTableview_name(self, ctx:plsqlParser.IgnoreTableview_nameContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by plsqlParser#Alias_expr.
     def visitAlias_expr(self, ctx:plsqlParser.Alias_exprContext):
         return self.visitChildren(ctx)
@@ -1061,6 +1066,11 @@ class plsqlVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by plsqlParser#for_update_options.
     def visitFor_update_options(self, ctx:plsqlParser.For_update_optionsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by plsqlParser#limit_clause.
+    def visitLimit_clause(self, ctx:plsqlParser.Limit_clauseContext):
         return self.visitChildren(ctx)
 
 
