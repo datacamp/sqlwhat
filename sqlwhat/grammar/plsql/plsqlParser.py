@@ -19338,35 +19338,95 @@ class plsqlParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
+
+        def getRuleIndex(self):
+            return plsqlParser.RULE_subquery
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+    class SubqueryCompoundContext(SubqueryContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a plsqlParser.SubqueryContext
+            super().__init__(parser)
+            self.left = None # SubqueryContext
+            self.op = None # Subquery_operation_partContext
+            self.right = None # SubqueryContext
+            self.copyFrom(ctx)
+
         def subquery(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(plsqlParser.SubqueryContext)
             else:
                 return self.getTypedRuleContext(plsqlParser.SubqueryContext,i)
 
+        def subquery_operation_part(self):
+            return self.getTypedRuleContext(plsqlParser.Subquery_operation_partContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterSubqueryCompound" ):
+                listener.enterSubqueryCompound(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitSubqueryCompound" ):
+                listener.exitSubqueryCompound(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSubqueryCompound" ):
+                return visitor.visitSubqueryCompound(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class IgnoreSubqueryContext(SubqueryContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a plsqlParser.SubqueryContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
 
         def query_block(self):
             return self.getTypedRuleContext(plsqlParser.Query_blockContext,0)
 
 
-        def subquery_operation_part(self):
-            return self.getTypedRuleContext(plsqlParser.Subquery_operation_partContext,0)
-
-
-        def getRuleIndex(self):
-            return plsqlParser.RULE_subquery
-
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSubquery" ):
-                listener.enterSubquery(self)
+            if hasattr( listener, "enterIgnoreSubquery" ):
+                listener.enterIgnoreSubquery(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSubquery" ):
-                listener.exitSubquery(self)
+            if hasattr( listener, "exitIgnoreSubquery" ):
+                listener.exitIgnoreSubquery(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitSubquery" ):
-                return visitor.visitSubquery(self)
+            if hasattr( visitor, "visitIgnoreSubquery" ):
+                return visitor.visitIgnoreSubquery(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class SubqueryParenContext(SubqueryContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a plsqlParser.SubqueryContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def subquery(self):
+            return self.getTypedRuleContext(plsqlParser.SubqueryContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterSubqueryParen" ):
+                listener.enterSubqueryParen(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitSubqueryParen" ):
+                listener.exitSubqueryParen(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSubqueryParen" ):
+                return visitor.visitSubqueryParen(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -19385,6 +19445,10 @@ class plsqlParser ( Parser ):
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [plsqlParser.LEFT_PAREN]:
+                localctx = plsqlParser.SubqueryParenContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+
                 self.state = 2684
                 self.match(plsqlParser.LEFT_PAREN)
                 self.state = 2685
@@ -19393,6 +19457,9 @@ class plsqlParser ( Parser ):
                 self.match(plsqlParser.RIGHT_PAREN)
                 pass
             elif token in [plsqlParser.SELECT]:
+                localctx = plsqlParser.IgnoreSubqueryContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
                 self.state = 2688
                 self.query_block()
                 pass
@@ -19408,16 +19475,17 @@ class plsqlParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = plsqlParser.SubqueryContext(self, _parentctx, _parentState)
+                    localctx = plsqlParser.SubqueryCompoundContext(self, plsqlParser.SubqueryContext(self, _parentctx, _parentState))
+                    localctx.left = _prevctx
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_subquery)
                     self.state = 2691
                     if not self.precpred(self._ctx, 2):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 2)")
                     self.state = 2692
-                    self.subquery_operation_part()
+                    localctx.op = self.subquery_operation_part()
                     self.state = 2693
-                    self.subquery(3) 
+                    localctx.right = self.subquery(3) 
                 self.state = 2699
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,290,self._ctx)

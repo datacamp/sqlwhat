@@ -1430,12 +1430,30 @@ class plsqlListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by plsqlParser#subquery.
-    def enterSubquery(self, ctx:plsqlParser.SubqueryContext):
+    # Enter a parse tree produced by plsqlParser#SubqueryCompound.
+    def enterSubqueryCompound(self, ctx:plsqlParser.SubqueryCompoundContext):
         pass
 
-    # Exit a parse tree produced by plsqlParser#subquery.
-    def exitSubquery(self, ctx:plsqlParser.SubqueryContext):
+    # Exit a parse tree produced by plsqlParser#SubqueryCompound.
+    def exitSubqueryCompound(self, ctx:plsqlParser.SubqueryCompoundContext):
+        pass
+
+
+    # Enter a parse tree produced by plsqlParser#IgnoreSubquery.
+    def enterIgnoreSubquery(self, ctx:plsqlParser.IgnoreSubqueryContext):
+        pass
+
+    # Exit a parse tree produced by plsqlParser#IgnoreSubquery.
+    def exitIgnoreSubquery(self, ctx:plsqlParser.IgnoreSubqueryContext):
+        pass
+
+
+    # Enter a parse tree produced by plsqlParser#SubqueryParen.
+    def enterSubqueryParen(self, ctx:plsqlParser.SubqueryParenContext):
+        pass
+
+    # Exit a parse tree produced by plsqlParser#SubqueryParen.
+    def exitSubqueryParen(self, ctx:plsqlParser.SubqueryParenContext):
         pass
 
 

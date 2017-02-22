@@ -799,8 +799,18 @@ class plsqlVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by plsqlParser#subquery.
-    def visitSubquery(self, ctx:plsqlParser.SubqueryContext):
+    # Visit a parse tree produced by plsqlParser#SubqueryCompound.
+    def visitSubqueryCompound(self, ctx:plsqlParser.SubqueryCompoundContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by plsqlParser#IgnoreSubquery.
+    def visitIgnoreSubquery(self, ctx:plsqlParser.IgnoreSubqueryContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by plsqlParser#SubqueryParen.
+    def visitSubqueryParen(self, ctx:plsqlParser.SubqueryParenContext):
         return self.visitChildren(ctx)
 
 
