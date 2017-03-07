@@ -1,7 +1,7 @@
 from sqlwhat.check_funcs import test_mc as _test_mc, Ex
 from sqlwhat.State import State
-from pythonwhat.Reporter import Reporter
-from pythonwhat.Test import TestFail as TF
+from sqlwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail as TF
 import pytest
 
 def prepare_state(student_code):

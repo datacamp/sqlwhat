@@ -1,8 +1,8 @@
 import pytest
 from sqlwhat.State import State
 from sqlwhat import check_result as cr
-from pythonwhat.Reporter import Reporter
-from pythonwhat.Test import TestFail as TF
+from sqlwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail as TF
 
 def prepare_state(sol_result, stu_result):
     return State(

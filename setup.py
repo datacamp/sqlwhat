@@ -6,4 +6,4 @@ setup(
 	name='sqlwhat',
 	version='0.0.7',
 	packages=['sqlwhat'],
-	install_requires=['pythonwhat', 'antlr-plsql'])
+	install_requires=['antlr-plsql'])

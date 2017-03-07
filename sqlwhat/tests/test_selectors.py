@@ -1,7 +1,7 @@
 from sqlwhat.selectors import Selector, dispatch, ast
 from sqlwhat.State import State
-from pythonwhat.Reporter import Reporter
-from pythonwhat.Test import TestFail as TF
+from sqlwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail as TF
 import pytest
 
 def test_selector_standalone():
