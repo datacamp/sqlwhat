@@ -1,5 +1,4 @@
-from pythonwhat import check_syntax as cs
-from pythonwhat.Test import TestFail, Test
+from sqlwhat.Test import TestFail, Test
 
 from sqlwhat.State import State
 from sqlwhat.selectors import dispatch, ast

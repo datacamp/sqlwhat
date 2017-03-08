@@ -1,4 +1,4 @@
-from sqlwhat.grammar.plsql import ast
+from antlr_plsql import ast
 from ast import NodeVisitor
 from collections.abc import Sequence
 

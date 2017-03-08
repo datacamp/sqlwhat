@@ -1,4 +1,4 @@
-from pythonwhat.Test import TestFail, Test
+from sqlwhat.Test import TestFail, Test
 
 def check_result(state, msg="Incorrect result."):
     """High level function which wraps other SCTs for checking results."""

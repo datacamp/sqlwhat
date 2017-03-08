@@ -1,4 +1,4 @@
-from sqlwhat.grammar.plsql import ast
+from antlr_plsql import ast
 from copy import copy
 import inspect
 

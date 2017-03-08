@@ -1,7 +1,7 @@
 from sqlwhat import check_funcs
 from sqlwhat.State import State
-from pythonwhat.Reporter import Reporter
-from pythonwhat.Test import TestFail as TF
+from sqlwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail as TF
 import pytest
 
 def test_pass():

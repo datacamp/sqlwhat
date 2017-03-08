@@ -2,8 +2,8 @@ from sqlwhat.check_funcs import check_statement, check_clause, has_equal_ast
 from sqlwhat import check_funcs as cf
 from sqlwhat.selectors import ast
 from sqlwhat.State import State
-from pythonwhat.Reporter import Reporter
-from pythonwhat.Test import TestFail as TF
+from sqlwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail as TF
 import pytest
 
 def prepare_state(solution_code, student_code):

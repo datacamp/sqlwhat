@@ -1,10 +1,8 @@
-sudo: false
 language: python
-services:
-  - docker
+python: 
+  - "3.5"
 
-before_install:
-  - docker build -t sqlwhat .
-
-script: docker run sqlwhat make build test
-after_script: '([ "${TRAVIS_BRANCH}" = "dev" ] || [ "${TRAVIS_BRANCH}" = "master" ]) && docker run -e GH_TOKEN -e TRAVIS_BRANCH -e TRAVIS_TAG -e TRAVIS_COMMIT sqlwhat make clean deploy'
+install: 
+  - "pip install -r requirements.txt"
+  - "pip install ."
+script: make test

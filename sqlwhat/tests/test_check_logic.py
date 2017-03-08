@@ -1,8 +1,8 @@
 import pytest
 from sqlwhat.State import State
 from sqlwhat import check_logic as cl
-from pythonwhat.Reporter import Reporter
-from pythonwhat.Test import TestFail as TF
+from sqlwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail as TF
 from functools import partial
 
 @pytest.fixture(scope="function")

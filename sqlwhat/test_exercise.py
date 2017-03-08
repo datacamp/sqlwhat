@@ -1,7 +1,7 @@
 from sqlwhat import check_funcs
 from sqlwhat.State import State
-from pythonwhat.Test import TestFail
-from pythonwhat.Reporter import Reporter
+from sqlwhat.Test import TestFail
+from sqlwhat.Reporter import Reporter
 
 def test_exercise(sct,
                   student_code,
