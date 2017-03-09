@@ -4,6 +4,6 @@ from setuptools import setup
 
 setup(
 	name='sqlwhat',
-	version='0.1.0',
+	version='0.1.1',
 	packages=['sqlwhat'],
-	install_requires=['antlr-plsql'])
+	install_requires=['markdown2', 'antlr-plsql'])
