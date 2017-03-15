@@ -5,7 +5,11 @@ from sqlwhat.Test import TestFail as TF
 from sqlwhat.tests.helper import Connection
 import pytest
 
-def test_pass():
+@pytest.fixture(params = ['postgresql', 'mssql'])
+def conn(request):
+    return Connection(request.param)
+
+def test_pass(conn):
     state = State(
         student_code = "SELECT * FROM company",
         solution_code = "SELECT * FROM company",
@@ -20,7 +24,7 @@ def test_pass():
 
     assert check_funcs.Ex().check_result()
 
-def test_fail():
+def test_fail(conn):
     state = State(
         student_code = "SELECT * FROM company",
         solution_code = "SELECT * FROM company",
