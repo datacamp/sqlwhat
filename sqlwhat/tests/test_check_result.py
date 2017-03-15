@@ -3,8 +3,10 @@ from sqlwhat.State import State
 from sqlwhat import check_result as cr
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
+from helper import Connection
 
 def prepare_state(sol_result, stu_result):
+    conn = Connection('postgresql')
     return State(
         student_code = "",
         solution_code = "",
@@ -12,7 +14,7 @@ def prepare_state(sol_result, stu_result):
         # args below should be ignored
         pre_exercise_code = "NA", 
         student_result = stu_result, solution_result = sol_result,
-        student_conn = None, solution_conn = None)
+        student_conn = conn, solution_conn = None)
 
 def test_test_has_columns_fail():
     state = prepare_state({'a': [1,2,3]}, {})

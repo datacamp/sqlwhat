@@ -1,12 +1,17 @@
 from sqlwhat.check_funcs import check_statement, check_clause, has_equal_ast
 from sqlwhat import check_funcs as cf
-from sqlwhat.selectors import ast
+from sqlwhat.selectors import get_ast_parser, Dispatcher
 from sqlwhat.State import State
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
 import pytest
 
+@pytest.fixture
+def ast_mod():
+    return get_ast_parser('postgresql')
+
 def prepare_state(solution_code, student_code):
+    dispatcher = Dispatcher.from_dialect('postgresql')
     return State(
         student_code = student_code,
         solution_code = solution_code,
@@ -14,7 +19,8 @@ def prepare_state(solution_code, student_code):
         # args below should be ignored
         pre_exercise_code = "NA", 
         student_result = [], solution_result = [],
-        student_conn = None, solution_conn = None)
+        student_conn = None, solution_conn = None,
+        ast_dispatcher = dispatcher)
 
 def test_has_equal_ast_pass_identical():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id, name FROM Trips")
@@ -50,11 +56,11 @@ def test_has_equal_ast_manual_pass():
     child = check_statement(state, "select")
     has_equal_ast(child, sql=query, start="subquery")
 
-def test_check_statement_pass():
+def test_check_statement_pass(ast_mod):
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
     child = check_statement(state, "select", 0)
-    assert isinstance(child.student_ast, ast.SelectStmt)
-    assert isinstance(child.solution_ast, ast.SelectStmt)
+    assert isinstance(child.student_ast, ast_mod.SelectStmt)
+    assert isinstance(child.solution_ast, ast_mod.SelectStmt)
 
 def test_check_statement_fail():
     state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")

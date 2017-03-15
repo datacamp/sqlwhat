@@ -3,10 +3,12 @@ from sqlwhat.State import State
 from sqlwhat import check_logic as cl
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
+from helper import Connection
 from functools import partial
 
 @pytest.fixture(scope="function")
 def state():
+    conn = Connection('postgresql')
     return State(
         student_code = "",
         solution_code = "",
@@ -14,7 +16,7 @@ def state():
         # args below should be ignored
         pre_exercise_code = "NA", 
         student_result = {'a': [1]}, solution_result = {'b': [2]},
-        student_conn = None, solution_conn = None)
+        student_conn = conn, solution_conn = None)
 
 def fails(state, msg=""): 
     state.reporter.feedback.msg = msg
