@@ -1,8 +1,16 @@
 language: python
-python: 
-  - "3.5"
-
-install: 
-  - "pip install -r requirements.txt"
-  - "pip install ."
+python:
+- '3.5'
+install:
+- pip install -r requirements.txt
+- pip install .
 script: make test
+deploy:
+  provider: pypi
+  user: machow
+  password:
+    secure: FCIgJnCjFrWg+CpED4PGRokbrZRKLEN6Kg+TI5sG4ZXdtcklF5SnMzHpAbL9eVs8u7uvVVOcWyd2V07wCQFYYu6FLxuXFvVi5QDSeIADwhM7jSMTLpKJCCrY7QUnSWCSwWMc0OOgHhptPC/C8PKVtyOyUqxtAzWkJN62KIgtXJ7vH908OW8Y/TA64xKe/7cR/9uFLFYjGvgp9a+AUH2B0z1ObX+rzBiu35FwtuRNhsoNKIq2WvBEC6N0Cr1CxvWX8SyTXEzDaNCCFL65yvxtPwHCbMf/P0eZCOiBp1foEyXvnB6V2poQpd7ftXDbToKvXCg1xVnyIPiYHuE5YajpPdcL74S2MmrWUIeTwI+BAVzKTgy3wctzK0P4E3BJxb/Y6RUhuz7YbdlGFqWwl8s/NkhggRd5xVsQdYb00gP3vRqswtTNxf9avAUfI5r/SjQhzaEXR5Po9g6QIqhS3Cs7pccyLGRKHsEpC6n5CoVZyqpX1trGTVSbNE2UGXwdBtILbm28Dn7fpCpHqX4NALAw7RdCscWHWQv1cHGFFUMF88IjlTj3WXzAkU8vlPvUTc5wDY/7RUctGE+eIOMLy+XVZUtlW0HXneAPH8o7IN37mYeuV9Q23lnZaQVYX7NI64V26WsTU6F0DROWF8yvfb9xu4aWUNBFDFYdvWkZ8VVuxfk=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: datacamp/sqlwhat
