@@ -3,7 +3,7 @@ from sqlwhat.State import State
 from sqlwhat import check_result as cr
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
-from sqlwhat.tests.helper import Connection
+from helper import Connection
 
 def prepare_state(sol_result, stu_result):
     conn = Connection('postgresql')

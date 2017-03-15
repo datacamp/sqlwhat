@@ -2,7 +2,7 @@ from sqlwhat import check_funcs
 from sqlwhat.State import State
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
-from sqlwhat.tests.helper import Connection
+from helper import Connection
 import pytest
 
 @pytest.fixture(params = ['postgresql', 'mssql'])

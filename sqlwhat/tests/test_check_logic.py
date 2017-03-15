@@ -3,7 +3,7 @@ from sqlwhat.State import State
 from sqlwhat import check_logic as cl
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
-from sqlwhat.tests.helper import Connection
+from helper import Connection
 from functools import partial
 
 @pytest.fixture(scope="function")

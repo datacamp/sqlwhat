@@ -1,4 +1,4 @@
-from sqlwhat.tests import helper
+import helper
 import pytest
 import os
 
