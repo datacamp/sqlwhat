@@ -22,9 +22,10 @@ class State:
 
         if ast_dispatcher is None: self.ast_dispatcher = Dispatcher.from_dialect(student_conn.dialect.name)
 
-        if student_ast is None:  self.student_ast  = self.ast_dispatcher.ast.parse(student_code)
-        if solution_ast is None: self.solution_ast = self.ast_dispatcher.ast.parse(solution_code)
-
+        # Parse solution and student code
+        # solution code raises an exception if can't be parsed
+        if solution_ast is None: self.solution_ast = self.ast_dispatcher.parse(solution_code)
+        if student_ast  is None: self.student_ast  = self.ast_dispatcher.parse(student_code)
 
     def to_child(self, **kwargs):
         """Basic implementation of returning a child state"""
@@ -38,3 +39,4 @@ class State:
         for k, v in kwargs.items(): setattr(child, k, v)
         child.parent = self
         return child
+

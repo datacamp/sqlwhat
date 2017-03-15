@@ -5,7 +5,7 @@ from sqlwhat.State import State
 from sqlwhat.check_result import check_result, test_has_columns, test_nrows, test_ncols, test_column
 from sqlwhat.check_logic import fail, multi, test_or, test_correct
 
-from functools import partial
+from functools import partial, wraps
 import copy
 
 # TODO: should be defined on chain class, rather than module level in pw
@@ -66,7 +66,21 @@ def Ex(state=None):
     """
     return Chain(state or State.root_state)
 
+def requires_ast(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        state = kwargs.get('state', args[0] if len(args) else None)
+        AntlrException = state.ast_dispatcher.ast.AntlrException
 
+        state_ast = [state.student_ast, state.solution_ast]
+        parse_fail = any(isinstance(ast, AntlrException) for ast in state_ast)
+
+        if parse_fail: return state              # skip test
+        else: return f(*args, **kwargs)          # proceed with test
+
+    return wrapper
+
+@requires_ast
 def check_statement(state, name, index=0, missing_msg="missing statement"):
     """Select a node from abstract syntax tree (AST), using its name and index position.
     
@@ -104,6 +118,7 @@ def check_statement(state, name, index=0, missing_msg="missing statement"):
     return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
 
 
+@requires_ast
 def check_clause(state, name, missing_msg="missing clause"):
     """Select an attribute from an abstract syntax tree (AST) node, using the attribute name.
     
@@ -194,6 +209,7 @@ def test_student_typed(state, text, msg="Solution does not contain {}.", fixed=F
     return state
 
 
+@requires_ast
 def has_equal_ast(state, msg="Incorrect AST", sql=None, start="sql_script"):
     """Test whether the student and solution code have identical AST representations
     
