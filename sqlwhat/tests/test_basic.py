@@ -1,14 +1,19 @@
 from sqlwhat.test_exercise import test_exercise as te
+from sqlwhat.tests.helper import Connection
 import pytest
 
-def test_pass():
+@pytest.fixture
+def conn():
+    return Connection('postgresql')
+
+def test_pass(conn):
     result = {'id': [1], 'name': ['greg']}
     sct_payload = te(
         sct = "Ex().check_result()",
         student_code = "SELECT * FROM company",
         solution_code = "SELECT * FROM company",
         pre_exercise_code = "",
-        student_conn = None,
+        student_conn = conn,
         solution_conn = None,
         student_result = result,
         solution_result = result,
@@ -18,7 +23,7 @@ def test_pass():
 
     assert sct_payload.get('correct') is True
 
-def test_fail():
+def test_fail(conn):
     sol_result = {'id': [1], 'name': ['greg']}
     stu_result = {'id': [1, 2], 'name': ['greg', 'fred']}
     sct_payload = te(
@@ -26,7 +31,7 @@ def test_fail():
         student_code = "SELECT * FROM company",
         solution_code = "SELECT * FROM company",
         pre_exercise_code = "",
-        student_conn = None,
+        student_conn = conn,
         solution_conn = None,
         student_result = stu_result,
         solution_result = sol_result,
@@ -52,14 +57,14 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
     "Ex().test_ncols()",
     "Ex().test_column('id')"
     ])
-def test_test_exercise_pass(sct):
+def test_test_exercise_pass(conn, sct):
     result = {'id': [1], 'name': ['greg']}
     sct_payload = te(
         sct = sct,
         student_code = "SELECT * FROM company",
         solution_code = "SELECT * FROM company",
         pre_exercise_code = "",
-        student_conn = None,
+        student_conn = conn,
         solution_conn = None,
         student_result =  result,
         solution_result = result,
@@ -81,7 +86,7 @@ def test_test_exercise_pass(sct):
     "Ex().test_ncols()",
     "Ex().test_column('id')"
     ])
-def test_test_exercise_fail(sct):
+def test_test_exercise_fail(conn, sct):
     sol_result = {'id': [1], 'name': ['greg']}
     stu_result = {'id2': [1, 2], 'name2': ['greg', 'fred'], 'c': [1,2]}
     sct_payload = te(
@@ -89,7 +94,7 @@ def test_test_exercise_fail(sct):
         student_code = "SELECT * FROM company",
         solution_code = "SELECT id FROM company",
         pre_exercise_code = "",
-        student_conn = None,
+        student_conn = conn,
         solution_conn = None,
         student_result = stu_result,
         solution_result = sol_result,

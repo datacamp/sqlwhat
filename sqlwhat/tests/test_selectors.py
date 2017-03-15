@@ -1,8 +1,16 @@
-from sqlwhat.selectors import Selector, dispatch, ast
+from sqlwhat.selectors import Selector, Dispatcher, get_ast_parser
 from sqlwhat.State import State
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
 import pytest
+
+@pytest.fixture
+def ast():
+    return get_ast_parser('postgresql')
+
+@pytest.fixture
+def dispatcher():
+    return Dispatcher.from_dialect('postgresql')
 
 def test_selector_standalone():
     from ast import Expr, Num        # use python's builtin ast library
@@ -12,7 +20,7 @@ def test_selector_standalone():
     sel.visit(node)
     assert isinstance(sel.out[0], Num)
 
-def test_selector_on_self():
+def test_selector_on_self(ast):
     star = ast.Star(None)
     sel = Selector(ast.Star)
     sel.visit(star)
@@ -20,41 +28,41 @@ def test_selector_on_self():
 
 # tests using actual parsed ASTs ----------------------------------------------
 
-def build_and_run(sql_expr, ast_class, priority=None):
-    tree = ast.parse(sql_expr)
+def build_and_run(sql_expr, ast_class, ast_mod, priority=None):
+    tree = ast_mod.parse(sql_expr)
     sel = Selector(ast_class, priority=priority)
     sel.visit(tree)
     return sel.out
 
-def test_selector_on_script():
-    out = build_and_run("SELECT id FROM artists", ast.SelectStmt)
+def test_selector_on_script(ast):
+    out = build_and_run("SELECT id FROM artists", ast.SelectStmt, ast)
     assert len(out) == 1
     assert type(out[0]) == ast.SelectStmt
 
-def test_selector_set_high_priority():
-    out = build_and_run("SELECT id FROM artists", ast.Identifier, priority=999)
+def test_selector_set_high_priority(ast):
+    out = build_and_run("SELECT id FROM artists", ast.Identifier, ast, priority=999)
     assert len(out) == 2
     assert all(type(v) == ast.Identifier for v in out)
 
-def test_selector_set_low_priority():
-    out = build_and_run("SELECT id FROM artists", ast.Identifier, priority=0)
+def test_selector_set_low_priority(ast):
+    out = build_and_run("SELECT id FROM artists", ast.Identifier, ast, priority=0)
     assert len(out) == 0
 
-def test_selector_omits_subquery():
-    out = build_and_run("SELECT a FROM x WHERE a = (SELECT b FROM y)", ast.SelectStmt)
+def test_selector_omits_subquery(ast):
+    out = build_and_run("SELECT a FROM x WHERE a = (SELECT b FROM y)", ast.SelectStmt, ast)
     assert len(out) == 1
     assert all(type(v) == ast.SelectStmt for v in out)
     assert out[0].target_list[0].fields == ['a']
 
-def test_selector_includes_subquery():
-    out = build_and_run("SELECT a FROM x WHERE a = (SELECT b FROM y)", ast.SelectStmt, priority=999)
+def test_selector_includes_subquery(ast):
+    out = build_and_run("SELECT a FROM x WHERE a = (SELECT b FROM y)", ast.SelectStmt, ast, priority=999)
     select1 = out[1]
     select2 = ast.parse("SELECT b FROM y", start='subquery')    # subquery is the parser rule for select statements
     assert repr(select1) == repr(select2)
 
-def test_dispatch_select():
+def test_dispatch_select(dispatcher, ast):
     tree = ast.parse("SELECT id FROM artists")
-    selected = dispatch("statement", "select", 0, tree)
+    selected = dispatcher("statement", "select", 0, tree)
     assert type(selected) == ast.SelectStmt
 
 

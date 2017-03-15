@@ -1,7 +1,7 @@
 from sqlwhat.Test import TestFail, Test
 
 from sqlwhat.State import State
-from sqlwhat.selectors import dispatch, ast
+#from sqlwhat.selectors import dispatch, ast
 from sqlwhat.check_result import check_result, test_has_columns, test_nrows, test_ncols, test_column
 from sqlwhat.check_logic import fail, multi, test_or, test_correct
 
@@ -91,7 +91,7 @@ def check_statement(state, name, index=0, missing_msg="missing statement"):
             new_state = Ex().check_statement('select', 0)
 
     """
-    df = partial(dispatch, 'statement', name, slice(None))
+    df = partial(state.ast_dispatcher, 'statement', name, slice(None))
 
     stu_stmt_list = df(state.student_ast)
     try: stu_stmt = stu_stmt_list[index]
@@ -198,6 +198,7 @@ def has_equal_ast(state, msg="Incorrect AST", sql=None, start="sql_script"):
     """Test whether the student and solution code have identical AST representations
     
     """
+    ast = state.ast_dispatcher.ast
     sol_ast = state.solution_ast if sql is None else ast.parse(sql, start)
     if repr(state.student_ast) != repr(sol_ast):
         state.reporter.do_test(Test(msg))

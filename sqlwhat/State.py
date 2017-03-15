@@ -1,6 +1,7 @@
-from antlr_plsql import ast
 from copy import copy
 import inspect
+
+from sqlwhat.selectors import Dispatcher
 
 class State:
     def __init__(self,
@@ -13,13 +14,17 @@ class State:
                  solution_result,
                  reporter,
                  solution_ast = None,
-                 student_ast = None):
+                 student_ast = None,
+                 ast_dispatcher = None):
 
         for k,v in locals().items():
             if k != 'self': setattr(self, k, v)
 
-        self.student_ast  = ast.parse(student_code)  if student_ast  is None else student_ast
-        self.solution_ast = ast.parse(solution_code) if solution_ast is None else solution_ast
+        if ast_dispatcher is None: self.ast_dispatcher = Dispatcher.from_dialect(student_conn.dialect.name)
+
+        if student_ast is None:  self.student_ast  = self.ast_dispatcher.ast.parse(student_code)
+        if solution_ast is None: self.solution_ast = self.ast_dispatcher.ast.parse(solution_code)
+
 
     def to_child(self, **kwargs):
         """Basic implementation of returning a child state"""

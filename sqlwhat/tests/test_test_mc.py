@@ -10,8 +10,10 @@ def prepare_state(student_code):
         reporter = Reporter(),
         # args below should be ignored
         solution_code = "NA", pre_exercise_code = "NA", 
+        solution_ast = "NA", student_ast = "NA",
         student_result = [], solution_result = [],
-        student_conn = None, solution_conn = None)
+        student_conn = None, solution_conn = None,
+        ast_dispatcher = "NA")
 
 def test_mc_alone_pass():
     state = prepare_state("selected_option = 1")

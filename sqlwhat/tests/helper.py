@@ -16,3 +16,10 @@ def run(data):
         raise(ValueError("Backend error"))
     output = exercise.runSubmit(data)
     return(get_sct_payload(output))
+
+class Connection:
+    """Mock up conn.dialect.name"""
+    def __init__(self, dialect_name):
+        self.dialect = lambda: None
+        self.dialect.name = dialect_name
+
