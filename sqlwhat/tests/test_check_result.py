@@ -1,6 +1,7 @@
 import pytest
 from sqlwhat.State import State
-from sqlwhat import check_result as cr
+import importlib
+cr = importlib.import_module('sqlwhat.checks.check_result')
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
 from helper import Connection

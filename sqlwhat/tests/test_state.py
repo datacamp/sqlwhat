@@ -1,4 +1,4 @@
-from sqlwhat import check_funcs
+from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
@@ -22,7 +22,7 @@ def test_pass(conn):
 
     State.root_state = state
 
-    assert check_funcs.Ex().check_result()
+    assert Ex().check_result()
 
 def test_fail(conn):
     state = State(
@@ -38,4 +38,4 @@ def test_fail(conn):
     State.root_state = state
 
     with pytest.raises(TF):
-        check_funcs.Ex().check_result()
+        Ex().check_result()

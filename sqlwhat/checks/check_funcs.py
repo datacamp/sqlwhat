@@ -1,70 +1,8 @@
 from sqlwhat.Test import TestFail, Test
-
 from sqlwhat.State import State
-#from sqlwhat.selectors import dispatch, ast
-from sqlwhat.check_result import check_result, test_has_columns, test_nrows, test_ncols, test_column, allow_error
-from sqlwhat.check_logic import fail, multi, test_or, test_correct
 
 from functools import partial, wraps
 import copy
-
-# TODO: should be defined on chain class, rather than module level in pw
-ATTR_SCTS = globals()
-
-class Chain:
-    def __init__(self, state):
-        self._state = state
-        self._crnt_sct = None
-        self._waiting_on_call = False
-
-    def __getattr__(self, attr):
-        if attr not in ATTR_SCTS: raise AttributeError("No SCT named %s"%attr)
-        elif self._waiting_on_call: 
-            raise AttributeError("Did you forget to call a statement? "
-                                 "e.g. Ex().check_list_comp.check_body()")
-        else:
-            # make a copy to return, 
-            # in case someone does: a = chain.a; b = chain.b
-            chain = copy.copy(self)
-            chain._crnt_sct = ATTR_SCTS[attr]
-            chain._waiting_on_call = True
-            return chain
-
-    def __call__(self, *args, **kwargs):
-        # NOTE: the only change from python what is that state is now 1st pos arg below
-        self._state = self._crnt_sct(self._state, *args, **kwargs)
-        self._waiting_on_call = False
-        return self
-
-def Ex(state=None):
-    """Returns the current code state as a Chain instance.
-
-    Args:
-        state: a State instance, which contains the student/solution code and results.
-
-    This allows SCTs to be run without including their 1st argument, ``state``.
-
-    Note:
-        When writing SCTs on DataCamp, no State argument to ``Ex`` is necessary.
-        The exercise State is built for you.
-
-    :Example:
-    
-        ::
-            
-            # life without Ex
-            state = SomeStateProducingFunction()
-            test_student_typed(state, text="SELECT id")    # some SCT, w/state as first arg
-
-            # life with Ex
-            state = SomeStateProducingFunction()
-            Ex(state).test_student_typed(text="SELECT id")      # some SCT, w/o state as arg
-
-            # life writing SCTs on DataCamp.com
-            Ex().test_student_typed(text="SELECT id")
-            
-    """
-    return Chain(state or State.root_state)
 
 def requires_ast(f):
     @wraps(f)

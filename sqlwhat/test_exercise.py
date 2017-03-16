@@ -1,7 +1,7 @@
-from sqlwhat import check_funcs
 from sqlwhat.State import State
 from sqlwhat.Test import TestFail
 from sqlwhat.Reporter import Reporter
+from sqlwhat.sct_syntax import SCT_CTX
 
 def test_exercise(sct,
                   student_code,
@@ -30,7 +30,7 @@ def test_exercise(sct,
     State.root_state = state
 
     try:
-        exec(sct, check_funcs.__dict__)
+        exec(sct, SCT_CTX)
     except TestFail: pass
 
     return(state.reporter.build_payload(error))

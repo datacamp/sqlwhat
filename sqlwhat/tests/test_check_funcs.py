@@ -1,5 +1,5 @@
-from sqlwhat.check_funcs import check_statement, check_clause, has_equal_ast
-from sqlwhat import check_funcs as cf
+from sqlwhat.checks.check_funcs import check_statement, check_clause, has_equal_ast
+from sqlwhat.checks import check_funcs as cf
 from sqlwhat.selectors import get_ast_parser, Dispatcher
 from sqlwhat.State import State
 from sqlwhat.Reporter import Reporter

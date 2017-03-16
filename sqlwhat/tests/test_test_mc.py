@@ -1,4 +1,5 @@
-from sqlwhat.check_funcs import test_mc as _test_mc, Ex
+from sqlwhat.checks import test_mc as _test_mc
+from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF

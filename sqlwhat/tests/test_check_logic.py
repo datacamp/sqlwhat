@@ -1,6 +1,6 @@
 import pytest
 from sqlwhat.State import State
-from sqlwhat import check_logic as cl
+from sqlwhat.checks import check_logic as cl
 from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
 from helper import Connection
