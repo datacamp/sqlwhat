@@ -2,7 +2,7 @@ from sqlwhat.Test import TestFail, Test
 
 from sqlwhat.State import State
 #from sqlwhat.selectors import dispatch, ast
-from sqlwhat.check_result import check_result, test_has_columns, test_nrows, test_ncols, test_column
+from sqlwhat.check_result import check_result, test_has_columns, test_nrows, test_ncols, test_column, allow_error
 from sqlwhat.check_logic import fail, multi, test_or, test_correct
 
 from functools import partial, wraps

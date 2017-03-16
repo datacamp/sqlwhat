@@ -104,3 +104,17 @@ def test_test_exercise_fail(conn, sct):
 
     assert sct_payload.get('correct') is False
 
+def test_allow_error(conn):
+    sct_payload = te(
+        sct = "Ex().allow_error()",
+        student_code = "SELECT * FROM company",
+        solution_code = "SELECT id FROM company",
+        pre_exercise_code = "",
+        student_conn = conn,
+        solution_conn = None,
+        student_result = None,
+        solution_result = None,
+        ex_type="NormalExercise",
+        error=[{'type': 'error', 'payload': 'error payload'}]
+        )
+
