@@ -1,5 +1,10 @@
 from sqlwhat.Test import TestFail, Test
 
+def allow_error(state):
+    state.reporter.errors_allowed = True
+
+    return state
+
 def check_result(state, msg="Incorrect result."):
     """High level function which wraps other SCTs for checking results."""
 
