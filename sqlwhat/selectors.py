@@ -32,10 +32,12 @@ class Selector(NodeVisitor):
         return self.priority > node._priority
 
 class Dispatcher:
-    def __init__(self, nodes, rules, ast=None):
+    def __init__(self, nodes, rules, ast=None, safe_parsing=True):
         """Wrapper to instantiate and use a Selector using node names."""
         self.types = {}
         self.ast = ast
+        self.safe_parsing = safe_parsing
+
         for name, funcs in rules.items():
             pred, map_name = funcs if len(funcs) == 2 else funcs + None
 
@@ -49,6 +51,13 @@ class Dispatcher:
         selector.visit(node)
 
         return selector.out[index]
+
+    def parse(self, code):
+        try:
+            return self.ast.parse(code, strict=True)
+        except self.ast.AntlrException as e:
+            if self.safe_parsing: return e
+            else: raise e
 
     @staticmethod
     def get(nodes, predicate, map_name = lambda x: x):

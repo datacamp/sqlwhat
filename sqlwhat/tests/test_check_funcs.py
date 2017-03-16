@@ -10,8 +10,12 @@ import pytest
 def ast_mod():
     return get_ast_parser('postgresql')
 
-def prepare_state(solution_code, student_code):
-    dispatcher = Dispatcher.from_dialect('postgresql')
+@pytest.fixture(params = ['postgresql', 'mssql'])
+def dialect_name(request):
+    return request.param
+
+def prepare_state(solution_code, student_code, dialect='postgresql'):
+    dispatcher = Dispatcher.from_dialect(dialect)
     return State(
         student_code = student_code,
         solution_code = solution_code,
@@ -66,6 +70,12 @@ def test_check_statement_fail():
     state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")
     with pytest.raises(TF): check_statement(state, "select", 0)
 
+def test_check_statement_antlr_exception_skips(dialect_name):
+    state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
+    assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
+    select = check_statement(state, "select", 2)   # should be skipped
+    assert select is state
+
 def test_check_clause_pass():
     state = prepare_state("SELECT id FROM Trips WHERE id > 3", "SELECT id FROM Trips WHERE id>3")
     select = check_statement(state, "select", 0)
@@ -75,6 +85,13 @@ def test_check_clause_fail():
     state = prepare_state("SELECT id FROM Trips WHERE id > 3", "SELECT id FROM Trips WHERE id>4")
     select = check_statement(state, "select", 0)
     check_clause(select, "where_clause")
+
+def test_check_clause_antlr_exception_skips(dialect_name):
+    state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
+    assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
+    select = check_clause(state, "where", 0)   # should be skipped
+    assert select is state
+
 
 @pytest.fixture
 def state_tst():
