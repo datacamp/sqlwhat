@@ -1,6 +1,6 @@
 from sqlwhat.State import State
 import copy
-from functools import wraps
+from functools import wraps, reduce
 
 def state_dec(f):
     """Decorate check_* functions to return F chain if no state passed"""
@@ -50,7 +50,7 @@ class F(Chain):
     def __call__(self, *args, **kwargs):
         if not self._crnt_sct:
             state = kwargs.get('state') or args[0]
-            return reduce(lambda s, cd: self._call_from_data(*cd[0], state=s), self._stack, state)
+            return reduce(lambda s, cd: self._call_from_data(*cd, state=s), self._stack, state)
         else:
             call_data = (self._crnt_sct, args, kwargs)
             return self.__class__(self._stack + [call_args])

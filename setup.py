@@ -13,7 +13,7 @@ with open('sqlwhat/__init__.py', 'rb') as f:
 setup(
 	name='sqlwhat',
 	version=version,
-	packages=['sqlwhat'],
+	packages=['sqlwhat', 'sqlwhat.checks'],
 	install_requires=['markdown2', 'antlr-plsql>=0.1.0', 'antlr-tsql>=0.1.0'],
         description = 'Submission correctness tests for sql',
         author = 'Michael Chow',
