@@ -12,18 +12,18 @@ Api
 Check query results
 ~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: sqlwhat.check_result
+.. automodule:: sqlwhat.checks.check_result
     :members:
 
 Check AST and code
 ~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: sqlwhat.check_funcs
+.. automodule:: sqlwhat.checks.check_funcs
     :members:
 
 Logic
 ~~~~~
 
-.. automodule:: sqlwhat.check_logic
+.. automodule:: sqlwhat.checks.check_logic
     :members:
 
