@@ -161,10 +161,17 @@ def has_equal_ast(state, msg="Incorrect AST", sql=None, start="sql_script"):
 
 
 def test_mc(state, correct, msgs):
+    """
+    Note uses 1-based indexing in order to work with Datacamp's campus app.
+    """
+
     ctxt = {}
     exec(state.student_code, globals(), ctxt)
-    if ctxt['selected_option'] != correct:
-        state.reporter.do_test(Test(msgs[correct-1]))
+    sel_indx = ctxt['selected_option']
+    if sel_indx != correct:
+        state.reporter.do_test(Test(msgs[sel_indx-1]))
+    else:
+        state.reporter.feedback.success_msg = msgs[correct-1]
 
     return state
 
