@@ -9,6 +9,14 @@ Reference
 * AST viewer: https://sqlwhat-viewer.herokuapp.com
 * Example DataCamp Course: https://github.com/datacamp/courses-sql-test
 
+Raising issues with how SQL is parsed
+-------------------------------------
+
+Please raise an issue on the respsective parser repo:
+
+* [antlr-tsql](https://github.com/datacamp/antlr-tsql)
+* [antlr-psql](https://github.com/datacamp/antlr-plsql)
+
 Setup ANTLR grammar
 -------------------
 
