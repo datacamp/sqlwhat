@@ -70,6 +70,17 @@ def test_check_node_fail():
     state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")
     with pytest.raises(TF): check_node(state, "SelectStmt", 0)
 
+def test_check_node_priority_pass(ast_mod):
+    state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
+    child = check_node(state, "Identifier", 0, priority=99)
+    assert isinstance(child.student_ast, ast_mod.Identifier)
+    assert isinstance(child.solution_ast, ast_mod.Identifier)
+
+def test_check_node_priority_fail():
+    state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")
+    with pytest.raises(TF): check_node(state, "SelectStmt", 0, priority=0)
+    with pytest.raises(TF): check_node(state, "Identifier", 0)
+
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)

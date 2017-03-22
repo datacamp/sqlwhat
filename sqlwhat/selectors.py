@@ -43,11 +43,11 @@ class Dispatcher:
 
             self.types[name] = self.get(nodes, pred, map_name)
 
-    def __call__(self, check, name, index, node):
+    def __call__(self, check, name, index, node, *args, **kwargs):
         # TODO: gentle error handling
         ast_cls = self.types[check][name]
 
-        selector = Selector(ast_cls)
+        selector = Selector(ast_cls, *args, **kwargs)
         selector.visit(node)
 
         return selector.out[index]

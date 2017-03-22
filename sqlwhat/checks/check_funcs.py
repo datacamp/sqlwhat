@@ -19,7 +19,7 @@ def requires_ast(f):
     return wrapper
 
 @requires_ast
-def check_node(state, name, index=0, missing_msg="missing AST node: {}"):
+def check_node(state, name, index=0, missing_msg="missing AST node: {}", priority=None):
     """Select a node from abstract syntax tree (AST), using its name and index position.
     
     Args:
@@ -27,6 +27,11 @@ def check_node(state, name, index=0, missing_msg="missing AST node: {}"):
         name : the name of the abstract syntax tree node to find.
         index: the position of that node (see below for details).
         missing_msg: feedback message if node is not in student AST.
+        priority: the priority level of the node being searched for. This determines whether to
+                  descend into other AST nodes during the search. Higher priority nodes descend
+                  into lower priority. Currently, the only important part of priority is that 
+                  setting a very high priority (e.g. 99) will search every node.
+                
 
     :Example:
         If both the student and solution code are.. ::
@@ -43,7 +48,7 @@ def check_node(state, name, index=0, missing_msg="missing AST node: {}"):
             new_state = Ex().check_node('SelectStmt', 0)
 
     """
-    df = partial(state.ast_dispatcher, 'node', name, slice(None))
+    df = partial(state.ast_dispatcher, 'node', name, slice(None), priority=priority)
 
     stu_stmt_list = df(state.student_ast)
     try: stu_stmt = stu_stmt_list[index]

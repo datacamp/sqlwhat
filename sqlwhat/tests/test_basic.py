@@ -45,6 +45,7 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
 
 @pytest.mark.parametrize('sct', [
     "Ex().check_node('SelectStmt')",
+    "Ex().check_node('SelectStmt', priority=99)",
     "Ex().check_node('SelectStmt').check_field('target_list')",
     "Ex().test_student_typed('SELECT')",
     "Ex().has_equal_ast()",
