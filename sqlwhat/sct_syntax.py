@@ -53,7 +53,7 @@ class F(Chain):
             return reduce(lambda s, cd: self._call_from_data(*cd, state=s), self._stack, state)
         else:
             call_data = (self._crnt_sct, args, kwargs)
-            return self.__class__(self._stack + [call_args])
+            return self.__class__(self._stack + [call_data])
     
     @staticmethod
     def _call_from_data(f, args, kwargs, state):
