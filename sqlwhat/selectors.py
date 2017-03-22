@@ -1,4 +1,4 @@
-from ast import NodeVisitor
+from ast import NodeVisitor, AST
 from collections.abc import Sequence
 import inspect
 
@@ -18,6 +18,22 @@ class Selector(NodeVisitor):
         self.src = src
         self.priority = src._priority if priority is None else priority
         self.out = []
+
+    # TODO: needed to repeat this function, since _fields is more complex on the
+    #       custom ASTs, should simplify _fields, so this can be removed..
+    @staticmethod
+    def iter_fields(node): 
+        return [(k, getattr(node, k)) for k in node._get_field_names() if hasattr(node, k)]
+
+    def generic_visit(self, node):
+        """Called if no explicit visitor function exists for a node."""
+        for field, value in self.iter_fields(node):
+            if isinstance(value, list):
+                for item in value:
+                    if isinstance(item, AST):
+                        self.visit(item)
+            elif isinstance(value, AST):
+                self.visit(value)
 
     def visit(self, node):
         if self.is_match(node): self.out.append(node)
