@@ -189,3 +189,7 @@ def success_msg(state, msg):
     state.reporter.success_msg = msg
 
     return state
+
+def verify_ast_parses(state):
+    if state.student_ast is None or state.solution_ast is None:
+        state.reporter.do_test(Test("AST did not parse"))
