@@ -51,6 +51,7 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
     "Ex().multi(test_student_typed('SELECT'))",
     "Ex().test_or(test_student_typed('SELECT'))",
     "Ex().test_correct(test_student_typed('SELECT'), test_student_typed('SEL'))",
+    "Ex().test_correct(test_student_typed('SELECT'), test_student_typed('SEL').test_student_typed('SEL'))",
     "Ex().check_result()",
     "Ex().test_has_columns()",
     "Ex().test_nrows()",
