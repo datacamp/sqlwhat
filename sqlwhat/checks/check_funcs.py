@@ -175,3 +175,10 @@ def test_mc(state, correct, msgs):
 
     return state
 
+def success_msg(state, msg):
+    """
+    Changes the success message to display if submission passes.
+    """
+    state.reporter.success_msg = msg
+
+    return state
