@@ -73,7 +73,8 @@ class Dispatcher:
     def from_dialect(cls, dialect_name):
         rules = {
                 "statement":     [lambda k, v: "Stmt" in k,     lambda k: k.replace("Stmt", "").lower()],
-                "other":         [lambda k, v: "Stmt" not in k, lambda k: k.lower()]
+                "other":         [lambda k, v: "Stmt" not in k, lambda k: k.lower()],
+                "node":          [lambda k, v: True,            lambda k: k]
                 }
 
         ast_parser = get_ast_parser(dialect_name)

@@ -23,8 +23,8 @@ def multi(state, *args):
 
         The SCT below checks that a SELECT statement has both a WHERE and LIMIT clause.. ::
 
-            Ex().check_statement('select', 0) \
-                .multi(check_clause('where_clause'), check_clause('limit_clause'))
+            Ex().check_node('SelectStmt', 0) \
+                .multi(check_field('where_clause'), check_field('limit_clause'))
 
     :Note:
         This function could be thought as an AND statement, since all tests it runs must pass
@@ -59,8 +59,8 @@ def test_or(state, *tests):
 
         The SCT below checks that a SELECT statement has at least a WHERE or LIMIT clause.. ::
 
-            Ex().check_statement('select', 0) \
-                .test_or(check_clause('where_clause'), check_clause('limit_clause'))
+            Ex().check_node('SelectStmt', 0) \
+                .test_or(check_field('where_clause'), check_field('limit_clause'))
     """
 
     rep = state.reporter

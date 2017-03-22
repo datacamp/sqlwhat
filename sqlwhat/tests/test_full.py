@@ -36,34 +36,34 @@ def test_check_result_fail(dc_pec, stu_query):
     assert sct_payload.get('correct') is False
 
 @pytest.mark.backend
-def test_ex_check_clause_pass(dc_pec):
+def test_ex_check_field_pass(dc_pec):
     sct_payload = helper.run({
         'DC_PEC': dc_pec, 
         'DC_SOLUTION': "SELECT * FROM company WHERE id > 1",
         'DC_CODE': "SELECT id, NAME as name FROM company WHERE id = 3",  # note where exists, even if different
-        'DC_SCT': "Ex().check_statement('select', 0).check_clause('where_clause')"
+        'DC_SCT': "Ex().check_node('SelectStmt', 0).check_field('where_clause')"
         })
 
     assert sct_payload.get('correct') is True
 
 @pytest.mark.backend
-def test_ex_check_clause_pass(dc_pec):
+def test_ex_check_field_pass(dc_pec):
     sct_payload = helper.run({
         'DC_PEC': dc_pec, 
         'DC_SOLUTION': "SELECT * FROM company WHERE id > 1",
         'DC_CODE': "SELECT id, NAME as name FROM company2",
-        'DC_SCT': "Ex().check_statement('select', 0).check_clause('where_clause')"
+        'DC_SCT': "Ex().check_node('SelectStmt', 0).check_field('where_clause')"
         })
 
     assert sct_payload.get('correct') is False
 
 @pytest.mark.backend
-def test_ex_check_clause_has_equal_ast_fail(dc_pec):
+def test_ex_check_field_has_equal_ast_fail(dc_pec):
     sct_payload = helper.run({
         'DC_PEC': dc_pec, 
         'DC_SOLUTION': "SELECT * FROM company WHERE id > 1",
         'DC_CODE': "SELECT id, NAME as name FROM company2 WHERE id = 3",
-        'DC_SCT': "Ex().check_statement('select', 0).check_clause('where_clause').has_equal_ast()"
+        'DC_SCT': "Ex().check_node('SelectStmt', 0).check_field('where_clause').has_equal_ast()"
         })
 
     assert sct_payload.get('correct') is False
