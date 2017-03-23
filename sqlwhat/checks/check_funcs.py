@@ -19,7 +19,7 @@ def requires_ast(f):
     return wrapper
 
 @requires_ast
-def check_statement(state, name, index=0, missing_msg="missing statement"):
+def check_node(state, name, index=0, missing_msg="missing AST node: {}", priority=None):
     """Select a node from abstract syntax tree (AST), using its name and index position.
     
     Args:
@@ -27,6 +27,11 @@ def check_statement(state, name, index=0, missing_msg="missing statement"):
         name : the name of the abstract syntax tree node to find.
         index: the position of that node (see below for details).
         missing_msg: feedback message if node is not in student AST.
+        priority: the priority level of the node being searched for. This determines whether to
+                  descend into other AST nodes during the search. Higher priority nodes descend
+                  into lower priority. Currently, the only important part of priority is that 
+                  setting a very high priority (e.g. 99) will search every node.
+                
 
     :Example:
         If both the student and solution code are.. ::
@@ -37,17 +42,19 @@ def check_statement(state, name, index=0, missing_msg="missing statement"):
         
             # approach 1: with manually created State instance
             state = State(*args, **kwargs)
-            new_state = check_statement(state, 'select', 0)
+            new_state = check_node(state, 'SelectStmt', 0)
             
             # approach 2:  with Ex and chaining
-            new_state = Ex().check_statement('select', 0)
+            new_state = Ex().check_node('SelectStmt', 0)
 
     """
-    df = partial(state.ast_dispatcher, 'statement', name, slice(None))
+    df = partial(state.ast_dispatcher, 'node', name, slice(None), priority=priority)
 
     stu_stmt_list = df(state.student_ast)
     try: stu_stmt = stu_stmt_list[index]
-    except IndexError: state.reporter.do_test(Test(missing_msg))
+    except IndexError: 
+        _msg = missing_msg.format(name)
+        state.reporter.do_test(Test(_msg))
 
     sol_stmt_list = df(state.solution_ast) 
     try: sol_stmt = sol_stmt_list[index]
@@ -55,9 +62,8 @@ def check_statement(state, name, index=0, missing_msg="missing statement"):
 
     return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
 
-
 @requires_ast
-def check_clause(state, name, missing_msg="missing clause"):
+def check_field(state, name, missing_msg="missing AST field: {}"):
     """Select an attribute from an abstract syntax tree (AST) node, using the attribute name.
     
     Args:
@@ -74,12 +80,12 @@ def check_clause(state, name, missing_msg="missing clause"):
 
             # approach 1: with manually created State instance -----
             state = State(*args, **kwargs)
-            select = check_statement(state, 'select', 0)
-            clause = check_clause(select, 'from_clause')
+            select = check_node(state, 'SelectStmt', 0)
+            clause = check_field(select, 'from_clause')
 
             # approach 2: with Ex and chaining ---------------------
-            select = Ex().check_statement('select', 0)     # get first select statement
-            clause = select.check_clause('from_clause')    # get from_clause
+            select = Ex().check_node('SelectStmt', 0)     # get first select statement
+            clause = select.check_field('from_clause')    # get from_clause
     """
     try: stu_attr = getattr(state.student_ast, name)
     except: state.reporter.do_test(Test(missing_msg))
@@ -89,7 +95,8 @@ def check_clause(state, name, missing_msg="missing clause"):
 
     # fail if attribute exists, but is none only for student
     if stu_attr is None and sol_attr is not None:
-        state.reporter.do_test(Test(missing_msg))
+        _msg = missing_msg.format(name)
+        state.reporter.do_test(Test(_msg))
 
     return state.to_child(student_ast = stu_attr, solution_ast = sol_attr)
 
@@ -105,7 +112,7 @@ def test_student_typed(state, text, msg="Solution does not contain {}.", fixed=F
         fixed: whether to match text exactly, rather than using regular expressions.
 
     Note:
-        Functions like ``check_statement`` focus on certain parts of code.
+        Functions like ``check_node`` focus on certain parts of code.
         Using these functions followed by ``test_student_typed`` will only look
         in the code being focused on.
 
@@ -131,7 +138,7 @@ def test_student_typed(state, text, msg="Solution does not contain {}.", fixed=F
 
         You can check only the code corresponding to the WHERE clause, using ::
 
-            where = Ex().check_statement('select', 0).check_clause('where_clause')
+            where = Ex().check_node('SelectStmt', 0).check_field('where_clause')
             where.test_student_typed(text = "id < 10)
 
 
@@ -182,3 +189,7 @@ def success_msg(state, msg):
     state.reporter.success_msg = msg
 
     return state
+
+def verify_ast_parses(state):
+    if state.student_ast is None or state.solution_ast is None:
+        state.reporter.do_test(Test("AST did not parse"))

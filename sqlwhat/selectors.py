@@ -1,4 +1,4 @@
-from ast import NodeVisitor
+from ast import NodeVisitor, AST
 from collections.abc import Sequence
 import inspect
 
@@ -18,6 +18,22 @@ class Selector(NodeVisitor):
         self.src = src
         self.priority = src._priority if priority is None else priority
         self.out = []
+
+    # TODO: needed to repeat this function, since _fields is more complex on the
+    #       custom ASTs, should simplify _fields, so this can be removed..
+    @staticmethod
+    def iter_fields(node): 
+        return [(k, getattr(node, k)) for k in node._get_field_names() if hasattr(node, k)]
+
+    def generic_visit(self, node):
+        """Called if no explicit visitor function exists for a node."""
+        for field, value in self.iter_fields(node):
+            if isinstance(value, list):
+                for item in value:
+                    if isinstance(item, AST):
+                        self.visit(item)
+            elif isinstance(value, AST):
+                self.visit(value)
 
     def visit(self, node):
         if self.is_match(node): self.out.append(node)
@@ -43,11 +59,11 @@ class Dispatcher:
 
             self.types[name] = self.get(nodes, pred, map_name)
 
-    def __call__(self, check, name, index, node):
+    def __call__(self, check, name, index, node, *args, **kwargs):
         # TODO: gentle error handling
         ast_cls = self.types[check][name]
 
-        selector = Selector(ast_cls)
+        selector = Selector(ast_cls, *args, **kwargs)
         selector.visit(node)
 
         return selector.out[index]
@@ -73,7 +89,8 @@ class Dispatcher:
     def from_dialect(cls, dialect_name):
         rules = {
                 "statement":     [lambda k, v: "Stmt" in k,     lambda k: k.replace("Stmt", "").lower()],
-                "other":         [lambda k, v: "Stmt" not in k, lambda k: k.lower()]
+                "other":         [lambda k, v: "Stmt" not in k, lambda k: k.lower()],
+                "node":          [lambda k, v: True,            lambda k: k]
                 }
 
         ast_parser = get_ast_parser(dialect_name)

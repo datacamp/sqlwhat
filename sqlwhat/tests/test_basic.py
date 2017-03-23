@@ -44,8 +44,9 @@ def test_fail(conn):
 xfail_def = pytest.mark.xfail(reason="implement deferrel")
 
 @pytest.mark.parametrize('sct', [
-    "Ex().check_statement('select')",
-    "Ex().check_statement('select').check_clause('target_list')",
+    "Ex().check_node('SelectStmt')",
+    "Ex().check_node('SelectStmt', priority=99)",
+    "Ex().check_node('SelectStmt').check_field('target_list')",
     "Ex().test_student_typed('SELECT')",
     "Ex().has_equal_ast()",
     "Ex().multi(test_student_typed('SELECT'))",
@@ -76,7 +77,7 @@ def test_test_exercise_pass(conn, sct):
     assert sct_payload.get('correct') is True
 
 @pytest.mark.parametrize('sct', [
-    "Ex().check_statement('select').check_clause('target_list').has_equal_ast()",
+    "Ex().check_node('SelectStmt').check_field('target_list').has_equal_ast()",
     "Ex().test_student_typed('id', fixed=True)",
     "Ex().has_equal_ast()",
     "Ex().multi(test_student_typed('id'))",
