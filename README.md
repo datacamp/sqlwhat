@@ -2,6 +2,11 @@
 
 [![Build Status](https://travis-ci.org/datacamp/sqlwhat.svg?branch=master)](https://travis-ci.org/datacamp/sqlwhat)
 
+Installing
+----------
+
+`pip install sqlwhat`
+
 Reference
 ---------
 
