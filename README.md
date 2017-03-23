@@ -17,6 +17,42 @@ Please raise an issue on the respsective parser repo:
 * [antlr-tsql](https://github.com/datacamp/antlr-tsql)
 * [antlr-psql](https://github.com/datacamp/antlr-plsql)
 
+Basic Use
+---------
+
+```python
+from sqlwhat.State import State    # State holds info needed for tests
+from sqlwhat.Reporter import Reporter
+from sqlwhat.checks import *       # imports all SCTs
+from sqlalchemy import create_engine
+
+code = "SELECT * FROM artists WHERE id < 100"
+
+state = State(
+    student_code = code,
+    solution_code = code,
+    pre_exercise_code = "",
+    student_conn = create_engine('sqlite:///'),
+    solution_conn = create_engine('sqlite:///'),
+    student_result = {'id': [1,2,3], 'name': ['greg', 'jon', 'martha']},
+    solution_result = {'id': [1,2,3], 'name': ['toby', 'keith', 'deb']},
+    reporter = Reporter()
+    )
+
+# test below passes, since code is equal for student and solution
+has_equal_ast(state)
+
+# test below raises a TestFail error, since 'name' col of results
+# doesn't match between student and solution results
+check_result(state)
+# shows error data
+state.reporter.build_payload([])
+
+# can also be done using a chain
+from sqlwhat.sct_syntax import Ex
+Ex(state).check_result()
+```
+
 Setup ANTLR grammar
 -------------------
 
