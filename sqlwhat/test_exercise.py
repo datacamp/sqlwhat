@@ -25,7 +25,7 @@ def test_exercise(sct,
         solution_conn = solution_conn,
         student_result = student_result,
         solution_result = solution_result,
-        reporter = Reporter())
+        reporter = Reporter(error))
 
     State.root_state = state
 
@@ -33,4 +33,4 @@ def test_exercise(sct,
         exec(sct, SCT_CTX)
     except TestFail: pass
 
-    return(state.reporter.build_payload(error))
+    return(state.reporter.build_payload())

@@ -21,7 +21,7 @@ def test_success_msg_pass():
     state = prepare_state("")
     success_msg(state, "NEW SUCCESS MSG")
 
-    sct_payload = state.reporter.build_payload([])
+    sct_payload = state.reporter.build_payload()
     assert sct_payload['correct'] == True
     assert sct_payload['message'] == "NEW SUCCESS MSG"
 
@@ -31,13 +31,13 @@ def test_success_msg_fail():
     with pytest.raises(TF):
         fail(child)
 
-    sct_payload = state.reporter.build_payload([])
+    sct_payload = state.reporter.build_payload()
     assert sct_payload['message'] != "NEW SUCCESS MSG"
 
 def test_success_msg_pass_ex():
     state = prepare_state("")
     Ex(state).success_msg("NEW SUCCESS MSG")
 
-    sct_payload = state.reporter.build_payload([])
+    sct_payload = state.reporter.build_payload()
     assert sct_payload['correct'] == True
     assert sct_payload['message'] == "NEW SUCCESS MSG"

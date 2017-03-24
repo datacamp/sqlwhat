@@ -120,3 +120,37 @@ def test_allow_error(conn):
         error=[{'type': 'error', 'payload': 'error payload'}]
         )
 
+    assert sct_payload.get('correct') is True
+
+def test_error(conn):
+    sct_payload = te(
+        sct = "",
+        student_code = "SELECT * FROM company",
+        solution_code = "SELECT id FROM company",
+        pre_exercise_code = "",
+        student_conn = conn,
+        solution_conn = None,
+        student_result = None,
+        solution_result = None,
+        ex_type="NormalExercise",
+        error=[{'type': 'error', 'payload': 'error payload'}]
+        )
+
+    assert 'error payload' in sct_payload.get('message')
+
+def test_test_error(conn):
+    sct_payload = te(
+        sct = "Ex().test_error('NEW MESSAGE')",
+        student_code = "SELECT * FROM company",
+        solution_code = "SELECT id FROM company",
+        pre_exercise_code = "",
+        student_conn = conn,
+        solution_conn = None,
+        student_result = None,
+        solution_result = None,
+        ex_type="NormalExercise",
+        error=[{'type': 'error', 'payload': 'error payload'}]
+        )
+
+    assert sct_payload.get('message') == "NEW MESSAGE"
+
