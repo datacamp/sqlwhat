@@ -51,7 +51,7 @@ has_equal_ast(state)
 # doesn't match between student and solution results
 check_result(state)
 # shows error data
-state.reporter.build_payload([])
+state.reporter.build_payload()
 
 # can also be done using a chain
 from sqlwhat.sct_syntax import Ex

@@ -14,13 +14,14 @@ class Reporter(object):
     """
     active_reporter = None
 
-    def __init__(self):
+    def __init__(self, output = []):
         self.failed_test = False
         self.feedback = Feedback("Oh no, your solution is incorrect! Please, try again.")
         self.success_msg = "Great work!"
         self.errors_allowed = False
         self.failure_msg = ""
         self.fallback_ast = None
+        self.output = output
 
     def set_tag(self, *args, **kwargs): pass
 
@@ -52,9 +53,15 @@ class Reporter(object):
         #self.failure_msg_stack.pop()
         return result
 
-    def build_payload(self, error):
-        if (error and not self.failed_test and not self.errors_allowed):
-            feedback_msg = "Your code contains an error: `%s`" % str(error[1])
+    def get_error(self):
+        # each entry of output should be a dict of form, type: 'error', payload: 'somepayload'
+        return self.output[-1].get('payload') if self.output else None  # get last error
+
+    def build_payload(self, error=None):
+        error = self.get_error() if not error else error
+
+        if (error is not None and not self.failed_test and not self.errors_allowed):
+            feedback_msg = "Your code contains an error: `%s`" % str(error)
             return {
                 "correct": False,
                 "message": Reporter.to_html(feedback_msg)

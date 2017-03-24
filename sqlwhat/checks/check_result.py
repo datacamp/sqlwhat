@@ -5,6 +5,14 @@ def allow_error(state):
 
     return state
 
+def test_error(state, msg="Your command returned the following error: {}"):
+    error = state.reporter.get_error()
+
+    if error is not None:
+        state.reporter.do_test(Test(msg.format(error)))
+
+    return state
+
 def check_result(state, msg="Incorrect result."):
     """High level function which wraps other SCTs for checking results."""
 
@@ -27,6 +35,8 @@ def test_has_columns(state, msg="You result did not output any columns."):
     if not state.student_result:
         state.reporter.do_test(Test(msg))
 
+    return state
+
 def test_nrows(state, msg="Result has {} row(s) but expected {}."):
     """Test whether the student and solution query results have equal numbers of rows.""" 
 
@@ -41,6 +51,8 @@ def test_nrows(state, msg="Result has {} row(s) but expected {}."):
         _msg = msg.format(n_stu, n_sol)
         state.reporter.do_test(Test(_msg))
 
+    return state
+
 def test_ncols(state, msg="Result has {} column(s) but expected {}."):
     """Test whether the student and solution query results have equal numbers of columns."""
 
@@ -53,6 +65,8 @@ def test_ncols(state, msg="Result has {} column(s) but expected {}."):
     if n_stu != n_sol:
         _msg = msg.format(n_stu, n_sol)
         state.reporter.do_test(Test(_msg))
+
+    return state
 
 def test_column(state, name, msg="Column {} does not match the solution", 
                 match = ('exact', 'alias', 'any')[0],
@@ -103,3 +117,5 @@ def test_column(state, name, msg="Column {} does not match the solution",
     if src_col not in dst_cols:
         _msg = msg.format(name)
         state.reporter.do_test(Test(_msg))
+
+    return state
