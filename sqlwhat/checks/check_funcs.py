@@ -155,7 +155,7 @@ def test_student_typed(state, text, msg="Solution does not contain {}.", fixed=F
 
 
 @requires_ast
-def has_equal_ast(state, msg="Incorrect AST", sql=None, start="sql_script"):
+def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=None, start="sql_script"):
     """Test whether the student and solution code have identical AST representations
     
     """
