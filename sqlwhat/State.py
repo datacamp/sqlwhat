@@ -20,7 +20,10 @@ class State:
         for k,v in locals().items():
             if k != 'self': setattr(self, k, v)
 
-        if ast_dispatcher is None: self.ast_dispatcher = Dispatcher.from_dialect(student_conn.dialect.name)
+        if ast_dispatcher is None:
+            # MCE doesn't always have connection - fallback on postgresql
+            dn = student_conn.dialect.name if student_conn else 'postgresql'
+            self.ast_dispatcher = Dispatcher.from_dialect(dn)
 
         # Parse solution and student code
         # solution code raises an exception if can't be parsed
@@ -39,4 +42,3 @@ class State:
         for k, v in kwargs.items(): setattr(child, k, v)
         child.parent = self
         return child
-
