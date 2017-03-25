@@ -1,11 +1,15 @@
 from sqlwhat.Test import TestFail, Test
 
 def allow_error(state):
+    """Allow submission to pass, even if it originally caused a database error."""
+
     state.reporter.errors_allowed = True
 
     return state
 
 def test_error(state, msg="Your command returned the following error: {}"):
+    """Test whether submission caused a database error."""
+
     error = state.reporter.get_error()
 
     if error is not None:
