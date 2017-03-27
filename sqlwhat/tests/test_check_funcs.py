@@ -81,6 +81,13 @@ def test_check_node_priority_fail():
     with pytest.raises(TF): check_node(state, "SelectStmt", 0, priority=0)
     with pytest.raises(TF): check_node(state, "Identifier", 0)
 
+def test_check_node_back_to_back():
+    state = prepare_state("SELECT 1 + 2 + 3 FROM x", "SELECT 1 + 2 + 3 FROM x")
+    sel = check_node(state, 'SelectStmt', 0)
+    bin1 = check_node(sel, 'BinaryExpr', 0)
+    bin2 = check_node(bin1, 'BinaryExpr', 0)
+    assert bin2.student_ast.left == '1'
+
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
