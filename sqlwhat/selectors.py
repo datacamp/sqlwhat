@@ -35,7 +35,9 @@ class Selector(NodeVisitor):
             elif isinstance(value, AST):
                 self.visit(value)
 
-    def visit(self, node):
+    def visit(self, node, head=False):
+        if head: return super().visit(node)
+
         if self.is_match(node): self.out.append(node)
         if self.has_priority_over(node):
             return super().visit(node)
@@ -64,7 +66,7 @@ class Dispatcher:
         ast_cls = self.types[check][name]
 
         selector = Selector(ast_cls, *args, **kwargs)
-        selector.visit(node)
+        selector.visit(node, head=True)
 
         return selector.out[index]
 

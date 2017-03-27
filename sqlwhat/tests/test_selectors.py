@@ -61,6 +61,18 @@ def test_selector_includes_subquery(ast):
     select2 = ast.parse("SELECT b FROM y", start='subquery')    # subquery is the parser rule for select statements
     assert repr(select1) == repr(select2)
 
+def test_selector_head(ast):
+    bin_expr = ast.parse("1 + 2 + 3", "expression")
+    sel = Selector(ast.BinaryExpr)
+    sel.visit(bin_expr)
+    assert len(sel.out) == 1
+    assert sel.out[0].right == '3'
+    sel2 = Selector(ast.BinaryExpr)
+    sel2.visit(sel.out[0], head=True)
+    assert len(sel2.out) == 1
+    assert sel2.out[0].left == '1'
+
+
 def test_dispatch_select(dispatcher, ast):
     tree = ast.parse("SELECT id FROM artists")
     selected = dispatcher("statement", "select", 0, tree)

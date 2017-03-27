@@ -81,6 +81,13 @@ def test_check_node_priority_fail():
     with pytest.raises(TF): check_node(state, "SelectStmt", 0, priority=0)
     with pytest.raises(TF): check_node(state, "Identifier", 0)
 
+def test_check_node_back_to_back():
+    state = prepare_state("SELECT 1 + 2 + 3 FROM x", "SELECT 1 + 2 + 3 FROM x")
+    sel = check_node(state, 'SelectStmt', 0)
+    bin1 = check_node(sel, 'BinaryExpr', 0)
+    bin2 = check_node(bin1, 'BinaryExpr', 0)
+    assert bin2.student_ast.left == '1'
+
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
@@ -96,6 +103,17 @@ def test_check_field_fail():
     state = prepare_state("SELECT id FROM Trips WHERE id > 3", "SELECT id FROM Trips WHERE id>4")
     select = check_node(state, "SelectStmt", 0)
     check_field(select, "where_clause")
+
+def test_check_field_index_pass():
+    state = prepare_state("SELECT id, name FROM Trips", "SELECT id, name FROM Trips")
+    select = check_node(state, "SelectStmt", 0)
+    check_field(select, "target_list", 1)
+
+def test_check_field_index_fail():
+    state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
+    select = check_node(state, "SelectStmt", 0)
+    with pytest.raises(TF): check_field(select, "target_list", 1)
+
 
 def test_check_field_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
