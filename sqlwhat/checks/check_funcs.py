@@ -63,12 +63,13 @@ def check_node(state, name, index=0, missing_msg="missing AST node: {}", priorit
     return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
 
 @requires_ast
-def check_field(state, name, missing_msg="missing AST field: {}"):
+def check_field(state, name, index=None, missing_msg="missing AST field: {}"):
     """Select an attribute from an abstract syntax tree (AST) node, using the attribute name.
     
     Args:
         state: State instance describing student and solution code. Can be omitted if used with Ex().
         name: the name of the attribute to select from current AST node.
+        index: entry to get from field. If too few entires, will fail with missing_msg.
         missing_msg: feedback message if attribute is not in student AST.
 
     :Example:
@@ -85,13 +86,20 @@ def check_field(state, name, missing_msg="missing AST field: {}"):
 
             # approach 2: with Ex and chaining ---------------------
             select = Ex().check_node('SelectStmt', 0)     # get first select statement
-            clause = select.check_field('from_clause')    # get from_clause
+            clause =  select.check_field('from_clause')    # get from_clause (a list)
+            clause2 = select.check_field('from_clause', 0) # get first entry in from_clause
     """
-    try: stu_attr = getattr(state.student_ast, name)
-    except: state.reporter.do_test(Test(missing_msg))
+    try: 
+        stu_attr = getattr(state.student_ast, name)
+        if index is not None: stu_attr = stu_attr[index]
+    except: 
+        state.reporter.do_test(Test(missing_msg))
 
-    try: sol_attr = getattr(state.solution_ast, name)
-    except IndexError: raise IndexError("Can't get %s attribute"%name)
+    try: 
+        sol_attr = getattr(state.solution_ast, name)
+        if index is not None: sol_attr = sol_attr[index]
+    except IndexError: 
+        raise IndexError("Can't get %s attribute"%name)
 
     # fail if attribute exists, but is none only for student
     if stu_attr is None and sol_attr is not None:

@@ -97,6 +97,17 @@ def test_check_field_fail():
     select = check_node(state, "SelectStmt", 0)
     check_field(select, "where_clause")
 
+def test_check_field_index_pass():
+    state = prepare_state("SELECT id, name FROM Trips", "SELECT id, name FROM Trips")
+    select = check_node(state, "SelectStmt", 0)
+    check_field(select, "target_list", 1)
+
+def test_check_field_index_fail():
+    state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
+    select = check_node(state, "SelectStmt", 0)
+    with pytest.raises(TF): check_field(select, "target_list", 1)
+
+
 def test_check_field_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
