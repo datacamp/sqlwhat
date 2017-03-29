@@ -84,7 +84,20 @@ def test_or(state, *tests):
 
 def test_correct(state, check, diagnose):
     """Allows feedback from a diagnostic SCT, only if a check SCT fails. 
-    
+
+    Args:
+        state: State instance describing student and solution code. Can be omitted if used with Ex().
+        check: An sct (or list of SCTs) that must succeed.
+        diagnose: An sct (or list of SCTs) to run if the check fails.
+
+    :Example:
+        The SCT below tests whether students query result is correct, before running diagnostic SCTs.. ::
+
+            Ex().test_correct(check_result(), [
+                    test_error("some message about an error"),
+                    check_node('SelectStmt', missing_msg = "Did you forget your Select statement?")
+                    ])
+
     """
     rep = state.reporter
 
