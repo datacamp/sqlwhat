@@ -93,7 +93,8 @@ def check_field(state, name, index=None, missing_msg="missing AST field: {}"):
         stu_attr = getattr(state.student_ast, name)
         if index is not None: stu_attr = stu_attr[index]
     except: 
-        state.reporter.do_test(Test(missing_msg))
+        _msg = missing_msg.format(name)
+        state.reporter.do_test(Test(_msg))
 
     try: 
         sol_attr = getattr(state.solution_ast, name)
