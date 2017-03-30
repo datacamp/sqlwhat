@@ -3,29 +3,14 @@ import _ast
 
 class Feedback(object):
 
-    def __init__(self, message, astobj = None):
+   def __init__(self, message, astobj = None, strict=False):
         self.message = message
         self.line_info = {}
         try:
             if astobj is not None:
-                if issubclass(type(astobj), (_ast.Module, _ast.Expression)):
-                    astobj = astobj.body
-                if isinstance(astobj, list) and len(astobj) > 0:
-                    start = astobj[0]
-                    end = astobj[-1]
-                else:
-                    start = astobj
-                    end = astobj
-                if  hasattr(start, "lineno") and \
-                    hasattr(start, "col_offset") and \
-                    hasattr(end, "end_lineno") and \
-                    hasattr(end, "end_col_offset"):
-                    self.line_info["line_start"] = start.lineno
-                    self.line_info["column_start"] = start.col_offset
-                    self.line_info["line_end"] = end.end_lineno
-                    self.line_info["column_end"] = end.end_col_offset
-        except:
-            pass
+                self.line_info = astobj._get_pos()
+        except Exception as e:
+            if strict: raise e
 
 class TestFail(Exception):
     pass

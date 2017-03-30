@@ -54,7 +54,7 @@ def check_node(state, name, index=0, missing_msg="missing AST node: {}", priorit
     try: stu_stmt = stu_stmt_list[index]
     except IndexError: 
         _msg = missing_msg.format(name)
-        state.reporter.do_test(Test(_msg))
+        state.do_test(Test(_msg))
 
     sol_stmt_list = df(state.solution_ast) 
     try: sol_stmt = sol_stmt_list[index]
@@ -94,7 +94,7 @@ def check_field(state, name, index=None, missing_msg="missing AST field: {}"):
         if index is not None: stu_attr = stu_attr[index]
     except: 
         _msg = missing_msg.format(name)
-        state.reporter.do_test(Test(_msg))
+        state.do_test(Test(_msg))
 
     try: 
         sol_attr = getattr(state.solution_ast, name)
@@ -105,7 +105,7 @@ def check_field(state, name, index=None, missing_msg="missing AST field: {}"):
     # fail if attribute exists, but is none only for student
     if stu_attr is None and sol_attr is not None:
         _msg = missing_msg.format(name)
-        state.reporter.do_test(Test(_msg))
+        state.do_test(Test(_msg))
 
     return state.to_child(student_ast = stu_attr, solution_ast = sol_attr)
 
@@ -156,9 +156,9 @@ def test_student_typed(state, text, msg="Solution does not contain {}.", fixed=F
 
     _msg = msg.format(text)
     if fixed and not text in stu_text:            # simple text matching
-        state.reporter.do_test(Test(msg))
+        state.do_test(Test(msg))
     elif not re.match(text, stu_text):            # regex
-        state.reporter.do_test(Test(msg))
+        state.do_test(Test(msg))
 
     return state
 
@@ -171,7 +171,7 @@ def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=Non
     ast = state.ast_dispatcher.ast
     sol_ast = state.solution_ast if sql is None else ast.parse(sql, start)
     if repr(state.student_ast) != repr(sol_ast):
-        state.reporter.do_test(Test(msg))
+        state.do_test(Test(msg))
 
     return state
 
@@ -185,7 +185,7 @@ def test_mc(state, correct, msgs):
     exec(state.student_code, globals(), ctxt)
     sel_indx = ctxt['selected_option']
     if sel_indx != correct:
-        state.reporter.do_test(Test(msgs[sel_indx-1]))
+        state.do_test(Test(msgs[sel_indx-1]))
     else:
         state.reporter.feedback.success_msg = msgs[correct-1]
 
@@ -201,4 +201,4 @@ def success_msg(state, msg):
 
 def verify_ast_parses(state):
     if state.student_ast is None or state.solution_ast is None:
-        state.reporter.do_test(Test("AST did not parse"))
+        state.do_test(Test("AST did not parse"))

@@ -4,7 +4,7 @@ from functools import partial
 
 def fail(state, msg=""):
     """Always fails the SCT, with an optional msg."""
-    state.reporter.do_test(Test(msg))
+    state.do_test(Test(msg))
 
     return state
 
@@ -31,7 +31,6 @@ def multi(state, *args):
 
     """
 
-    rep = state.reporter
     for arg in args:
         # when input is a single test, make iterable
         if callable(arg): arg = [arg]
@@ -40,7 +39,7 @@ def multi(state, *args):
             # assume test is function needing a state argument
             # partial state so reporter can test
             closure = partial(test, state)
-            rep.do_test(closure, "")
+            state.do_test(closure)
 
     # return original state, so can be chained
     return state
@@ -99,7 +98,6 @@ def test_correct(state, check, diagnose):
                     ])
 
     """
-    rep = state.reporter
 
     def diagnose_and_check(state):
         # use multi twice, since diagnose and check may be lists of tests
