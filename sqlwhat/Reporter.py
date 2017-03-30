@@ -54,6 +54,14 @@ class Reporter(object):
         # each entry of output should be a dict of form, type: 'error', payload: 'somepayload'
         return self.output[-1].get('payload') if self.output else None  # get last error
 
+    @staticmethod
+    def formatted_line_info(line_info):
+        cpy = {**line_info}
+        for k in ['column_start', 'column_end']:
+            if k in cpy: cpy[k] += 1
+        return cpy
+
+
     def build_payload(self, error=None):
         error = self.get_error() if not error else error
 
@@ -68,7 +76,7 @@ class Reporter(object):
             return {
                 "correct": False,
                 "message": Reporter.to_html(self.feedback.message),
-                **self.feedback.line_info
+                **self.formatted_line_info(self.feedback.line_info)
                 }
             
         else:

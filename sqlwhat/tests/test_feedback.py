@@ -24,12 +24,12 @@ def test_feedback_init(sql_cmd, start, pos):
     for ii, k in enumerate(pos_names):
         assert fb.line_info[k] == pos[ii]
 
-def test_reporter_line_info():
+def test_reporter_line_info_1_based_cols():
     rep = Reporter()
     rep.failed_test = True
     rep.feedback = Feedback("MESSAGE", ast.parse("\nSELECT x FROM y"))
     payload = rep.build_payload()
-    pos = [2, 0, 2, 14]
+    pos = [2, 1, 2, 15]
     pos_names = ['line_start', 'column_start', 'line_end', 'column_end']
     for ii, k in enumerate(pos_names):
         assert payload[k] == pos[ii]
@@ -46,7 +46,7 @@ def test_state_line_info():
 
     payload = state.reporter.build_payload()
 
-    pos = [2, 0, 2, 14]
+    pos = [2, 1, 2, 15]
     pos_names = ['line_start', 'column_start', 'line_end', 'column_end']
     for ii, k in enumerate(pos_names):
         assert payload[k] == pos[ii]
