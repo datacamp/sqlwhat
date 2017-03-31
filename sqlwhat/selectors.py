@@ -42,6 +42,9 @@ class Selector(NodeVisitor):
         if self.has_priority_over(node):
             return super().visit(node)
 
+    def visit_list(self, lst):
+        for item in lst: self.visit(item)
+
     def is_match(self, node):
         if type(node) is self.src: return True
         else: return False

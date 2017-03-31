@@ -88,6 +88,12 @@ def test_check_node_back_to_back():
     bin2 = check_node(bin1, 'BinaryExpr', 0)
     assert bin2.student_ast.left == '1'
 
+def test_check_node_from_list():
+    state = prepare_state("SELECT a, b, c FROM x", "SELECT a, b, c FROM x")
+    sel = check_node(state, "SelectStmt", 0)
+    tl = check_field(sel, "target_list")
+    check_node(tl, "Identifier")
+
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
