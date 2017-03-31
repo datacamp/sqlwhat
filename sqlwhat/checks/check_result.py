@@ -29,11 +29,12 @@ def check_result(state, msg="Incorrect result."):
     test_nrows(state)
     # column tests
     for k in sol_res:
+        test_name_miscased(state, k)
         test_column(state, k)
 
     return state
 
-def test_has_columns(state, msg="You result did not output any columns."):
+def test_has_columns(state, msg="Your result did not output any columns."):
     """Test if the student's query result contains any columns"""
 
     if not state.student_result:
@@ -72,7 +73,24 @@ def test_ncols(state, msg="Result has {} column(s) but expected {}."):
 
     return state
 
-def test_column(state, name, msg="Column {} does not match the solution", 
+def test_name_miscased(state, name, 
+                       msg="Check the name of column `{}`. It looks similar to column name `{}` in the result, but is not an exact match."):
+    stu_res = state.student_result
+    sol_res = state.solution_result
+
+    if name not in sol_res:
+        raise BaseException("name %s not in solution column names"%name)
+
+    stu_lower = {k.lower() : k for k in stu_res.keys()}
+
+    if name.lower() in stu_lower and name not in stu_res:
+        _msg = msg.format(stu_lower[name.lower()], name)
+        state.reporter.do_test(Test(_msg))
+
+    return state
+
+
+def test_column(state, name, msg="Column {} in the solution does not have a match in your query results.", 
                 match = ('exact', 'alias', 'any')[0],
                 test = 'equivalent'):
     """Test whether a specific column from solution is contained in the student query results.

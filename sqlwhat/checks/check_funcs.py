@@ -19,7 +19,7 @@ def requires_ast(f):
     return wrapper
 
 @requires_ast
-def check_node(state, name, index=0, missing_msg="missing AST node: {}", priority=None):
+def check_node(state, name, index=0, missing_msg="Your submission is incorrect. Try again!", priority=None):
     """Select a node from abstract syntax tree (AST), using its name and index position.
     
     Args:
@@ -63,7 +63,7 @@ def check_node(state, name, index=0, missing_msg="missing AST node: {}", priorit
     return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
 
 @requires_ast
-def check_field(state, name, index=None, missing_msg="missing AST field: {}"):
+def check_field(state, name, index=None, missing_msg="Your submission is incorrect. Try again!"):
     """Select an attribute from an abstract syntax tree (AST) node, using the attribute name.
     
     Args:
@@ -111,7 +111,7 @@ def check_field(state, name, index=None, missing_msg="missing AST field: {}"):
 
 import re
 
-def test_student_typed(state, text, msg="Solution does not contain {}.", fixed=False):
+def test_student_typed(state, text, msg="Submission does not contain the code `{}`.", fixed=False):
     """Test whether the student code contains text.
 
     Args:
