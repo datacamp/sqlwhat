@@ -99,4 +99,20 @@ class Dispatcher:
                 }
 
         ast_parser = get_ast_parser(dialect_name)
+        
+        # TODO: the code below monkney patches the mssql ast to use only lowercase
+        #       representations. This is because msft server has a setting to be
+        #       case sensitive. However, this is often not the case, and probably
+        #       detremental to DataCamp courses. Need to move to more sane configuration.
+        if dialect_name == 'mssql':
+            ast_parser.AstNode.__repr__ = lower_case(ast_parser.AstNode.__repr__)
+
         return cls.from_module(ast_parser, rules)
+
+from functools import wraps
+def lower_case(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return f(*args, **kwargs).lower()
+    return wrapper
+
