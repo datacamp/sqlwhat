@@ -57,7 +57,8 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
     "Ex().test_has_columns()",
     "Ex().test_nrows()",
     "Ex().test_ncols()",
-    "Ex().test_column('id')"
+    "Ex().test_column('id')",
+    "Ex().test_name_miscased('id')"
     ])
 def test_test_exercise_pass(conn, sct):
     result = {'id': [1], 'name': ['greg']}
