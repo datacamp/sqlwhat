@@ -30,6 +30,11 @@ class State:
         if solution_ast is None: self.solution_ast = self.ast_dispatcher.parse(solution_code)
         if student_ast  is None: self.student_ast  = self.ast_dispatcher.parse(student_code)
 
+    def do_test(self, *args, highlight=None, **kwargs):
+        highlight = self.student_ast if highlight is None else highlight
+
+        return self.reporter.do_test(*args, highlight=highlight, **kwargs)
+
     def to_child(self, **kwargs):
         """Basic implementation of returning a child state"""
 

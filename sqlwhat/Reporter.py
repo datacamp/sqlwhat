@@ -19,21 +19,18 @@ class Reporter(object):
         self.feedback = Feedback("Oh no, your solution is incorrect! Please, try again.")
         self.success_msg = "Great work!"
         self.errors_allowed = False
-        self.failure_msg = ""
-        self.fallback_ast = None
         self.output = output
+
+        self.raise_ast_pos_errors = False
 
     def set_tag(self, *args, **kwargs): pass
 
-    def do_test(self, testobj, prepend_on_fail="", fallback_ast=None):
+    def do_test(self, testobj, highlight=None):
         """Do test.
 
         Execute a given test, unless some previous test has failed. If the test has failed,
         the state of the reporter changes and the feedback is kept.
         """
-
-        if prepend_on_fail: self.failure_msg = prepend_on_fail
-        if fallback_ast: self.fallback_ast = fallback_ast
 
         if isinstance(testobj, Test):
             testobj.test()
@@ -41,21 +38,29 @@ class Reporter(object):
             if (not result):
                 self.failed_test = True
                 self.feedback = testobj.get_feedback()
-                self.feedback.message = self.failure_msg + self.feedback.message
-                if not self.feedback.line_info and self.fallback_ast: 
-                    self.feedback = Feedback(self.feedback.message, self.fallback_ast)
+
+                if highlight: 
+                    self.feedback = Feedback(self.feedback.message, highlight)
+
                 raise TestFail
 
         else: 
             result = None
             testobj()    # run function for side effects
 
-        #self.failure_msg_stack.pop()
         return result
 
     def get_error(self):
         # each entry of output should be a dict of form, type: 'error', payload: 'somepayload'
         return self.output[-1].get('payload') if self.output else None  # get last error
+
+    @staticmethod
+    def formatted_line_info(line_info):
+        cpy = {**line_info}
+        for k in ['column_start', 'column_end']:
+            if k in cpy: cpy[k] += 1
+        return cpy
+
 
     def build_payload(self, error=None):
         error = self.get_error() if not error else error
@@ -68,33 +73,17 @@ class Reporter(object):
                 }
 
         if self.failed_test:
-            if not self.feedback.line_info:
-                return {
-                    "correct": False,
-                    "message": Reporter.to_html(self.feedback.message)
-                    }
-            else:
-                # Hack to make it work with campus app implementation
-                if self.feedback.line_info["column_start"] is None:
-                    col_start = None
-                else:
-                    col_start = self.feedback.line_info["column_start"] + 1
-
-                return {
-                    "correct": False,
-                    "message": Reporter.to_html(self.feedback.message),
-                    "line_start": self.feedback.line_info["line_start"],
-                    "column_start": col_start,
-                    "line_end": self.feedback.line_info["line_end"],
-                    "column_end": self.feedback.line_info["column_end"]
-                    }
-                
+            return {
+                "correct": False,
+                "message": Reporter.to_html(self.feedback.message),
+                **self.formatted_line_info(self.feedback.line_info)
+                }
             
         else:
-            return({
+            return {
                 "correct": True,
                 "message": Reporter.to_html(self.success_msg)
-                })
+                }
 
     @staticmethod
     def to_html(msg):
