@@ -152,13 +152,20 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
 
 
     """
-    stu_text = state.student_ast._get_text(state.student_code)
+    stu_ast = state.student_ast
+    stu_code = state.student_code
+
+    # fallback on using complete student code if no ast
+    AntlrException = state.ast_dispatcher.ast.AntlrException
+    stu_text = stu_ast._get_text(stu_code) if not isinstance(stu_ast, AntlrException) else stu_code
 
     _msg = msg.format(text)
-    if fixed and not text in stu_text:            # simple text matching
-        state.do_test(Test(msg))
-    elif not re.match(text, stu_text):            # regex
-        state.do_test(Test(msg))
+
+    # either simple text matching or regex test
+    res = text in stu_text if fixed else re.match(text, stu_text)
+
+    if not res:
+        state.do_test(Test(_msg))
 
     return state
 
@@ -200,5 +207,8 @@ def success_msg(state, msg):
     return state
 
 def verify_ast_parses(state):
-    if state.student_ast is None or state.solution_ast is None:
+    asts = [state.student_ast, state.solution_ast]
+    if any(isinstance(c, state.ast_dispatcher.ast.AntlrException) for c in asts):
         state.do_test(Test("AST did not parse"))
+
+    return state

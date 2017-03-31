@@ -88,6 +88,12 @@ def test_check_node_back_to_back():
     bin2 = check_node(bin1, 'BinaryExpr', 0)
     assert bin2.student_ast.left == '1'
 
+def test_check_node_from_list():
+    state = prepare_state("SELECT a, b, c FROM x", "SELECT a, b, c FROM x")
+    sel = check_node(state, "SelectStmt", 0)
+    tl = check_field(sel, "target_list")
+    check_node(tl, "Identifier")
+
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
@@ -156,3 +162,16 @@ def test_student_typed_subset_re_pass(state_tst):
     where = check_field(select, "where_clause")
     with pytest.raises(TF):
         cf.test_student_typed(where, "id > [a-z]")
+
+def test_student_typed_fixed_star_pass():
+    state_tst = prepare_state("SELECT * FROM x", "SELECT * FROM x")
+    cf.test_student_typed(state_tst, "*", fixed=True)
+
+def test_student_typed_no_ast():
+    state_tst = prepare_state("SELECT * FROM x!!", "SELECT * FROM x!!")
+    cf.test_student_typed(state_tst, "*", fixed=True)
+
+def test_verify_ast_parses_fail():
+    state_tst = prepare_state("SELECT * FROM x!!!", "SELECT * FROM x!!!")
+    with pytest.raises(TF):
+        cf.verify_ast_parses(state_tst)
