@@ -41,6 +41,16 @@ def test_test_ncols_pass():
     state = prepare_state({'a': [1], 'b': [1]}, {'c': [1], 'd': [1]})
     cr.test_ncols(state)
 
+def test_test_name_miscased_pass():
+    state = prepare_state({'A': [1], 'b': [1]}, {'A': [2], 'd': [2]})
+    cr.test_name_miscased(state, 'A')
+
+def test_test_name_miscased_fail():
+    state = prepare_state({'A': [1], 'b': [1]}, {'a': [2], 'd': [2]})
+    with pytest.raises(TF):
+        cr.test_name_miscased(state, 'A')
+    print(state.reporter.build_payload())
+
 @pytest.mark.parametrize('match, stu_result', [
     [ 'any', {'b': [1]} ],
     [ 'any', {'b': [1], 'a': [2]} ],
