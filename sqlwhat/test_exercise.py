@@ -12,7 +12,9 @@ def test_exercise(sct,
                   solution_conn,
                   pre_exercise_code,
                   ex_type,
-                  error):
+                  error,
+                  debug = False   # currently unused
+                  ):
     """
     """
 
