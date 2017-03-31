@@ -162,3 +162,16 @@ def test_student_typed_subset_re_pass(state_tst):
     where = check_field(select, "where_clause")
     with pytest.raises(TF):
         cf.test_student_typed(where, "id > [a-z]")
+
+def test_student_typed_fixed_star_pass():
+    state_tst = prepare_state("SELECT * FROM x", "SELECT * FROM x")
+    cf.test_student_typed(state_tst, "*", fixed=True)
+
+def test_student_typed_no_ast():
+    state_tst = prepare_state("SELECT * FROM x!!", "SELECT * FROM x!!")
+    cf.test_student_typed(state_tst, "*", fixed=True)
+
+def test_verify_ast_parses_fail():
+    state_tst = prepare_state("SELECT * FROM x!!!", "SELECT * FROM x!!!")
+    with pytest.raises(TF):
+        cf.verify_ast_parses(state_tst)
