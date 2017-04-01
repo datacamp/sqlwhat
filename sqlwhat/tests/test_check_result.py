@@ -13,7 +13,7 @@ def prepare_state(sol_result, stu_result):
         solution_code = "",
         reporter = Reporter(),
         # args below should be ignored
-        pre_exercise_code = "NA", 
+        pre_exercise_code = "NA",
         student_result = stu_result, solution_result = sol_result,
         student_conn = conn, solution_conn = None)
 
@@ -50,6 +50,14 @@ def test_test_name_miscased_fail():
     with pytest.raises(TF):
         cr.test_name_miscased(state, 'A')
     print(state.reporter.build_payload())
+
+def test_test_column_name_pass():
+    state = prepare_state({'A': [1], 'b': [1]}, {'A': [2], 'd': [2]})
+    cr.test_column_name(state, 'A')
+
+def test_test_column_name_fail():
+    state = prepare_state({'A': [1], 'b': [1]}, {'a': [2], 'd': [2]})
+    cr.test_column_name(state, 'A')
 
 @pytest.mark.parametrize('match, stu_result', [
     [ 'any', {'b': [1]} ],
