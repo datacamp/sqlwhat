@@ -29,7 +29,7 @@ def check_result(state, msg="Incorrect result."):
     test_nrows(state)
     # column tests
     for k in sol_res:
-        test_name_miscased(state, k)
+        test_column_name(state, k)
         test_column(state, k)
 
     return state
@@ -89,8 +89,23 @@ def test_name_miscased(state, name,
 
     return state
 
+def test_column_name(state, name, 
+                     msg="Make sure your results contain a column named `{}`. (Case does not matter)."):
+    stu_res = state.student_result
+    sol_res = state.solution_result
 
-def test_column(state, name, msg="Column {} in the solution does not have a match in your query results.", 
+    if name not in sol_res:
+        raise BaseException("name %s not in solution column names"%name)
+
+    stu_lower = {k.lower() : k for k in stu_res.keys()}
+
+    if name.lower() not in stu_lower:
+        _msg = msg.format(name)
+        state.do_test(Test(_msg))
+
+    return state
+
+def test_column(state, name, msg="Column {} in the solution does not have a column with the same name and values in your results.", 
                 match = ('exact', 'alias', 'any')[0],
                 test = 'equivalent'):
     """Test whether a specific column from solution is contained in the student query results.
@@ -120,7 +135,7 @@ def test_column(state, name, msg="Column {} in the solution does not have a matc
 
     """
 
-    stu_res = state.student_result
+    stu_res = state.student_result or {}
     sol_res = state.solution_result
 
     src_col = sol_res[name]
@@ -131,7 +146,8 @@ def test_column(state, name, msg="Column {} in the solution does not have a matc
     elif match == 'alias':
         raise NotImplementedError()
     elif match == "exact":
-        dst_cols = [stu_res.get(name)]
+        stu_res_lower = {k.lower() : v for k, v in stu_res.items()}
+        dst_cols = [stu_res.get(name.lower())]
     else:
         raise BaseException("match must be one of 'any', 'alias', 'exact'")
 
