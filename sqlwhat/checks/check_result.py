@@ -147,7 +147,7 @@ def test_column(state, name, msg="Column {} in the solution does not have a colu
         raise NotImplementedError()
     elif match == "exact":
         stu_res_lower = {k.lower() : v for k, v in stu_res.items()}
-        dst_cols = [stu_res.get(name.lower())]
+        dst_cols = [stu_res_lower.get(name.lower())]
     else:
         raise BaseException("match must be one of 'any', 'alias', 'exact'")
 
