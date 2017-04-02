@@ -70,6 +70,10 @@ def test_test_column_pass(match, stu_result):
     state = prepare_state({'a': [1]}, stu_result)
     cr.test_column(state, 'a', match=match)
 
+def test_test_column_pass_uppercase():
+    state = prepare_state({'A': [1]}, {'a': [1]})
+    cr.test_column(state, 'A', match='exact')
+
 @pytest.mark.parametrize('match, stu_result', [
     ( 'any', {'a': [2]} ),
     ( 'exact', {'b': [1], 'a': [2]} )
