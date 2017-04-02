@@ -52,17 +52,19 @@ def test_test_name_miscased_fail():
     print(state.reporter.build_payload())
 
 def test_test_column_name_pass():
-    state = prepare_state({'A': [1], 'b': [1]}, {'A': [2], 'd': [2]})
+    state = prepare_state({'A': [1], 'b': [1]}, {'a': [2], 'd': [2]})
     cr.test_column_name(state, 'A')
 
 def test_test_column_name_fail():
-    state = prepare_state({'A': [1], 'b': [1]}, {'a': [2], 'd': [2]})
-    cr.test_column_name(state, 'A')
+    state = prepare_state({'A': [1], 'b': [1]}, {'d': [2]})
+    with pytest.raises(TF):
+        cr.test_column_name(state, 'A')
 
 @pytest.mark.parametrize('match, stu_result', [
     [ 'any', {'b': [1]} ],
     [ 'any', {'b': [1], 'a': [2]} ],
-    [ 'exact', {'a': [1]} ]
+    [ 'exact', {'a': [1]} ],
+    [ 'exact', {'A': [1]} ]
     ])
 def test_test_column_pass(match, stu_result):
     state = prepare_state({'a': [1]}, stu_result)
