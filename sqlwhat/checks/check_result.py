@@ -27,6 +27,8 @@ def check_result(state, msg="Incorrect result."):
     test_has_columns(state)
     # row test
     test_nrows(state)
+    # col test
+    test_ncols(state)
     # column tests
     for k in sol_res:
         test_column_name(state, k)
