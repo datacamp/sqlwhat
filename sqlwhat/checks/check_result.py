@@ -28,9 +28,10 @@ def check_result(state, msg="Incorrect result."):
     # row test
     test_nrows(state)
     # column tests
+    child = sort_rows(state)
     for k in sol_res:
-        test_column_name(state, k)
-        test_column(state, k)
+        test_column_name(child, k)
+        test_column(child, k)
 
     return state
 
@@ -157,3 +158,37 @@ def test_column(state, name, msg="Column {} in the solution does not have a colu
         state.do_test(Test(_msg))
 
     return state
+
+def sort_rows(state, keys=None):
+    stu_res = state.student_result or {}
+    sol_res = state.solution_result
+
+    # ensure all columns in solution are in submission result
+    for k in sol_res:
+        test_column_name(state, k)
+
+    # map lower case key names to keys
+    stu_keys = {k.lower(): k for k in stu_res}
+    sol_keys = {k.lower(): k for k in sol_res}
+
+    sort_cols = sorted(sol_keys)
+    stu_cols = sort_cols + list(set(stu_keys) - set(sol_keys))
+
+    # convert results to a tuple of rows
+    sorted_sol = zip(*[state.solution_result[sol_keys[k]] for k in sort_cols])
+    sorted_stu = zip(*[state.student_result[stu_keys[k]] for k in stu_cols])
+
+    # sort
+    for ii, k in enumerate(sort_cols):
+        sorted_sol = sorted(sorted_sol, key = lambda row: row[ii])
+
+        sorted_stu = sorted(sorted_stu, key = lambda row: row[ii])
+
+    # convert sorted results back to dictionaries
+    out_sol_res = dict(zip([sol_keys[k] for k in sort_cols], zip(*sorted_sol)))
+    out_stu_res = dict(zip([stu_keys[k] for k in stu_cols] , zip(*sorted_stu)))
+
+    return state.to_child(
+                student_result = out_stu_res,
+                solution_result = out_sol_res)
+

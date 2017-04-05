@@ -81,3 +81,38 @@ def test_test_column_pass_uppercase():
 def test_test_column_fail(match, stu_result):
     state = prepare_state({'a': [1]}, stu_result)
     with pytest.raises(TF): cr.test_column(state, 'a', match=match)
+
+# cases:
+#   same num cols
+#   extra cols in student - pass
+#   extra cols in solution - fail due to test_column_name
+#   different casing, same lowercase - pass
+#   no student results
+#   no solution results
+@pytest.mark.parametrize('sol_result,stu_result', [
+    ( {'a': [2, 2, 1], 'b': [2, 1, 1]}, {'a': [2, 2, 1], 'b': [1, 2, 1]} ),
+    ( {'A': [2, 2, 1], 'b': [2, 1, 1]}, {'a': [2, 2, 1], 'b': [1, 2, 1]} ),
+    ( {'a': [2, 2, 1], 'b': [2, 1, 1]}, {'A': [2, 2, 1], 'b': [1, 2, 1]} ),
+    ( {'a': [2, 2, 1], 'b': [2, 1, 1]}, {'a': [2, 2, 1], 'b': [1, 2, 1], 'c': [0, 0, 0]} ),
+    ( {},                               {'a': [2, 2, 1], 'b': [1, 2, 1]} ),
+    ])
+def test_sort_rows_pass(sol_result, stu_result):
+    state = prepare_state(sol_result, stu_result)
+    child = cr.sort_rows(state)
+    print(child.solution_result)
+    print(child.student_result)
+    assert all(k in child.solution_result for k in state.solution_result)
+    assert all(k in child.student_result for k in state.student_result)
+    if 'a' in state.solution_result and 'a' in state.student_result: 
+        assert child.solution_result['a'] == child.student_result['a']
+
+    
+
+@pytest.mark.parametrize('sol_result,stu_result', [
+    ( {'a': [2, 2, 1], 'b': [2, 1, 1]}, {'b': [1, 2, 1]} ),
+    ( {'a': [2, 2, 1], 'b': [2, 1, 1]}, {} ),
+    ])
+def test_sort_rows_fail(sol_result, stu_result):
+    state = prepare_state(sol_result, stu_result)
+    with pytest.raises(TF):
+        cr.sort_rows(state)
