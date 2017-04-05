@@ -28,9 +28,10 @@ def check_result(state, msg="Incorrect result."):
     # row test
     test_nrows(state)
     # column tests
+    child = sort_rows(state)
     for k in sol_res:
-        test_column_name(state, k)
-        test_column(state, k)
+        test_column_name(child, k)
+        test_column(child, k)
 
     return state
 
