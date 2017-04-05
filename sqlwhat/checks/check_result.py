@@ -179,10 +179,11 @@ def sort_rows(state, keys=None):
     sorted_stu = zip(*[state.student_result[stu_keys[k]] for k in stu_cols])
 
     # sort
+    tiny_none = TinyNone()
     for ii, k in enumerate(sort_cols):
-        sorted_sol = sorted(sorted_sol, key = lambda row: row[ii])
+        sorted_sol = sorted(sorted_sol, key = lambda row: row[ii] or tiny_none)
 
-        sorted_stu = sorted(sorted_stu, key = lambda row: row[ii])
+        sorted_stu = sorted(sorted_stu, key = lambda row: row[ii] or tiny_none)
 
     # convert sorted results back to dictionaries
     out_sol_res = dict(zip([sol_keys[k] for k in sort_cols], zip(*sorted_sol)))
@@ -192,3 +193,7 @@ def sort_rows(state, keys=None):
                 student_result = out_stu_res,
                 solution_result = out_sol_res)
 
+class TinyNone:
+    def __lt__(self, x): return True
+
+    def __gt__(self, x): return False
