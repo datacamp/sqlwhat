@@ -171,14 +171,18 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
 
 
 @requires_ast
-def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=None, start="sql_script"):
+def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=None, start="sql_script", exact=True):
     """Test whether the student and solution code have identical AST representations
     
     """
     ast = state.ast_dispatcher.ast
     sol_ast = state.solution_ast if sql is None else ast.parse(sql, start)
-    if repr(state.student_ast) != repr(sol_ast):
-        state.do_test(Test(msg))
+
+    stu_rep = repr(state.student_ast)
+    sol_rep = repr(sol_ast)
+
+    if       exact and (sol_rep != stu_rep):     state.do_test(Test(msg))
+    elif not exact and (sol_rep not in stu_rep): state.do_test(Test(msg))
 
     return state
 
