@@ -173,7 +173,31 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
 @requires_ast
 def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=None, start="sql_script", exact=True):
     """Test whether the student and solution code have identical AST representations
-    
+
+    Args:
+        state: State instance describing student and solution code. Can be omitted if used with Ex().
+        msg  : feedback message if student and solution ASTs don't match
+        sql  : optional code to use in place of the solution ast
+        start: if sql arg is used, the parser rule to parse the sql code
+        exact: whether to require an exact match (True), or only that the 
+               student AST contains the solution AST.
+
+    :Example:
+        Suppose the student and solution code is `SeLeCt 1` and `SELECT 1`, respectively.
+        In this case, the SCT `Ex().has_equal_ast()` will pass, since both
+        select statements return identical ASTs.
+
+        If the solution code is..::
+
+            SELECT * FROM b WHERE id > 1 AND name = 'filip'
+
+        Then the following SCT makes sure ``id > 1`` was used somewhere in the WHERE clause.::
+
+            
+            Ex().check_node('SelectStmt') \
+                .check_field('where_clause') \
+                .has_equal_ast(sql = 'id > 1', start='expression', exact=False)
+        
     """
     ast = state.ast_dispatcher.ast
     sol_ast = state.solution_ast if sql is None else ast.parse(sql, start)
