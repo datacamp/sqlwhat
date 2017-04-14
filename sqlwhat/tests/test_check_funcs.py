@@ -60,6 +60,19 @@ def test_has_equal_ast_manual_pass():
     child = check_node(state, "SelectStmt")
     has_equal_ast(child, sql=query, start="subquery")
 
+def test_has_equal_ast_not_exact_pass():
+    query = "SELECT id, name FROM Trips WHERE id < 100 AND name = 'greg'"
+    state = prepare_state(query, query)
+    child = check_node(state, "SelectStmt")
+    has_equal_ast(child, sql="id < 100", start="expression", exact=False)
+
+def test_has_equal_ast_not_exact_fail():
+    query = "SELECT id, name FROM Trips WHERE id < 100 AND name = 'greg'"
+    state = prepare_state(query, query)
+    child = check_node(state, "SelectStmt")
+    with pytest.raises(TF):
+        has_equal_ast(child, sql="id < 999", start="expression", exact=False)
+
 def test_check_node_pass(ast_mod):
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
     child = check_node(state, "SelectStmt", 0)
