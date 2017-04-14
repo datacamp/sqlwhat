@@ -106,7 +106,7 @@ def test_column_name(state, name,
 
     return state
 
-def test_column(state, name, msg="Column {} in the solution does not have a column with the same name and values in your results.", 
+def test_column(state, name, msg="Column `{}` in the solution does not have a column with the same name and values in your results.", 
                 match = ('exact', 'alias', 'any')[0],
                 test = 'equivalent'):
     """Test whether a specific column from solution is contained in the student query results.
