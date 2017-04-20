@@ -28,7 +28,7 @@ def check_result(state, msg="Incorrect result."):
     # row test
     test_nrows(state)
     # column tests
-    child = sort_rows(state)
+    child = sort_columns_indiv(state)
     for k in sol_res:
         msg = "Column `{}` in the solution does not have a column with matching values in your results."
         test_column(child, k, msg, match = 'any')
@@ -192,6 +192,17 @@ def sort_rows(state, keys=None):
     return state.to_child(
                 student_result = out_stu_res,
                 solution_result = out_sol_res)
+
+def sort_columns_indiv(state):
+    tiny_none = TinyNone()
+    sorted_columns = lambda res: {k: sorted(col, key = lambda el: el or tiny_none) for k, col in res.items()}
+
+    stu_res = sorted_columns(state.student_result)
+    sol_res = sorted_columns(state.solution_result)
+
+    return state.to_child(
+                student_result = stu_res,
+                solution_result = sol_res)
 
 class TinyNone:
     def __lt__(self, x): return True
