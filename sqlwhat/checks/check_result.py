@@ -30,8 +30,8 @@ def check_result(state, msg="Incorrect result."):
     # column tests
     child = sort_rows(state)
     for k in sol_res:
-        test_column_name(child, k)
-        test_column(child, k)
+        msg = "Column `{}` in the solution does not have a column with matching values in your results."
+        test_column(child, k, msg, match = 'any')
 
     return state
 
