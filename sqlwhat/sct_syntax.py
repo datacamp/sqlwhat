@@ -123,3 +123,4 @@ ATTR_SCTS = {k: v for k,v in vars(checks).items() if k not in builtins.__dict__ 
 SCT_CTX = {k: state_dec(v) for k,v in ATTR_SCTS.items()}
 SCT_CTX['Ex'] = Ex
 SCT_CTX['F'] = F
+SCT_CTX['state_dec'] = state_dec
