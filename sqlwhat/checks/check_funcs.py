@@ -229,6 +229,16 @@ def test_mc(state, correct, msgs):
 def success_msg(state, msg):
     """
     Changes the success message to display if submission passes.
+
+    Args:
+        state: State instance describing student and solution code. Can be omitted if used with Ex().
+        msg  : feedback message if student and solution ASTs don't match
+
+    :Example:
+        The following SCT changes the success message::
+
+            Ex().success_msg("You did it!")
+
     """
     state.reporter.success_msg = msg
 
