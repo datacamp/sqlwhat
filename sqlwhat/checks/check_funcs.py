@@ -214,6 +214,17 @@ def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=Non
 def test_mc(state, correct, msgs):
     """
     Note uses 1-based indexing in order to work with Datacamp's campus app.
+
+    Args:
+        state:    State instance describing student and solution code. Can be omitted if used with Ex().
+        correct:  index of correct option, where 1 is the first option.
+        msg  :    list of feedback messages corresponding to each option.
+
+    :Example:
+        The following SCT is for a multiple choice exercise with 2 options, the first
+        of which is correct.::
+
+            Ex().test_mc(1, ['Correct!', 'Incorrect. Try again!'])
     """
 
     ctxt = {}
@@ -222,7 +233,7 @@ def test_mc(state, correct, msgs):
     if sel_indx != correct:
         state.do_test(Test(msgs[sel_indx-1]))
     else:
-        state.reporter.feedback.success_msg = msgs[correct-1]
+        state.reporter.success_msg = msgs[correct-1]
 
     return state
 
