@@ -28,7 +28,7 @@ def test_mc_alone_fail():
 def test_mc_chain_pass():
     state = prepare_state("selected_option = 1")
     Ex(state).test_mc(1, ['good', 'bad'])
-    assert state.reporter.feedback.success_msg == 'good'
+    assert state.reporter.success_msg == 'good'
 
 def test_mc_chain_fail():
     state = prepare_state("selected_option = 2")
