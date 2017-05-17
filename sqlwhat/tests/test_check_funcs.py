@@ -6,6 +6,8 @@ from sqlwhat.Reporter import Reporter
 from sqlwhat.Test import TestFail as TF
 import pytest
 
+def print_message(exc): print(exc.value.args[0].message)
+
 @pytest.fixture
 def ast_mod():
     return get_ast_parser('postgresql')
@@ -45,7 +47,8 @@ def test_has_equal_ast_pass_unparsed():
 
 def test_has_equal_ast_fail_quoted_column():
     state = prepare_state('SELECT "id", "name" FROM "Trips"', "SELECT id, name FROM Trips")
-    with pytest.raises(TF): has_equal_ast(state=state)
+    with pytest.raises(TF) as exc_info: has_equal_ast(state=state)
+    print_message(exc_info)
 
 def test_has_equal_ast_manual_fail():
     query = "SELECT id, name FROM Trips"
@@ -70,8 +73,9 @@ def test_has_equal_ast_not_exact_fail():
     query = "SELECT id, name FROM Trips WHERE id < 100 AND name = 'greg'"
     state = prepare_state(query, query)
     child = check_node(state, "SelectStmt")
-    with pytest.raises(TF):
+    with pytest.raises(TF) as exc_info:
         has_equal_ast(child, sql="id < 999", start="expression", exact=False)
+    print_message(exc_info)
 
 def test_check_node_pass(ast_mod):
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
@@ -81,7 +85,8 @@ def test_check_node_pass(ast_mod):
 
 def test_check_node_fail():
     state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")
-    with pytest.raises(TF): check_node(state, "SelectStmt", 0)
+    with pytest.raises(TF) as exc_info: check_node(state, "SelectStmt", 0)
+    print_message(exc_info)
 
 def test_check_node_priority_pass(ast_mod):
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
@@ -90,9 +95,10 @@ def test_check_node_priority_pass(ast_mod):
     assert isinstance(child.solution_ast, ast_mod.Identifier)
 
 def test_check_node_priority_fail():
-    state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")
-    with pytest.raises(TF): check_node(state, "SelectStmt", 0, priority=0)
-    with pytest.raises(TF): check_node(state, "Identifier", 0)
+    state = prepare_state("SELECT id + 1, name FROM Trips", "INSERT INTO Trips VALUES (1)")
+    with pytest.raises(TF):             check_node(state, "SelectStmt", 0, priority=0)
+    with pytest.raises(TF) as exc_info: check_node(state, "BinaryExpr", 0, priority = 99)
+    print_message(exc_info)
 
 def test_check_node_back_to_back():
     state = prepare_state("SELECT 1 + 2 + 3 FROM x", "SELECT 1 + 2 + 3 FROM x")
@@ -131,7 +137,8 @@ def test_check_field_index_pass():
 def test_check_field_index_fail():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
     select = check_node(state, "SelectStmt", 0)
-    with pytest.raises(TF): check_field(select, "target_list", 1)
+    with pytest.raises(TF) as exc_info: check_field(select, "target_list", 1)
+    print_message(exc_info)
 
 
 def test_check_field_antlr_exception_skips(dialect_name):
