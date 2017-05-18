@@ -91,7 +91,7 @@ def test_name_miscased(state, name,
     return state
 
 def test_column_name(state, name, 
-                     msg="Make sure your results contain a column named `{}`. (Case does not matter)."):
+                     msg="Make sure your results contain a column named `{}`. Case does not matter."):
     stu_res = state.student_result
     sol_res = state.solution_result
 
