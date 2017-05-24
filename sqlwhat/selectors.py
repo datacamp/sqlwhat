@@ -83,7 +83,13 @@ class Dispatcher:
     def describe(self, node, msg, field = "", **kwargs):
         speaker = getattr(self.ast, 'speaker', None)
 
-        if 'index' in kwargs: kwargs['index'] = get_ord(kwargs['index'] + 1)
+        has_index = kwargs.get('index') is not None
+        if has_index: 
+            phrase = "{} entry of " if field else "the {} "
+            kwargs['index'] = phrase.format(get_ord(kwargs['index'] + 1))
+        else: 
+            kwargs['index'] = ""
+
         if speaker:
             return self.ast.speaker.describe(node, field = field, 
                                              fmt = msg, **kwargs)

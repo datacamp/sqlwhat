@@ -21,7 +21,7 @@ def requires_ast(f):
     return wrapper
 
 @requires_ast
-def check_node(state, name, index=0, missing_msg="Could not find the {index} {node_name}.", priority=None):
+def check_node(state, name, index=0, missing_msg="Could not find the {index}{node_name}.", priority=None):
     """Select a node from abstract syntax tree (AST), using its name and index position.
     
     Args:
@@ -67,7 +67,7 @@ def check_node(state, name, index=0, missing_msg="Could not find the {index} {no
     return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
 
 @requires_ast
-def check_field(state, name, index=None, missing_msg="Could not find the {index} entry in the {field_name} of the {node_name}."):
+def check_field(state, name, index=None, missing_msg="Could not find the {index}{field_name} of the {node_name}."):
     """Select an attribute from an abstract syntax tree (AST) node, using the attribute name.
     
     Args:
@@ -94,6 +94,12 @@ def check_field(state, name, index=None, missing_msg="Could not find the {index}
             clause2 = select.check_field('from_clause', 0) # get first entry in from_clause
     """
     try: 
+        sol_attr = getattr(state.solution_ast, name)
+        if index is not None: sol_attr = sol_attr[index]
+    except IndexError: 
+        raise IndexError("Can't get %s attribute"%name)
+
+    try: 
         stu_attr = getattr(state.student_ast, name)
         if index is not None: stu_attr = stu_attr[index]
     except: 
@@ -101,15 +107,9 @@ def check_field(state, name, index=None, missing_msg="Could not find the {index}
         _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
         state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
 
-    try: 
-        sol_attr = getattr(state.solution_ast, name)
-        if index is not None: sol_attr = sol_attr[index]
-    except IndexError: 
-        raise IndexError("Can't get %s attribute"%name)
-
     # fail if attribute exists, but is none only for student
     if stu_attr is None and sol_attr is not None:
-        _msg = missing_msg.format(name)
+        _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
         state.do_test(Test(_msg))
 
     return state.to_child(student_ast = stu_attr, solution_ast = sol_attr)
