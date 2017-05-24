@@ -44,6 +44,18 @@ def multi(state, *args):
     # return original state, so can be chained
     return state
 
+def extend(state, *args):
+    for arg in args:
+        # when input is a single test, make iterable
+        if callable(arg): arg = [arg]
+
+        for test in arg:
+            # update state to be output of current test
+            state = test(state)
+
+    # return original state, so can be chained
+    return state
+
 def test_or(state, *tests):
     """Test whether at least one SCT passes.
     
