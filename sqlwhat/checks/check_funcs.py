@@ -215,8 +215,8 @@ def has_equal_ast(state,
     sol_rep = repr(sol_ast)
 
     _msg = state.ast_dispatcher.describe(state.student_ast, msg)
-    if       exact and (sol_rep != stu_rep):     state.do_test(Test(_msg))
-    elif not exact and (sol_rep not in stu_rep): state.do_test(Test(_msg))
+    if       exact and (sol_rep != stu_rep):     state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+    elif not exact and (sol_rep not in stu_rep): state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
 
     return state
 
