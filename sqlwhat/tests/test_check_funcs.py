@@ -195,3 +195,10 @@ def test_verify_ast_parses_fail():
     state_tst = prepare_state("SELECT * FROM x!!!", "SELECT * FROM x!!!")
     with pytest.raises(TF):
         cf.verify_ast_parses(state_tst)
+
+def test_check_field_index_none_fail():
+    state = prepare_state("SELECT a, b FROM b WHERE a < 10", "SELECT a FROM b")
+    sel = check_node(state, 'SelectStmt') 
+    with pytest.raises(TF) as exc_info:
+        from_field = check_field(sel, 'where_clause')
+    print_message(exc_info)
