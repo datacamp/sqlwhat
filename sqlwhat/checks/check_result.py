@@ -108,7 +108,7 @@ def test_column_name(state, name,
 
 def test_column(state, name, msg="Column `{}` in the solution does not have a column with the same name and values in your results.", 
                 match = ('exact', 'alias', 'any')[0],
-                test = 'equivalent'):
+                digits = None):
     """Test whether a specific column from solution is contained in the student query results.
     
     Args:
@@ -138,8 +138,10 @@ def test_column(state, name, msg="Column `{}` in the solution does not have a co
 
     stu_res = state.student_result or {}
     sol_res = state.solution_result
+    
+    round_seq = lambda seq, digits: [round(x, digits) for x in seq]
 
-    src_col = sol_res[name]
+    src_col = sol_res[name] if digits is None else round_seq(sol_res[name], digits)
 
     # get submission columns to test against
     if match == 'any':
@@ -153,10 +155,19 @@ def test_column(state, name, msg="Column `{}` in the solution does not have a co
         raise BaseException("match must be one of 'any', 'alias', 'exact'")
 
     # test that relevant submission columns contain the solution column
-    if src_col not in dst_cols:
-        _msg = msg.format(name)
-        state.do_test(Test(_msg))
+    for col in dst_cols:
+        if digits is not None: 
+            try: col = round_seq(col, digits)
+            except TypeError: continue
 
+        if src_col == col:
+            return state
+
+    # fail test if no match
+    _msg = msg.format(name)
+    state.do_test(Test(_msg))
+
+    # return state just in case, but should never happen
     return state
 
 def sort_rows(state, keys=None):

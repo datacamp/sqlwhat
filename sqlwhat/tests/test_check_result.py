@@ -60,6 +60,19 @@ def test_test_column_name_fail():
     with pytest.raises(TF):
         cr.test_column_name(state, 'A')
 
+def test_test_column_digits():
+    state = prepare_state({'a': [1.1]}, {'a': [1.11]})
+    cr.test_column(state, 'a', digits = 1)
+
+def test_test_column_digits_incompat_fail():
+    state = prepare_state({'a': [1.1]}, {'a': ['abc']})
+    with pytest.raises(TF): cr.test_column(state, 'a', digits = 1)
+
+def test_test_column_digits_incompat_pass():
+    state = prepare_state({'a': [1.1]}, {'a': ['abc'], 'b': [1.11]})
+    cr.test_column(state, 'a', digits = 1, match = 'any')
+
+
 @pytest.mark.parametrize('match, stu_result', [
     [ 'any', {'b': [1]} ],
     [ 'any', {'b': [1], 'a': [2]} ],
@@ -75,8 +88,9 @@ def test_test_column_pass_uppercase():
     cr.test_column(state, 'A', match='exact')
 
 @pytest.mark.parametrize('match, stu_result', [
-    ( 'any', {'a': [2]} ),
-    ( 'exact', {'b': [1], 'a': [2]} )
+    ( 'any', {'a': [2]} ),                     # wrong value for a
+    ( 'exact', {'b': [1], 'a': [2]} ),         # b is what a should be
+    ( 'exact', {'a': [1.1]} )                  # no rounding
     ])
 def test_test_column_fail(match, stu_result):
     state = prepare_state({'a': [1]}, stu_result)
