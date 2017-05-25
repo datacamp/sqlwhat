@@ -117,6 +117,7 @@ def test_column(state, name, msg="Column `{}` in the solution does not have a co
         match: condition for whether student column could be possible match to solution.
                Should either be 'exact' if names must be identical, or 'any' if
                all student columns should be tested against solution.
+        digits: if specified, number of decimals to use when comparing column values.
 
     :Example:
         Suppose we are testing the following SELECT statements
