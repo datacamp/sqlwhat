@@ -63,8 +63,11 @@ def check_node(state, name, index=0, missing_msg="Could not find the {index}{nod
         _msg = state.ast_dispatcher.describe(sol_stmt, missing_msg, index = index)
         state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
 
+    action = {'type': 'check_node', 'kwargs': {'name': name, 'index': index}, 'node': stu_stmt}
+    
+    return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt,
+                          history = state.history + (action,)) 
 
-    return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
 
 @requires_ast
 def check_field(state, name, index=None, missing_msg="Could not find the {index}{field_name} of the {node_name}."):
@@ -112,7 +115,10 @@ def check_field(state, name, index=None, missing_msg="Could not find the {index}
         _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
         state.do_test(Test(_msg))
 
-    return state.to_child(student_ast = stu_attr, solution_ast = sol_attr)
+    action = {'type': 'check_field', 'kwargs': {'name': name, 'index': index}}
+
+    return state.to_child(student_ast = stu_attr, solution_ast = sol_attr,
+                          history = state.history + (action,)) 
 
 import re
 
@@ -177,7 +183,7 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
 
 @requires_ast
 def has_equal_ast(state, 
-                  msg="Check the {node_name}. Your code does not seem to match the solution.",
+                  msg="Check the {ast_path}. Your code does not seem to match the solution.",
                   sql=None,
                   start="sql_script",
                   exact=True):
@@ -214,7 +220,7 @@ def has_equal_ast(state,
     stu_rep = repr(state.student_ast)
     sol_rep = repr(sol_ast)
 
-    _msg = state.ast_dispatcher.describe(state.student_ast, msg)
+    _msg = state.ast_dispatcher.describe(state.student_ast, msg, ast_path = state.get_ast_path())
     if       exact and (sol_rep != stu_rep):     state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
     elif not exact and (sol_rep not in stu_rep): state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
 

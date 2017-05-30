@@ -15,7 +15,8 @@ class State:
                  reporter,
                  solution_ast = None,
                  student_ast = None,
-                 ast_dispatcher = None):
+                 ast_dispatcher = None,
+                 history = tuple()):
 
         for k,v in locals().items():
             if k != 'self': setattr(self, k, v)
@@ -29,6 +30,28 @@ class State:
         # solution code raises an exception if can't be parsed
         if solution_ast is None: self.solution_ast = self.ast_dispatcher.parse(solution_code)
         if student_ast  is None: self.student_ast  = self.ast_dispatcher.parse(student_code)
+
+    def get_ast_path(self):
+        rev_checks = filter(lambda x: x['type'] in ['check_field', 'check_node'], reversed(self.history))
+
+        try:
+            last = next(rev_checks)
+            if last['type'] == 'check_node':
+                # final check was for a node
+                return self.ast_dispatcher.describe(last['node'],
+                                                    index = last['kwargs']['index'],
+                                                    msg = "{index}{node_name}")
+            else:
+                node = next(rev_checks)
+                if node['type'] == 'check_node':
+                    # checked for node, then for target, so can give rich description
+                    return self.ast_dispatcher.describe(node['node'],
+                                                        field = last['kwargs']['name'],
+                                                        index = last['kwargs']['index'],
+                                                        msg = "{index}{field_name} of the {node_name}")
+        except StopIteration:
+            return self.ast_dispatcher.describe(self.student_ast, "{node_name}")
+
 
     def do_test(self, *args, highlight=None, **kwargs):
         highlight = self.student_ast if highlight is None else highlight

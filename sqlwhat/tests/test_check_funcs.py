@@ -50,6 +50,13 @@ def test_has_equal_ast_fail_quoted_column():
     with pytest.raises(TF) as exc_info: has_equal_ast(state=state)
     print_message(exc_info)
 
+def test_has_equal_ast_field_fail():
+    state = prepare_state('SELECT id, name FROM Trips', "SELECT name FROM Trips")
+    sel = cf.check_node(state, "SelectStmt", 0)
+    tl = cf.check_field(sel, "target_list", 0)
+    with pytest.raises(TF) as exc_info: has_equal_ast(tl)
+    print_message(exc_info)
+
 def test_has_equal_ast_manual_fail():
     query = "SELECT id, name FROM Trips"
     state = prepare_state(query, query)

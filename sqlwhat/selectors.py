@@ -85,7 +85,7 @@ class Dispatcher:
 
         has_index = kwargs.get('index') is not None
         if has_index: 
-            phrase = "{} entry of " if field else "the {} "
+            phrase = "{} entry in the " if field else "{} "
             kwargs['index'] = phrase.format(get_ord(kwargs['index'] + 1))
         else: 
             kwargs['index'] = ""
