@@ -162,7 +162,7 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
     _msg = msg.format(text)
 
     # either simple text matching or regex test
-    res = text in stu_text if fixed else re.match(text, stu_text)
+    res = text in stu_text if fixed else re.search(text, stu_text)
 
     if not res:
         state.do_test(Test(_msg))

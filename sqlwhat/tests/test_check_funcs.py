@@ -143,7 +143,7 @@ def test_check_field_antlr_exception_skips(dialect_name):
 
 @pytest.fixture
 def state_tst():
-    return prepare_state("SELECT id FROM Trips", "SELECT id FROM Trips WHERE id > 4   ;")
+    return prepare_state("SELECT id FROM Trips", "SELECT id FROM Trips WHERE id > 4 AND name = 'greg'   ;")
 
 def test_student_typed_itself_pass(state_tst):
     cf.test_student_typed(state_tst, text=state_tst.student_code, fixed=True)
@@ -175,6 +175,9 @@ def test_student_typed_subset_re_pass(state_tst):
     where = check_field(select, "where_clause")
     with pytest.raises(TF):
         cf.test_student_typed(where, "id > [a-z]")
+
+def test_student_typed_upper_case_pass(state_tst):
+    cf.test_student_typed(state_tst, "AND")
 
 def test_student_typed_fixed_star_pass():
     state_tst = prepare_state("SELECT * FROM x", "SELECT * FROM x")
