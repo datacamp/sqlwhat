@@ -172,6 +172,15 @@ def test_column(state, name, msg="Column `{}` in the solution does not have a co
     return state
 
 def sort_rows(state, keys=None):
+    """
+    Match columns of results based on lower-case name, and return state with sorted rows.
+
+    This allow test_column to be extremely robust to row ordering of results.
+
+    Warning:
+        Sorting is a cumbersome process and may slow SCTs when queries return many rows.
+
+    """
     stu_res = state.student_result or {}
     sol_res = state.solution_result
 
