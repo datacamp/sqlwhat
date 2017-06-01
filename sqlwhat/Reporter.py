@@ -42,7 +42,7 @@ class Reporter(object):
                 if highlight: 
                     self.feedback = Feedback(self.feedback.message, highlight)
 
-                raise TestFail
+                raise TestFail(self.feedback)
 
         else: 
             result = None

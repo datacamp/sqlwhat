@@ -4,6 +4,8 @@ from sqlwhat.State import State
 from functools import partial, wraps
 import copy
 
+MSG_CHECK_FALLBACK = "Your submission is incorrect. Try again!"
+
 def requires_ast(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -19,7 +21,7 @@ def requires_ast(f):
     return wrapper
 
 @requires_ast
-def check_node(state, name, index=0, missing_msg="Your submission is incorrect. Try again!", priority=None):
+def check_node(state, name, index=0, missing_msg="Could not find the {index}{node_name}.", priority=None):
     """Select a node from abstract syntax tree (AST), using its name and index position.
     
     Args:
@@ -50,20 +52,25 @@ def check_node(state, name, index=0, missing_msg="Your submission is incorrect. 
     """
     df = partial(state.ast_dispatcher, 'node', name, slice(None), priority=priority)
 
-    stu_stmt_list = df(state.student_ast)
-    try: stu_stmt = stu_stmt_list[index]
-    except IndexError: 
-        _msg = missing_msg.format(name)
-        state.do_test(Test(_msg))
-
     sol_stmt_list = df(state.solution_ast) 
     try: sol_stmt = sol_stmt_list[index]
     except IndexError: raise IndexError("Can't get %s statement at index %s"%(name, index))
 
-    return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt)
+    stu_stmt_list = df(state.student_ast)
+    try: stu_stmt = stu_stmt_list[index]
+    except IndexError: 
+        # use speaker on ast dialect module to get message, or fall back to generic
+        _msg = state.ast_dispatcher.describe(sol_stmt, missing_msg, index = index)
+        state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+
+    action = {'type': 'check_node', 'kwargs': {'name': name, 'index': index}, 'node': stu_stmt}
+    
+    return state.to_child(student_ast = stu_stmt, solution_ast = sol_stmt,
+                          history = state.history + (action,)) 
+
 
 @requires_ast
-def check_field(state, name, index=None, missing_msg="Your submission is incorrect. Try again!"):
+def check_field(state, name, index=None, missing_msg="Could not find the {index}{field_name} of the {node_name}."):
     """Select an attribute from an abstract syntax tree (AST) node, using the attribute name.
     
     Args:
@@ -90,24 +97,28 @@ def check_field(state, name, index=None, missing_msg="Your submission is incorre
             clause2 = select.check_field('from_clause', 0) # get first entry in from_clause
     """
     try: 
-        stu_attr = getattr(state.student_ast, name)
-        if index is not None: stu_attr = stu_attr[index]
-    except: 
-        _msg = missing_msg.format(name)
-        state.do_test(Test(_msg))
-
-    try: 
         sol_attr = getattr(state.solution_ast, name)
         if index is not None: sol_attr = sol_attr[index]
     except IndexError: 
         raise IndexError("Can't get %s attribute"%name)
 
+    try: 
+        stu_attr = getattr(state.student_ast, name)
+        if index is not None: stu_attr = stu_attr[index]
+    except: 
+        # use speaker on ast dialect module to get message, or fall back to generic
+        _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
+        state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+
     # fail if attribute exists, but is none only for student
     if stu_attr is None and sol_attr is not None:
-        _msg = missing_msg.format(name)
+        _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
         state.do_test(Test(_msg))
 
-    return state.to_child(student_ast = stu_attr, solution_ast = sol_attr)
+    action = {'type': 'check_field', 'kwargs': {'name': name, 'index': index}}
+
+    return state.to_child(student_ast = stu_attr, solution_ast = sol_attr,
+                          history = state.history + (action,)) 
 
 import re
 
@@ -171,7 +182,11 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
 
 
 @requires_ast
-def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=None, start="sql_script", exact=True):
+def has_equal_ast(state, 
+                  msg="Check the {ast_path}. Your code does not seem to match the solution.",
+                  sql=None,
+                  start="sql_script",
+                  exact=True):
     """Test whether the student and solution code have identical AST representations
 
     Args:
@@ -205,8 +220,9 @@ def has_equal_ast(state, msg="Your submission is incorrect. Try again!", sql=Non
     stu_rep = repr(state.student_ast)
     sol_rep = repr(sol_ast)
 
-    if       exact and (sol_rep != stu_rep):     state.do_test(Test(msg))
-    elif not exact and (sol_rep not in stu_rep): state.do_test(Test(msg))
+    _msg = msg.format(ast_path = state.get_ast_path())
+    if       exact and (sol_rep != stu_rep):     state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+    elif not exact and (sol_rep not in stu_rep): state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
 
     return state
 

@@ -80,6 +80,20 @@ class Dispatcher:
             if self.safe_parsing: return e
             else: raise e
 
+    def describe(self, node, msg, field = "", **kwargs):
+        speaker = getattr(self.ast, 'speaker', None)
+
+        has_index = kwargs.get('index') is not None
+        if has_index: 
+            phrase = "{} entry in the " if field else "{} "
+            kwargs['index'] = phrase.format(get_ord(kwargs['index'] + 1))
+        else: 
+            kwargs['index'] = ""
+
+        if speaker:
+            return self.ast.speaker.describe(node, field = field, 
+                                             fmt = msg, **kwargs)
+
     @staticmethod
     def get(nodes, predicate, map_name = lambda x: x):
         return {map_name(k): v for k, v in nodes.items() if predicate(k, v)}
@@ -116,3 +130,13 @@ def lower_case(f):
         return f(*args, **kwargs).lower()
     return wrapper
 
+
+def get_ord(num):
+    assert num != 0, "use strictly positive numbers in get_ord()"
+    nums = {1: "first", 2: "second", 3:"third", 4:"fourth",
+            5: "fifth", 6: "sixth", 7:"seventh", 8:"eight",
+            9: "ninth", 10: "tenth"}
+    if num in nums:
+        return(nums[num])
+    else:
+        return("%dth" % num)
