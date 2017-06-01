@@ -21,24 +21,41 @@ class Chain:
         self._crnt_sct = None
         self._waiting_on_call = False
 
+    def _double_attr_error(self):
+        raise AttributeError("Did you forget to call a statement? "
+                                "e.g. Ex().check_list_comp.check_body()")
+
     def __getattr__(self, attr):
         if attr not in ATTR_SCTS: raise AttributeError("No SCT named %s"%attr)
-        elif self._waiting_on_call: 
-            raise AttributeError("Did you forget to call a statement? "
-                                 "e.g. Ex().check_list_comp.check_body()")
+        elif self._waiting_on_call: self._double_attr_error()
         else:
             # make a copy to return, 
             # in case someone does: a = chain.a; b = chain.b
-            chain = copy.copy(self)
-            chain._crnt_sct = ATTR_SCTS[attr]
-            chain._waiting_on_call = True
-            return chain
+            return self._sct_copy(ATTR_SCTS[attr])
 
     def __call__(self, *args, **kwargs):
         # NOTE: the only change from python what is that state is now 1st pos arg below
         self._state = self._crnt_sct(self._state, *args, **kwargs)
         self._waiting_on_call = False
         return self
+
+    def __rshift__(self, f):
+        if self._waiting_on_call:
+            self._double_attr_error()
+        elif type(f) == Chain:
+            raise BaseException("did you use a result of the Ex() function on the right hand side of the + operator?")
+        elif not callable(f):
+            raise BaseException("right hand side of + operator should be an SCT, so must be callable!")
+        else:
+            chain = self._sct_copy(f)
+            return chain()
+
+    def _sct_copy(self, f):
+        chain = copy.copy(self)
+        chain._crnt_sct = f
+        chain._waiting_on_call = True
+        return chain
+            
 
 
 class F(Chain):
@@ -54,13 +71,14 @@ class F(Chain):
         else:
             call_data = (self._crnt_sct, args, kwargs)
             return self.__class__(self._stack + [call_data])
-    
+
     @staticmethod
     def _call_from_data(f, args, kwargs, state):
         return f(state, *args, **kwargs)
 
     @classmethod
     def _from_func(cls, f, *args, **kwargs):
+        """Creates a function chain starting with the specified SCT (f), and its arguments."""
         func_chain = cls()
         func_chain._stack.append([f, args, kwargs])
         return func_chain
@@ -93,6 +111,14 @@ def Ex(state=None):
             # life writing SCTs on DataCamp.com
             Ex().test_student_typed(text="SELECT id")
             
+        Further, note that the operator ``>>`` can be used in place of chaining.::
+
+            # Ex with chaining
+            Ex().test_student_typed(text="SELECT id")
+
+            # Ex without
+            Ex() >> test_student_typed(text="SELECT id")
+            
     """
     return Chain(state or State.root_state)
 
@@ -106,3 +132,4 @@ ATTR_SCTS = {k: v for k,v in vars(checks).items() if k not in builtins.__dict__ 
 SCT_CTX = {k: state_dec(v) for k,v in ATTR_SCTS.items()}
 SCT_CTX['Ex'] = Ex
 SCT_CTX['F'] = F
+SCT_CTX['state_dec'] = state_dec

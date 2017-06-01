@@ -24,6 +24,8 @@ def fails(state, msg=""):
 
 def passes(state): return state
 
+def childx(state): return state.to_child(student_code = state.student_code + 'x')
+
 @pytest.mark.parametrize('arg1', ( passes, [passes, passes] ))
 @pytest.mark.parametrize('arg2', ( passes, [passes, passes] ))
 def test_test_multi_pass_one(state, arg1, arg2):
@@ -36,6 +38,19 @@ def test_test_multi_fail_arg1(state, arg1):
 @pytest.mark.parametrize('arg2', ( fails, [passes, fails] ))
 def test_test_multi_fail_arg2(state, arg2):
     with pytest.raises(TF): cl.multi(state, passes, arg2)
+
+@pytest.mark.parametrize('sct,stu_code,is_star_args', [
+    (childx, 'x', False),
+    ([childx, childx], 'xx', False),
+    ([childx, childx], 'xx', True),
+    ([[childx, childx], childx], 'xxx', True)
+    ])
+def test_extend(state, sct, stu_code, is_star_args):
+    child = cl.extend(state, sct) if not is_star_args else cl.extend(state, *sct)
+    assert child.student_code == stu_code
+
+def test_extend_fail(state):
+    with pytest.raises(TF): cl.extend(state, childx, lambda state: cl.fail(state))
 
 def test_test_or_pass(state):
     cl.test_or(state, passes, fails)
