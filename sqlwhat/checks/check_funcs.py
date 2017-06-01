@@ -220,7 +220,7 @@ def has_equal_ast(state,
     stu_rep = repr(state.student_ast)
     sol_rep = repr(sol_ast)
 
-    _msg = state.ast_dispatcher.describe(state.student_ast, msg, ast_path = state.get_ast_path())
+    _msg = msg.format(ast_path = state.get_ast_path())
     if       exact and (sol_rep != stu_rep):     state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
     elif not exact and (sol_rep not in stu_rep): state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
 
