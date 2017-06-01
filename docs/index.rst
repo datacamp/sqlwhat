@@ -9,6 +9,11 @@ sqlwhat
 Api
 ----
 
+Syntax
+~~~~~~
+
+.. autofunction:: sqlwhat.sct_syntax.Ex
+
 Check query results
 ~~~~~~~~~~~~~~~~~~~
 

@@ -34,11 +34,11 @@ def test_f_2_funcs(f, addx):
     assert g(x = 'x')('a') == 'abx'
 
 def test_f_add_unary_func(f):
-    g = f + (lambda state: state + 'c')
+    g = f >> (lambda state: state + 'c')
     assert g('a') == 'abc'
 
 def test_f_add_f(f, f2):
-    g = f + f2
+    g = f >> f2
     assert g('a') == 'abc'
 
 def test_f_from_state_dec(addx):
@@ -52,16 +52,16 @@ def ex():
     return Ex('state')._sct_copy(lambda state, x: state + x)('x')
 
 def test_ex_add_f(ex, f):
-    (ex + f)._state = 'statexb'
+    (ex >> f)._state = 'statexb'
 
 def test_ex_add_unary(ex):
-    (ex + (lambda state: state + 'b'))._state == 'statexb'
+    (ex >> (lambda state: state + 'b'))._state == 'statexb'
 
 def test_ex_add_ex_err(ex):
-    with pytest.raises(BaseException): ex + ex
+    with pytest.raises(BaseException): ex >> ex
 
 def test_f_add_ex_err(f, ex):
-    with pytest.raises(BaseException): f + ex
+    with pytest.raises(BaseException): f >> ex
 
 
 from sqlwhat.State import State

@@ -39,7 +39,7 @@ class Chain:
         self._waiting_on_call = False
         return self
 
-    def __add__(self, f):
+    def __rshift__(self, f):
         if self._waiting_on_call:
             self._double_attr_error()
         elif type(f) == Chain:
@@ -78,6 +78,7 @@ class F(Chain):
 
     @classmethod
     def _from_func(cls, f, *args, **kwargs):
+        """Creates a function chain starting with the specified SCT (f), and its arguments."""
         func_chain = cls()
         func_chain._stack.append([f, args, kwargs])
         return func_chain
@@ -109,6 +110,14 @@ def Ex(state=None):
 
             # life writing SCTs on DataCamp.com
             Ex().test_student_typed(text="SELECT id")
+            
+        Further, note that the operator ``>>`` can be used in place of chaining.::
+
+            # Ex with chaining
+            Ex().test_student_typed(text="SELECT id")
+
+            # Ex without
+            Ex() >> test_student_typed(text="SELECT id")
             
     """
     return Chain(state or State.root_state)
