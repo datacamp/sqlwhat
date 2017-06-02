@@ -92,6 +92,11 @@ def test_name_miscased(state, name,
 
 def test_column_name(state, name, 
                      msg="Make sure your results contain a column named `{}`. Case does not matter."):
+    """Test whether results contain a column with a specific name
+
+    Currently converts all names to lowercase before checking.
+    """
+
     stu_res = state.student_result
     sol_res = state.solution_result
 
