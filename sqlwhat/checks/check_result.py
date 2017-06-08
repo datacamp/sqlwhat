@@ -145,7 +145,7 @@ def test_column(state, name, msg="Column `{}` in the solution does not have a co
     stu_res = state.student_result or {}
     sol_res = state.solution_result
     
-    round_seq = lambda seq, digits: [round(x, digits) for x in seq]
+    round_seq = lambda seq, digits: [round(x, digits) if x is not None else x for x in seq]
 
     src_col = sol_res[name] if digits is None else round_seq(sol_res[name], digits)
 

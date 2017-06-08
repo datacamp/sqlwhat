@@ -64,6 +64,14 @@ def test_test_column_digits():
     state = prepare_state({'a': [1.1]}, {'a': [1.11]})
     cr.test_column(state, 'a', digits = 1)
 
+def test_test_column_digits_null():
+    state = prepare_state({'a': [1.1, None]}, {'a': [1.11, None]})
+    cr.test_column(state, 'a', digits = 1)
+
+def test_test_column_digits_null_fail():
+    state = prepare_state({'a': [None, 1.1]}, {'a': [1.11, None]})
+    with pytest.raises(TF): cr.test_column(state, 'a', digits = 1)
+
 def test_test_column_digits_incompat_fail():
     state = prepare_state({'a': [1.1]}, {'a': ['abc']})
     with pytest.raises(TF): cr.test_column(state, 'a', digits = 1)
