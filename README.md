@@ -13,6 +13,7 @@ Reference
 * API Docs: https://sqlwhat.readthedocs.io
 * AST viewer: https://sqlwhat-viewer.herokuapp.com
 * Example DataCamp Course: https://github.com/datacamp/courses-sql-test
+* Extensions: https://github.com/datacamp/sqlwhat-ext
 
 Raising issues with how SQL is parsed
 -------------------------------------
