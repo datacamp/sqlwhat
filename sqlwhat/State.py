@@ -22,15 +22,17 @@ class State:
             if k != 'self': setattr(self, k, v)
 
         if ast_dispatcher is None:
-            # MCE doesn't always have connection - fallback on postgresql
-            dn = student_conn.dialect.name if student_conn else 'postgresql'
-            self.ast_dispatcher = Dispatcher.from_dialect(dn)
+            self.ast_dispatcher = Dispatcher.from_dialect(self.get_dialect())
 
         # Parse solution and student code
         # solution code raises an exception if can't be parsed
         if solution_ast is None: self.solution_ast = self.ast_dispatcher.parse(solution_code)
         if student_ast  is None: self.student_ast  = self.ast_dispatcher.parse(student_code)
 
+    def get_dialect(self):
+        # MCE doesn't always have connection - fallback on postgresql
+        return self.student_conn.dialect.name if self.student_conn else 'postgresql'
+        
     def get_ast_path(self):
         rev_checks = filter(lambda x: x['type'] in ['check_field', 'check_node'], reversed(self.history))
 

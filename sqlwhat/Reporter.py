@@ -32,6 +32,8 @@ class Reporter(object):
         the state of the reporter changes and the feedback is kept.
         """
 
+        testobj = Test(testobj) if isinstance(testobj, str) else testobj
+
         if isinstance(testobj, Test):
             testobj.test()
             result = testobj.result
