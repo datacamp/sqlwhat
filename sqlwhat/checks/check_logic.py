@@ -1,10 +1,10 @@
-from protowhat.Test import TestFail, Test
+from protowhat.Test import TestFail
 from types import GeneratorType
 from functools import partial
 
 def fail(state, msg=""):
     """Always fails the SCT, with an optional msg."""
-    state.do_test(Test(msg))
+    state.do_test(msg)
 
     return state
 
