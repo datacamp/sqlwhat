@@ -20,7 +20,7 @@ def test_pass(conn):
         solution_conn = None,
         reporter= Reporter())
 
-    State.root_state = state
+    Ex.root_state = state
 
     assert Ex().check_result()
 
@@ -35,7 +35,7 @@ def test_fail(conn):
         solution_conn = None,
         reporter= Reporter())
 
-    State.root_state = state
+    Ex.root_state = state
 
     with pytest.raises(TF):
         Ex().check_result()

@@ -18,7 +18,6 @@ def test_exercise(sct,
     """
     """
 
-    # TODO: put reporter on state
     state = State(
         student_code = student_code,
         solution_code = solution_code,
@@ -29,7 +28,7 @@ def test_exercise(sct,
         solution_result = solution_result,
         reporter = Reporter(error))
 
-    State.root_state = state
+    SCT_CTX['Ex'].root_state = state
 
     try:
         exec(sct, SCT_CTX)
