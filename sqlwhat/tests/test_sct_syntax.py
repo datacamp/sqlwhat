@@ -65,7 +65,7 @@ def test_f_add_ex_err(f, ex):
 
 
 from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
+from protowhat.Reporter import Reporter
 def test_state_dec_instant_eval():
     state = State("student_code", "", "", None, None, {}, {}, Reporter())
 

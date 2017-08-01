@@ -1,8 +1,8 @@
 import pytest
 from sqlwhat.State import State
 from sqlwhat.checks import check_logic as cl
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 from helper import Connection
 from functools import partial
 

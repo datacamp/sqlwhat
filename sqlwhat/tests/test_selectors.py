@@ -1,7 +1,7 @@
 from sqlwhat.selectors import Selector, Dispatcher, get_ast_parser
 from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 import pytest
 
 @pytest.fixture

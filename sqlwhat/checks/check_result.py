@@ -1,4 +1,4 @@
-from sqlwhat.Test import TestFail, Test
+from protowhat.Test import Test
 
 def allow_error(state):
     """Allow submission to pass, even if it originally caused a database error."""

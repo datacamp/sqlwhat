@@ -1,7 +1,7 @@
 from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 from helper import Connection
 import pytest
 

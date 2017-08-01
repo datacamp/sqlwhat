@@ -1,6 +1,6 @@
 from sqlwhat.State import State
-from sqlwhat.Test import TestFail
-from sqlwhat.Reporter import Reporter
+from protowhat.Test import TestFail
+from protowhat.Reporter import Reporter
 from sqlwhat.sct_syntax import SCT_CTX
 
 def test_exercise(sct,

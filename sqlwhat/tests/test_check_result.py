@@ -2,8 +2,8 @@ import pytest
 from sqlwhat.State import State
 import importlib
 cr = importlib.import_module('sqlwhat.checks.check_result')
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 from helper import Connection
 
 def prepare_state(sol_result, stu_result):

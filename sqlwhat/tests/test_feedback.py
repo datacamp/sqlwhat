@@ -1,5 +1,5 @@
-from sqlwhat.Test import Feedback, TestFail as TF, Test as _Test
-from sqlwhat.Reporter import Reporter
+from protowhat.Test import Feedback, TestFail as TF, Test as _Test
+from protowhat.Reporter import Reporter
 from sqlwhat.State import State
 from sqlwhat.selectors import Dispatcher
 from antlr_tsql import ast

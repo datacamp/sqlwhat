@@ -1,4 +1,4 @@
-from sqlwhat.Test import TestFail, Test
+from protowhat.Test import Test
 from sqlwhat.State import State
 
 from functools import partial, wraps

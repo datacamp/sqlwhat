@@ -1,4 +1,4 @@
-from sqlwhat.Test import TestFail, Test
+from protowhat.Test import TestFail, Test
 from types import GeneratorType
 from functools import partial
 
