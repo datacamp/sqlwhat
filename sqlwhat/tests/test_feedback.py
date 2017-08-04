@@ -1,5 +1,5 @@
-from sqlwhat.Test import Feedback, TestFail as TF, Test as _Test
-from sqlwhat.Reporter import Reporter
+from protowhat.Test import Feedback, TestFail as TF
+from protowhat.Reporter import Reporter
 from sqlwhat.State import State
 from sqlwhat.selectors import Dispatcher
 from antlr_tsql import ast
@@ -42,7 +42,7 @@ def test_state_line_info():
                   ast_dispatcher = Dispatcher.from_dialect('mssql'))
     
     with pytest.raises(TF):
-        state.do_test(_Test("failure message"))
+        state.do_test("failure message")
 
     payload = state.reporter.build_payload()
 

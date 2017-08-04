@@ -1,7 +1,7 @@
 from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 from helper import Connection
 import pytest
 
@@ -20,7 +20,7 @@ def test_pass(conn):
         solution_conn = None,
         reporter= Reporter())
 
-    State.root_state = state
+    Ex.root_state = state
 
     assert Ex().check_result()
 
@@ -35,7 +35,7 @@ def test_fail(conn):
         solution_conn = None,
         reporter= Reporter())
 
-    State.root_state = state
+    Ex.root_state = state
 
     with pytest.raises(TF):
         Ex().check_result()

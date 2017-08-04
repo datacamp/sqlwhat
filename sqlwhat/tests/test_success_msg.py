@@ -2,8 +2,8 @@ from sqlwhat.checks import success_msg
 from sqlwhat.checks.check_logic import fail
 from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 import pytest
 
 def prepare_state(student_code):

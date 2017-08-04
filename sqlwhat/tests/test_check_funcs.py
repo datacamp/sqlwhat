@@ -2,8 +2,8 @@ from sqlwhat.checks.check_funcs import check_node, check_field, has_equal_ast
 from sqlwhat.checks import check_funcs as cf
 from sqlwhat.selectors import get_ast_parser, Dispatcher
 from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
-from sqlwhat.Test import TestFail as TF
+from protowhat.Reporter import Reporter
+from protowhat.Test import TestFail as TF
 import pytest
 
 def print_message(exc): print(exc.value.args[0].message)

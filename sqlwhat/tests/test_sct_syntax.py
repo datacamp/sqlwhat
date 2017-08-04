@@ -1,5 +1,9 @@
-from sqlwhat.sct_syntax import Ex, F, state_dec
+from protowhat.State import State
+from protowhat.sct_syntax import ExGen, F, state_dec_gen
 import pytest
+
+state_dec = state_dec_gen(State, {})
+Ex = ExGen(State, {})
 
 @pytest.fixture
 def addx():
@@ -64,8 +68,7 @@ def test_f_add_ex_err(f, ex):
     with pytest.raises(BaseException): f >> ex
 
 
-from sqlwhat.State import State
-from sqlwhat.Reporter import Reporter
+from protowhat.Reporter import Reporter
 def test_state_dec_instant_eval():
     state = State("student_code", "", "", None, None, {}, {}, Reporter())
 

@@ -14,7 +14,7 @@ setup(
 	name='sqlwhat',
 	version=version,
 	packages=['sqlwhat', 'sqlwhat.checks'],
-	install_requires=['markdown2', 'antlr-plsql>=0.1.0', 'antlr-tsql>=0.1.0'],
+	install_requires=['protowhat', 'antlr-plsql>=0.1.0', 'antlr-tsql>=0.1.0'],
         description = 'Submission correctness tests for sql',
         author = 'Michael Chow',
         author_email = 'michael@datacamp.com',

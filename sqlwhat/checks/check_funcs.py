@@ -1,4 +1,3 @@
-from sqlwhat.Test import TestFail, Test
 from sqlwhat.State import State
 
 from functools import partial, wraps
@@ -61,7 +60,7 @@ def check_node(state, name, index=0, missing_msg="Could not find the {index}{nod
     except IndexError: 
         # use speaker on ast dialect module to get message, or fall back to generic
         _msg = state.ast_dispatcher.describe(sol_stmt, missing_msg, index = index)
-        state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+        state.do_test(_msg or MSG_CHECK_FALLBACK)
 
     action = {'type': 'check_node', 'kwargs': {'name': name, 'index': index}, 'node': stu_stmt}
     
@@ -108,12 +107,12 @@ def check_field(state, name, index=None, missing_msg="Could not find the {index}
     except: 
         # use speaker on ast dialect module to get message, or fall back to generic
         _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
-        state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+        state.do_test(_msg or MSG_CHECK_FALLBACK)
 
     # fail if attribute exists, but is none only for student
     if stu_attr is None and sol_attr is not None:
         _msg = state.ast_dispatcher.describe(state.student_ast, missing_msg, field = name, index = index)
-        state.do_test(Test(_msg))
+        state.do_test(_msg)
 
     action = {'type': 'check_field', 'kwargs': {'name': name, 'index': index}}
 
@@ -176,7 +175,7 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
     res = text in stu_text if fixed else re.search(text, stu_text)
 
     if not res:
-        state.do_test(Test(_msg))
+        state.do_test(_msg)
 
     return state
 
@@ -221,8 +220,8 @@ def has_equal_ast(state,
     sol_rep = repr(sol_ast)
 
     _msg = msg.format(ast_path = state.get_ast_path())
-    if       exact and (sol_rep != stu_rep):     state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
-    elif not exact and (sol_rep not in stu_rep): state.do_test(Test(_msg or MSG_CHECK_FALLBACK))
+    if       exact and (sol_rep != stu_rep):     state.do_test(_msg or MSG_CHECK_FALLBACK)
+    elif not exact and (sol_rep not in stu_rep): state.do_test(_msg or MSG_CHECK_FALLBACK)
 
     return state
 
@@ -247,7 +246,7 @@ def test_mc(state, correct, msgs):
     exec(state.student_code, globals(), ctxt)
     sel_indx = ctxt['selected_option']
     if sel_indx != correct:
-        state.do_test(Test(msgs[sel_indx-1]))
+        state.do_test(msgs[sel_indx-1])
     else:
         state.reporter.success_msg = msgs[correct-1]
 
@@ -274,6 +273,6 @@ def success_msg(state, msg):
 def verify_ast_parses(state):
     asts = [state.student_ast, state.solution_ast]
     if any(isinstance(c, state.ast_dispatcher.ast.AntlrException) for c in asts):
-        state.do_test(Test("AST did not parse"))
+        state.do_test("AST did not parse")
 
     return state
