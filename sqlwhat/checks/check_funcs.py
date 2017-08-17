@@ -9,10 +9,10 @@ def requires_ast(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         state = kwargs.get('state', args[0] if len(args) else None)
-        AntlrException = state.ast_dispatcher.ast.AntlrException
+        ParseError = state.ast_dispatcher.ParseError
 
         state_ast = [state.student_ast, state.solution_ast]
-        parse_fail = any(isinstance(ast, AntlrException) for ast in state_ast)
+        parse_fail = any(isinstance(ast, ParseError) for ast in state_ast)
 
         if parse_fail: return state              # skip test
         else: return f(*args, **kwargs)          # proceed with test
@@ -166,8 +166,8 @@ def test_student_typed(state, text, msg="Submission does not contain the code `{
     stu_code = state.student_code
 
     # fallback on using complete student code if no ast
-    AntlrException = state.ast_dispatcher.ast.AntlrException
-    stu_text = stu_ast._get_text(stu_code) if not isinstance(stu_ast, AntlrException) else stu_code
+    ParseError = state.ast_dispatcher.ParseError
+    stu_text = stu_ast._get_text(stu_code) if not isinstance(stu_ast, ParseError) else stu_code
 
     _msg = msg.format(text)
 
@@ -272,7 +272,7 @@ def success_msg(state, msg):
 
 def verify_ast_parses(state):
     asts = [state.student_ast, state.solution_ast]
-    if any(isinstance(c, state.ast_dispatcher.ast.AntlrException) for c in asts):
+    if any(isinstance(c, state.ast_dispatcher.ParseError) for c in asts):
         state.do_test("AST did not parse")
 
     return state

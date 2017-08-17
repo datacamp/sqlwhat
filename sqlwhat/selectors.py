@@ -1,14 +1,7 @@
 from ast import NodeVisitor, AST
 from collections.abc import Sequence
 import inspect
-
 import importlib
-def get_ast_parser(dialect_name):
-    mod_map = {
-            'postgresql': 'antlr_plsql.ast', 
-            'sqlite': 'antlr_plsql.ast',        # uses postgres parser for now
-            'mssql': 'antlr_tsql.ast'}
-
 
 class Selector(NodeVisitor):
 
@@ -50,12 +43,16 @@ class Selector(NodeVisitor):
     def has_priority_over(self, node):
         return self.priority > node._priority
 
+
 class Dispatcher:
     def __init__(self, nodes, ast=None, safe_parsing=True):
         """Wrapper to instantiate and use a Selector using node names."""
         self.nodes = nodes
         self.ast = ast
         self.safe_parsing = safe_parsing
+
+        self.ParseError = getattr(self.ast, 'ParseError', None) or \
+                          getattr(self.ast, 'AntlrException', None)
 
     def __call__(self, name, index, node, *args, **kwargs):
         # TODO: gentle error handling
@@ -67,10 +64,11 @@ class Dispatcher:
         return selector.out[index]
 
     def parse(self, code):
+        # AST modules should define exception as ParseError, but use AntlrException
+        # for backwards compatibility
         try:
             return self.ast.parse(code, strict=True)
-        #except self.ast.ParseError as e:
-        except self.ast.AntlrException as e:
+        except self.ParseError as e:
             if self.safe_parsing: return e
             else: raise e
 
