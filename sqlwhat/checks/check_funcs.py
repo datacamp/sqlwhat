@@ -49,7 +49,7 @@ def check_node(state, name, index=0, missing_msg="Could not find the {index}{nod
             new_state = Ex().check_node('SelectStmt', 0)
 
     """
-    df = partial(state.ast_dispatcher, 'node', name, slice(None), priority=priority)
+    df = partial(state.ast_dispatcher, name, slice(None), priority=priority)
 
     sol_stmt_list = df(state.solution_ast) 
     try: sol_stmt = sol_stmt_list[index]

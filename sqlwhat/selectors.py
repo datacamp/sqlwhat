@@ -9,8 +9,6 @@ def get_ast_parser(dialect_name):
             'sqlite': 'antlr_plsql.ast',        # uses postgres parser for now
             'mssql': 'antlr_tsql.ast'}
 
-    ast_parser = importlib.import_module(mod_map[dialect_name])
-    return ast_parser
 
 class Selector(NodeVisitor):
 
@@ -53,20 +51,15 @@ class Selector(NodeVisitor):
         return self.priority > node._priority
 
 class Dispatcher:
-    def __init__(self, nodes, rules, ast=None, safe_parsing=True):
+    def __init__(self, nodes, ast=None, safe_parsing=True):
         """Wrapper to instantiate and use a Selector using node names."""
-        self.types = {}
+        self.nodes = nodes
         self.ast = ast
         self.safe_parsing = safe_parsing
 
-        for name, funcs in rules.items():
-            pred, map_name = funcs if len(funcs) == 2 else funcs + None
-
-            self.types[name] = self.get(nodes, pred, map_name)
-
-    def __call__(self, check, name, index, node, *args, **kwargs):
+    def __call__(self, name, index, node, *args, **kwargs):
         # TODO: gentle error handling
-        ast_cls = self.types[check][name]
+        ast_cls = self.nodes[name]
 
         selector = Selector(ast_cls, *args, **kwargs)
         selector.visit(node, head=True)
@@ -76,6 +69,7 @@ class Dispatcher:
     def parse(self, code):
         try:
             return self.ast.parse(code, strict=True)
+        #except self.ast.ParseError as e:
         except self.ast.AntlrException as e:
             if self.safe_parsing: return e
             else: raise e
@@ -94,42 +88,13 @@ class Dispatcher:
             return self.ast.speaker.describe(node, field = field, 
                                              fmt = msg, **kwargs)
 
-    @staticmethod
-    def get(nodes, predicate, map_name = lambda x: x):
-        return {map_name(k): v for k, v in nodes.items() if predicate(k, v)}
-
     @classmethod
-    def from_module(cls, mod, rules):
+    def from_module(cls, mod):
+        if isinstance(mod, str): mod = importlib.import_module(mod)
+
         ast_nodes = {k: v for k, v in vars(mod).items() if (inspect.isclass(v) and issubclass(v, mod.AstNode))}
-        dispatcher = cls(ast_nodes, rules, ast=mod)
+        dispatcher = cls(ast_nodes, ast=mod)
         return dispatcher
-
-    @classmethod
-    def from_dialect(cls, dialect_name):
-        rules = {
-                "statement":     [lambda k, v: "Stmt" in k,     lambda k: k.replace("Stmt", "").lower()],
-                "other":         [lambda k, v: "Stmt" not in k, lambda k: k.lower()],
-                "node":          [lambda k, v: True,            lambda k: k]
-                }
-
-        ast_parser = get_ast_parser(dialect_name)
-        
-        # TODO: the code below monkney patches the mssql ast to use only lowercase
-        #       representations. This is because msft server has a setting to be
-        #       case sensitive. However, this is often not the case, and probably
-        #       detremental to DataCamp courses. Need to move to more sane configuration.
-        if dialect_name == 'mssql':
-            ast_parser.AstNode.__repr__ = lower_case(ast_parser.AstNode.__repr__)
-
-        return cls.from_module(ast_parser, rules)
-
-from functools import wraps
-def lower_case(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return f(*args, **kwargs).lower()
-    return wrapper
-
 
 def get_ord(num):
     assert num != 0, "use strictly positive numbers in get_ord()"
