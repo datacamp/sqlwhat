@@ -51,6 +51,8 @@ class Dispatcher:
         self.ast = ast
         self.safe_parsing = safe_parsing
 
+        # AST modules should define exception as ParseError, but use AntlrException
+        # for backwards compatibility
         self.ParseError = getattr(self.ast, 'ParseError', None) or \
                           getattr(self.ast, 'AntlrException', None)
 
@@ -64,8 +66,6 @@ class Dispatcher:
         return selector.out[index]
 
     def parse(self, code):
-        # AST modules should define exception as ParseError, but use AntlrException
-        # for backwards compatibility
         try:
             return self.ast.parse(code, strict=True)
         except self.ParseError as e:
