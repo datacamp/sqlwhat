@@ -1,7 +1,7 @@
 from copy import copy
 import inspect
 
-from sqlwhat.selectors import Dispatcher
+from protowhat.selectors import Dispatcher
 from protowhat.State import State as BaseState
 from functools import wraps
 

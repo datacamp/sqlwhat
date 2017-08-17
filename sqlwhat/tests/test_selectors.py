@@ -1,4 +1,4 @@
-from sqlwhat.selectors import Selector, Dispatcher
+from protowhat.selectors import Selector, Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 import importlib
 from protowhat.Reporter import Reporter

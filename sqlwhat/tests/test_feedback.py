@@ -1,7 +1,7 @@
 from protowhat.Test import Feedback, TestFail as TF
 from protowhat.Reporter import Reporter
+from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
-from sqlwhat.selectors import Dispatcher
 from antlr_tsql import ast
 import pytest
 
