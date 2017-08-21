@@ -20,6 +20,7 @@ from unittest import mock
  
 MOCK_MODULES = ['protowhat',
                 'protowhat.State', 'protowhat.Test', 'protowhat.Reporter', 'protowhat.sct_syntax', 'protowhat.checks',
+                'protowhat.checks.check_logic',
                 'sqlwhat.grammar.plsql.ast']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
