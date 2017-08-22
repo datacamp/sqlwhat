@@ -1,5 +1,5 @@
-from sqlwhat.checks.check_funcs import check_node, check_field, has_equal_ast
-from sqlwhat.checks import check_funcs as cf
+from protowhat.checks.check_funcs import check_node, check_field, has_equal_ast
+from protowhat.checks import check_funcs as cf
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
