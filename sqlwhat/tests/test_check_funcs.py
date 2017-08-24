@@ -1,23 +1,24 @@
-from sqlwhat.checks.check_funcs import check_node, check_field, has_equal_ast
-from sqlwhat.checks import check_funcs as cf
-from sqlwhat.selectors import get_ast_parser, Dispatcher
-from sqlwhat.State import State
+from protowhat.checks.check_funcs import check_node, check_field, has_equal_ast
+from protowhat.checks import check_funcs as cf
+from protowhat.selectors import Dispatcher
+from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
 from protowhat.Test import TestFail as TF
+import importlib
 import pytest
 
 def print_message(exc): print(exc.value.args[0].message)
 
 @pytest.fixture
 def ast_mod():
-    return get_ast_parser('postgresql')
+    return importlib.import_module(PARSER_MODULES['postgresql'])
 
 @pytest.fixture(params = ['postgresql', 'mssql'])
 def dialect_name(request):
     return request.param
 
 def prepare_state(solution_code, student_code, dialect='postgresql'):
-    dispatcher = Dispatcher.from_dialect(dialect)
+    dispatcher = Dispatcher.from_module(PARSER_MODULES[dialect])
     return State(
         student_code = student_code,
         solution_code = solution_code,

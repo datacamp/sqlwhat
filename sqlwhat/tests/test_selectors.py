@@ -1,16 +1,17 @@
-from sqlwhat.selectors import Selector, Dispatcher, get_ast_parser
-from sqlwhat.State import State
+from protowhat.selectors import Selector, Dispatcher
+from sqlwhat.State import State, PARSER_MODULES
+import importlib
 from protowhat.Reporter import Reporter
 from protowhat.Test import TestFail as TF
 import pytest
 
 @pytest.fixture
 def ast():
-    return get_ast_parser('postgresql')
+    return importlib.import_module(PARSER_MODULES['postgresql'])
 
 @pytest.fixture
 def dispatcher():
-    return Dispatcher.from_dialect('postgresql')
+    return Dispatcher.from_module(ast())
 
 @pytest.mark.xfail
 def test_selector_standalone():
@@ -75,7 +76,7 @@ def test_selector_head(ast):
 
 def test_dispatch_select(dispatcher, ast):
     tree = ast.parse("SELECT id FROM artists")
-    selected = dispatcher("statement", "select", 0, tree)
+    selected = dispatcher("SelectStmt", 0, tree)
     assert type(selected) == ast.SelectStmt
 
 
