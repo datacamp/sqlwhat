@@ -1,5 +1,5 @@
 from sqlwhat.checks import success_msg
-from sqlwhat.checks.check_logic import fail
+from sqlwhat.checks import fail
 from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
 from protowhat.Reporter import Reporter
