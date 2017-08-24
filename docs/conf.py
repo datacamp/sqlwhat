@@ -18,7 +18,8 @@ import os
 import sys
 from unittest import mock
  
-MOCK_MODULES = ['pythonwhat', 'pythonwhat.Test', 'pythonwhat.Reporter', 'sqlwhat.grammar.plsql.ast']
+MOCK_MODULES = ['sqlwhat.test_exercise', 'protowhat.checks', 
+                'protowhat.checks.check_funcs', 'protowhat.checks.check_simple', 'protowhat.checks.check_logic']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
