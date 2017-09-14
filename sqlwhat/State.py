@@ -13,13 +13,13 @@ PARSER_MODULES = {
 
 def lower_case(f):
     """Decorator specifically for turning mssql AST into lowercase"""
+    # if it has already been wrapped, we return original
+    if hasattr(f, 'lower_cased'): return f
+
     @wraps(f)
     def wrapper(*args, **kwargs):
-        # if it has already been wrapped, we return original
-        if hasattr(f, 'lower_cased'): return f
-        else:
-            f.lower_cased = True
-            return f(*args, **kwargs).lower()
+        f.lower_cased = True
+        return f(*args, **kwargs).lower()
     return wrapper
 
 class State(BaseState):
