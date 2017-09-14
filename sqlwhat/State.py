@@ -35,6 +35,7 @@ class State(BaseState):
         #       detremental to DataCamp courses. Need to move to more sane configuration.
 #        if dialect_name == 'mssql':
         if dialect == 'mssql':
-            ast_dispatcher.ast.AstNode.__repr__ = lower_case(ast_parser.AstNode.__repr__)
+            AstNode = ast_dispatcher.ast.AstNode
+            AstNode.__repr__ = lower_case(AstNode.__repr__)
 
         return ast_dispatcher
