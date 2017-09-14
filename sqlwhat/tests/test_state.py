@@ -16,7 +16,7 @@ def test_pass(conn):
         pre_exercise_code = "",
         student_result =  {'id': [1], 'name': ['greg']},
         solution_result = {'id': [1], 'name': ['greg']},
-        student_conn = Connection('postgresql'),
+        student_conn = conn,
         solution_conn = None,
         reporter= Reporter())
 
@@ -31,7 +31,7 @@ def test_fail(conn):
         pre_exercise_code = "",
         student_result = {'id': [1], 'name': ['greg']},
         solution_result = {'id': [0], 'name': ['greg']},
-        student_conn = Connection('postgresql'),
+        student_conn = conn,
         solution_conn = None,
         reporter= Reporter())
 
