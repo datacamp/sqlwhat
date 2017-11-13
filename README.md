@@ -77,3 +77,13 @@ In order to install psycopg2 in a virtualenv, I [needed to run](http://stackover
 ```
 env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install --no-cache psycopg2
 ```
+
+Building Docs
+-------------
+
+Install sqlwhat and run..
+
+```
+cd docs
+make html
+```
