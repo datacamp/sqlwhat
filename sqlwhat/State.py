@@ -8,7 +8,8 @@ from functools import wraps
 PARSER_MODULES = {
         'postgresql': 'antlr_plsql.ast', 
         'sqlite': 'antlr_plsql.ast',        # uses postgres parser for now
-        'mssql': 'antlr_tsql.ast'
+        'mssql': 'antlr_tsql.ast',
+        'mysql': 'antlr_plsql.ast'          # uses postgres parser for now
         }
 
 def lower_case(f):
