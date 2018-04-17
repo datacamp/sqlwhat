@@ -10,7 +10,8 @@ clean:
 	rm -rf sqlwhat.egg-info
 
 test: clean
-	pytest -m "not backend"
+	pytest --cov=sqlwhat -m "not backend"
+	codecov
 
 deploy: build
 	travis/setup-git.sh

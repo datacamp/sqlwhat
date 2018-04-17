@@ -1,7 +1,7 @@
 General
 ~~~~~~~
 
-Visit the `protowhat docs <https://protowhat.readthedocs.io>`_ for an overview of..
+Visit the `protowhat docs <https://protowhat.readthedocs.io>`_ for an overview of
 
 * `Basic Syntax <https://protowhat.readthedocs.io/en/latest/#ex-syntax>`_
 * `Checking AST and code <https://protowhat.readthedocs.io/en/latest/#module-protowhat.checks.check_funcs>`_

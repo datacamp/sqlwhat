@@ -1,6 +1,8 @@
 # sqlwhat
 
 [![Build Status](https://travis-ci.org/datacamp/sqlwhat.svg?branch=master)](https://travis-ci.org/datacamp/sqlwhat)
+[![codecov](https://codecov.io/gh/datacamp/sqlwhat/branch/master/graph/badge.svg)](https://codecov.io/gh/datacamp/sqlwhat)
+[![PyPI version](https://badge.fury.io/py/sqlwhat.svg)](https://badge.fury.io/py/sqlwhat)
 
 Installing
 ----------
@@ -81,7 +83,7 @@ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip 
 Building Docs
 -------------
 
-Install sqlwhat and run..
+Install sqlwhat and run ..
 
 ```
 cd docs
