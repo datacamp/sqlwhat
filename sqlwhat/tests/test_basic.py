@@ -53,6 +53,7 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
     "Ex().test_or(test_student_typed('SELECT'))",
     "Ex().test_correct(test_student_typed('SELECT'), test_student_typed('SEL'))",
     "Ex().test_correct(test_student_typed('SELECT'), test_student_typed('SEL').test_student_typed('SEL'))",
+    "Ex().test_not(test_student_typed('WHERE'), msg='do not write WHERE')",
     "Ex().check_result()",
     "Ex().test_has_columns()",
     "Ex().test_nrows()",
