@@ -51,8 +51,69 @@ def test_has_equal_ast_fail_quoted_column():
     with pytest.raises(TF) as exc_info: has_equal_ast(state=state)
     print_message(exc_info)
 
+# the 4 tests below will fail until https://github.com/datacamp/antlr-plsql/issues/27 is fixed
+# TODO move tests to antlr-plsql
+
+def test_bug():
+    x = "SELECT * FROM cities INNER JOIN countries ON cities.country_code = countries.code;"
+    state = prepare_state(x, x)
+    sel = cf.check_node(state, "SelectStmt")
+    fc = cf.check_field(sel, "from_clause")
+    jt = cf.check_field(fc, "join_type")
+    has_equal_ast(jt)
+
+def test_bug_2():
+    x = "SELECT cities.name AS city, urbanarea_pop, countries.name AS country, indep_year, languages.name AS language, percent FROM languages RIGHT JOIN countries ON languages.code = countries.code RIGHT JOIN cities ON countries.code = cities.country_code ORDER BY city, language;"
+    state = prepare_state(x, x)
+    sel = cf.check_node(state, "SelectStmt")
+    fc = cf.check_field(sel, "from_clause")
+    l = cf.check_field(fc, "left")
+    jt = cf.check_field(l, "join_type")
+    has_equal_ast(jt)
+
+def test_bug_3():
+    x = "SELECT cities.name AS city, urbanarea_pop, countries.name AS country, indep_year, languages.name AS language, percent FROM languages RIGHT JOIN countries ON languages.code = countries.code RIGHT JOIN cities ON countries.code = cities.country_code ORDER BY city, language;"
+    state = prepare_state(x, x)
+    sel = cf.check_node(state, "SelectStmt")
+    fc = cf.check_field(sel, "from_clause")
+    l = cf.check_field(fc, "left")
+    jt = cf.check_field(l, "join_type")
+    has_equal_ast(jt)
+
+def test_bug_4():
+    x = """
+SELECT name, continent, inflation_rate
+FROM countries
+INNER JOIN economies
+ON countries.code = economies.code
+WHERE year = 2015
+    AND inflation_rate IN (
+        SELECT MAX(inflation_rate) AS max_inf
+        FROM (
+             SELECT name, continent, inflation_rate
+             FROM countries
+             INNER JOIN economies
+             ON countries.code = economies.code
+             WHERE year = 2015) AS subquery
+        GROUP BY continent);
+"""
+    state = prepare_state(x, x)
+    sel = cf.check_node(state, "SelectStmt")
+    fc = cf.check_field(sel, "from_clause")
+    jt = cf.check_field(fc, "join_type")
+    wc = cf.check_field(sel, "where_clause")
+    rw = cf.check_field(wc, 'right')
+    subsel = cf.check_node(rw, 'SelectStmt')
+    subfc = cf.check_field(subsel, 'from_clause')
+    subsubsel = check_node(check_node(subfc, 'Unshaped'), 'SelectStmt')
+    subsubfc = cf.check_field(subsubsel, "from_clause")
+    subsubjt = cf.check_field(subsubfc, 'join_type')
+
+    for i in [fc, jt, wc, rw, subsel, subfc, subsubsel, subsubfc, subsubjt]:
+        has_equal_ast(i)
+
 def test_has_equal_ast_field_fail():
-    state = prepare_state('SELECT id, name FROM Trips', "SELECT name FROM Trips")
+    state = prepare_state("SELECT id, name FROM Trips", "SELECT name FROM Trips")
     sel = cf.check_node(state, "SelectStmt", 0)
     tl = cf.check_field(sel, "target_list", 0)
     with pytest.raises(TF) as exc_info: has_equal_ast(tl)

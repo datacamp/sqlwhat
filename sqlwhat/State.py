@@ -3,6 +3,7 @@ import inspect
 
 from protowhat.selectors import Dispatcher
 from protowhat.State import State as BaseState
+from protowhat.State import DummyParser
 from functools import wraps
 
 PARSER_MODULES = {
@@ -24,9 +25,15 @@ def lower_case(f):
 
 class State(BaseState):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def get_dispatcher(self):
         # MCE doesn't always have connection - fallback on postgresql
-        dialect = self.student_conn.dialect.name if self.student_conn else 'postgresql'
+        if not self.student_conn:
+            return DummyParser()
+
+        dialect = self.student_conn.dialect.name
         ast_dispatcher = Dispatcher.from_module(PARSER_MODULES[dialect])
         
         # TODO: the code below monkney patches the mssql ast to use only lowercase
