@@ -17,5 +17,5 @@ from sqlalchemy import create_engine
 # engine will be accessed to run submission
 connect('sqlite', "")
 
-self.conn.execute(create_table)
-self.conn.execute(create_entries)
+execute_code(create_table)
+execute_code(create_entries)
