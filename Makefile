@@ -2,8 +2,9 @@
 
 all: clean test
 
-build:
-	antlr4 -Dlanguage=Python3 -visitor sqlwhat/grammar/plsql/plsql.g4
+install:
+	pip install -r requirements.txt
+	pip install -e .
 
 clean:
 	find . \( -name \*.pyc -o -name \*.pyo -o -name __pycache__ \) -prune -exec rm -rf {} +
@@ -12,7 +13,3 @@ clean:
 test: clean
 	pytest --cov=sqlwhat -m "not backend"
 	codecov
-
-deploy: build
-	travis/setup-git.sh
-	travis/deploy-builds.sh
