@@ -4,6 +4,12 @@
 [![codecov](https://codecov.io/gh/datacamp/sqlwhat/branch/master/graph/badge.svg)](https://codecov.io/gh/datacamp/sqlwhat)
 [![PyPI version](https://badge.fury.io/py/sqlwhat.svg)](https://badge.fury.io/py/sqlwhat)
 
+`sqlwhat` enables you to write Submission Correctness Tests (SCTs) for interactive SQL exercises on DataCamp.
+
+- If you are new to teaching on DataCamp, check out https://authoring.datacamp.com.
+- If you want to learn what SCTs are and how they work, visit https://authoring.datacamp.com/courses/sct.html.
+- For a complete overview of all functionality inside `sqlwhat` and articles about what to use when, consult https://sqlwhat.readthedocs.io.
+
 Installing
 ----------
 
