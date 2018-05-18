@@ -1,23 +1,33 @@
-General
-~~~~~~~
+sqlwhat
+-------
 
-Visit the `protowhat docs <https://protowhat.readthedocs.io>`_ for an overview of
+``sqlwhat`` enables you to write Submission Correctness Tests (SCTs) for interactive SQL exercises on DataCamp.
 
-* `Basic Syntax <https://protowhat.readthedocs.io/en/latest/#ex-syntax>`_
-* `Checking AST and code <https://protowhat.readthedocs.io/en/latest/#module-protowhat.checks.check_funcs>`_
-* `Logical SCTs (e.g. test_or) <https://protowhat.readthedocs.io/en/latest/#module-protowhat.checks.check_logic>`_
+- If you are new to teaching on DataCamp, check out https://authoring.datacamp.com.
+- If you want to learn what SCTs are and how they work, visit `this article <https://authoring.datacamp.com/courses/exercises/technical-details/sct.html>`_ specifically.
 
-See `here <https://protowhat.readthedocs.io/en/latest/#module-protowhat.checks.check_simple>`_
-for testing multiple choice exercises and changing success messages.
+If you are new to writing SCTs for SQL exercises, start with the ``protowhat`` docs (`link <https://protowhat.readthedocs.io>`_)
+that explain the concept of state, SCT chaining, and how this relates to abstract syntax trees, in addition to providing documentation
+on all SCT functions that are shared with the ``shellwhat`` package (used for writing SCTs for Shell exercises).
 
-Check query results
-~~~~~~~~~~~~~~~~~~~
+After consulting the resources above, you can continue with this site that features:
 
-.. automodule:: sqlwhat.checks.check_result
-    :members:
+- Articles that list best practices commonly used SCT patterns.
+- Reference documentation for all SCT functions that are specific to SQL exercises.
 
-Extensions
-~~~~~~~~~~
+Because SQL scripts aren't as free form as, say, Python scripts,
+you will find yourself using the AST-related SCT functions very often when checking SQL exercises.
+The `AST viewer <https://ast-viewer.new.datacamp.com>`_ is a great tool to
+understand how different SQL statements are parsed and will be very helpful in writing up your own SCTs.
 
-See the `sqlwhat-ext <https://sqlwhat-ext.readthedocs.io>`_ package for other, high level SCTs.
+.. toctree::
+   :maxdepth: 1
+   :caption: Articles
 
+   articles/glossary.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
+   reference

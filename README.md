@@ -7,8 +7,8 @@
 `sqlwhat` enables you to write Submission Correctness Tests (SCTs) for interactive SQL exercises on DataCamp.
 
 - If you are new to teaching on DataCamp, check out https://authoring.datacamp.com.
-- If you want to learn what SCTs are and how they work, visit https://authoring.datacamp.com/courses/sct.html.
-- For a complete overview of all functionality inside `sqlwhat` and articles about what to use when, consult https://sqlwhat.readthedocs.io.
+- If you want to learn what SCTs are and how they work, visit [this article](https://authoring.datacamp.com/courses/exercises/technical-details/sct.html) specifically.
+- For more information about writing SCTs for SQL exercises, consult https://sqlwhat.readthedocs.io.
 
 Installing
 ----------
