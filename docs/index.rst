@@ -17,7 +17,7 @@ After consulting the resources above, you can continue with this site that featu
 
 Because SQL scripts aren't as free form as, say, Python scripts,
 you will find yourself using the AST-related SCT functions very often when checking SQL exercises.
-The `AST viewer <https://ast-viewer.new.datacamp.com>`_ is a great tool to
+The `AST viewer <https://ast-viewer.datacamp.com>`_ is a great tool to
 understand how different SQL statements are parsed and will be very helpful in writing up your own SCTs.
 
 .. toctree::
