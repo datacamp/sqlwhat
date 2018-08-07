@@ -1,5 +1,5 @@
 # pkg deps
-protowhat==0.6.1
+git+git://github.com/datacamp/protowhat@fs/refactor
 antlr-plsql==0.5.5
 antlr-tsql==0.9.2
 

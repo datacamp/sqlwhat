@@ -29,7 +29,6 @@ class State(BaseState):
         super().__init__(*args, **kwargs)
 
     def get_dispatcher(self):
-        # MCE doesn't always have connection - fallback on postgresql
         if not self.student_conn:
             return DummyParser()
 
@@ -40,7 +39,6 @@ class State(BaseState):
         #       representations. This is because msft server has a setting to be
         #       case sensitive. However, this is often not the case, and probably
         #       detremental to DataCamp courses. Need to move to more sane configuration.
-#        if dialect_name == 'mssql':
         if dialect == 'mssql':
             AstNode = ast_dispatcher.ast.AstNode
             AstNode.__repr__ = lower_case(AstNode.__repr__)
