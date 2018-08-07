@@ -20,8 +20,11 @@ Basic query check (strict)
     SELECT title FROM films
 
     # sct
-    Ex().check_node('SelectStmt').multi(check_field('from_clause').has_equal_ast(),
-                                        check_field('target_list').has_equal_ast())
+    Ex().check_node('SelectStmt').multi(
+        check_field('from_clause').has_equal_ast(),
+        check_field('target_list').has_equal_ast()
+    )
+
     Ex().check_result()
 
     # passing submissions
@@ -44,9 +47,13 @@ Note that ``check_result()`` currently allows students to specify more columns t
     SELECT title FROM films
 
     # sct
-    Ex().test_correct(check_result(),
-                      check_node('SelectStmt').multi(check_field('from_clause').has_equal_ast(),
-                                                     check_field('target_list').has_equal_ast()))
+    Ex().check_correct(
+        check_result(),
+        check_node('SelectStmt').multi(
+            check_field('from_clause').has_equal_ast(),
+            check_field('target_list').has_equal_ast()
+        )
+    )
 
     # passing submissions
     SELECT title FROM films
@@ -55,6 +62,5 @@ Note that ``check_result()`` currently allows students to specify more columns t
 
     # failing submissions
     SELECT id FROM films
-
 
 TODO ADD MORE

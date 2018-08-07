@@ -47,20 +47,19 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
     "Ex().check_node('SelectStmt')",
     "Ex().check_node('SelectStmt', priority=99)",
     "Ex().check_node('SelectStmt').check_field('target_list')",
-    "Ex().test_student_typed('SELECT')",
+    "Ex().has_code('SELECT')",
     "Ex().has_equal_ast()",
-    "Ex().multi(test_student_typed('SELECT'))",
-    "Ex().test_or(test_student_typed('SELECT'))",
-    "Ex().test_correct(test_student_typed('SELECT'), test_student_typed('SEL'))",
-    "Ex().test_correct(test_student_typed('SELECT'), test_student_typed('SEL').test_student_typed('SEL'))",
-    "Ex().test_not(test_student_typed('WHERE'), msg='do not write WHERE')",
-    "Ex().check_result()",
-    "Ex().test_has_columns()",
-    "Ex().test_nrows()",
-    "Ex().test_ncols()",
-    "Ex().test_column('id')",
-    "Ex().test_name_miscased('id')"
-    ])
+    "Ex().multi(has_code('SELECT'))",
+    "Ex().check_or(has_code('SELECT'))",
+    "Ex().check_correct(has_code('SELECT'), has_code('SEL'))",
+    "Ex().check_correct(has_code('SELECT'), has_code('SEL').has_code('SEL'))",
+    "Ex().check_not(has_code('WHERE'), msg='do not write WHERE')",
+    "Ex().has_result()",
+    "Ex().has_nrows()",
+    "Ex().has_ncols()",
+    "Ex().check_col('id')",
+    "Ex().check_col('id').is_equal()"
+])
 def test_test_exercise_pass(conn, sct):
     result = {'id': [1], 'name': ['greg']}
     sct_payload = te(
@@ -80,19 +79,19 @@ def test_test_exercise_pass(conn, sct):
 
 @pytest.mark.parametrize('sct', [
     "Ex().check_node('SelectStmt').check_field('target_list').has_equal_ast()",
-    "Ex().test_student_typed('id', fixed=True)",
+    "Ex().has_code('id', fixed=True)",
     "Ex().has_equal_ast()",
-    "Ex().multi(test_student_typed('id'))",
-    "Ex().test_or(test_student_typed('id'))",
-    "Ex().test_correct(test_student_typed('id'), test_student_typed('i'))",
-    "Ex().check_result()",
-    "Ex().test_nrows()",
-    "Ex().test_ncols()",
-    "Ex().test_column('id')"
-    ])
+    "Ex().multi(has_code('id'))",
+    "Ex().check_or(has_code('id'))",
+    "Ex().check_correct(has_code('id'), has_code('i'))",
+    "Ex().has_nrows()",
+    "Ex().has_ncols()",
+    "Ex().check_col('id')",
+    "Ex().check_col('name').is_equal()",
+])
 def test_test_exercise_fail(conn, sct):
     sol_result = {'id': [1], 'name': ['greg']}
-    stu_result = {'id2': [1, 2], 'name2': ['greg', 'fred'], 'c': [1,2]}
+    stu_result = {'id2': [1, 2], 'name': ['greg', 'fred'], 'c': [1,2]}
     sct_payload = te(
         sct = sct,
         student_code = "SELECT * FROM company",
@@ -108,51 +107,24 @@ def test_test_exercise_fail(conn, sct):
 
     assert sct_payload.get('correct') is False
 
-def test_allow_error(conn):
+@pytest.mark.parametrize('sct, passes, msg', [
+    ('', False, 'Your code generated an error. Fix it and try again!'),
+    ('Ex().check_error(msg="wow")', False, 'wow'),
+    ('Ex().allow_error()', True, None)
+])
+def test_error_handling(sct, passes, msg):
     sct_payload = te(
-        sct = "Ex().allow_error()",
-        student_code = "SELECT * FROM company",
-        solution_code = "SELECT id FROM company",
+        sct = sct,
+        student_code = "",
+        solution_code = "",
         pre_exercise_code = "",
-        student_conn = conn,
+        student_conn = None,
         solution_conn = None,
-        student_result = None,
-        solution_result = None,
+        student_result = {},
+        solution_result = {},
         ex_type="NormalExercise",
-        error=[{'type': 'error', 'payload': 'error payload'}]
-        )
+        error=['an error']
+    )
 
-    assert sct_payload.get('correct') is True
-
-def test_error(conn):
-    sct_payload = te(
-        sct = "",
-        student_code = "SELECT * FROM company",
-        solution_code = "SELECT id FROM company",
-        pre_exercise_code = "",
-        student_conn = conn,
-        solution_conn = None,
-        student_result = None,
-        solution_result = None,
-        ex_type="NormalExercise",
-        error=[{'type': 'error', 'payload': 'error payload'}]
-        )
-
-    assert 'error payload' in sct_payload.get('message')
-
-def test_test_error(conn):
-    sct_payload = te(
-        sct = "Ex().test_error('NEW MESSAGE')",
-        student_code = "SELECT * FROM company",
-        solution_code = "SELECT id FROM company",
-        pre_exercise_code = "",
-        student_conn = conn,
-        solution_conn = None,
-        student_result = None,
-        solution_result = None,
-        ex_type="NormalExercise",
-        error=[{'type': 'error', 'payload': 'error payload'}]
-        )
-
-    assert sct_payload.get('message') == "NEW MESSAGE"
-
+    assert sct_payload.get('correct') == passes
+    if msg: assert sct_payload.get('message') == msg

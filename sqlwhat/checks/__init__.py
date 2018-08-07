@@ -1,5 +1,5 @@
-from sqlwhat.checks.check_result import check_result, test_has_columns, test_nrows, test_ncols, test_column, allow_error, test_error, test_name_miscased, test_column_name, sort_rows
+from sqlwhat.checks.check_funcs import allow_error, check_error, has_result, has_nrows, has_ncols, check_col, check_row, check_solution_cols, lowercase, is_equal, check_result
 
-from protowhat.checks.check_funcs import check_node, check_field, test_student_typed, has_equal_ast, verify_ast_parses
-from protowhat.checks.check_logic import fail, multi, test_not, extend, test_or, test_correct
-from protowhat.checks.check_simple import test_mc, success_msg
+from protowhat.checks.check_funcs import check_node, check_field, has_code, has_equal_ast, has_parsed_ast
+from protowhat.checks.check_logic import fail, multi, check_not, check_or, check_correct
+from protowhat.checks.check_simple import has_chosen, success_msg
