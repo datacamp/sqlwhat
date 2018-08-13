@@ -7,8 +7,6 @@ from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
 from protowhat.Test import TestFail as TF
 
-def print_message(exc): print(exc.value.payload['message'])
-
 @pytest.fixture
 def ast_mod():
     return importlib.import_module(PARSER_MODULES['postgresql'])
@@ -17,11 +15,11 @@ def ast_mod():
 def dialect_name(request):
     return request.param
 
-def prepare_state(solution_code, student_code, dialect='postgresql'):
+def prepare_state(sol_code, stu_code, dialect='postgresql'):
     dispatcher = Dispatcher.from_module(PARSER_MODULES[dialect])
     return State(
-        student_code = student_code,
-        solution_code = solution_code,
+        student_code = stu_code,
+        solution_code = sol_code,
         reporter = Reporter(),
         # args below should be ignored
         pre_exercise_code = "NA", 
@@ -29,93 +27,28 @@ def prepare_state(solution_code, student_code, dialect='postgresql'):
         student_conn = None, solution_conn = None,
         ast_dispatcher = dispatcher)
 
-def test_has_equal_ast_pass_identical():
-    state = prepare_state("SELECT id, name FROM Trips", "SELECT id, name FROM Trips")
-    has_equal_ast(state=state)
+# has_equal_ast ---------------------------------------------------------------
 
-def test_has_equal_ast_pass_clause_caps():
-    state = prepare_state("select id, name from Trips", "SELECT id, name FROM Trips")
-    has_equal_ast(state=state)
-
-def test_has_equal_ast_pass_spacing():
-    state = prepare_state("SELECT id,name from Trips", "SELECT id, name FROM Trips")
-    has_equal_ast(state=state)
-
-def test_has_equal_ast_pass_unparsed():
-    query = "SELECT CURSOR (SELECT * FROM TRIPS) FROM Trips"
-    state = prepare_state(query, query)
+@pytest.mark.parametrize('sol, stu', [
+    ("SELECT id, name FROM Trips", "SELECT id, name FROM Trips"), # identical
+    ("select id, name from Trips", "SELECT id, name FROM Trips"), # clause caps
+    ("SELECT id,name from Trips", "SELECT id, name FROM Trips"),  # spacing
+    ("SELECT CURSOR (SELECT * FROM TRIPS) FROM Trips", "SELECT CURSOR (SELECT * FROM TRIPS) FROM Trips") # unparsed
+])
+def test_has_equal_ast_pass(sol, stu):
+    state = prepare_state(sol, stu)
     has_equal_ast(state=state)
 
 def test_has_equal_ast_fail_quoted_column():
     state = prepare_state('SELECT "id", "name" FROM "Trips"', "SELECT id, name FROM Trips")
-    with pytest.raises(TF, match='Check the Script') as exc_info:
+    with pytest.raises(TF):
         has_equal_ast(state=state)
-    print_message(exc_info)
-
-def test_bug():
-    x = "SELECT * FROM cities INNER JOIN countries ON cities.country_code = countries.code;"
-    state = prepare_state(x, x)
-    sel = check_node(state, "SelectStmt")
-    fc = check_field(sel, "from_clause")
-    jt = check_field(fc, "join_type")
-    has_equal_ast(jt)
-
-def test_bug_2():
-    x = "SELECT cities.name AS city, urbanarea_pop, countries.name AS country, indep_year, languages.name AS language, percent FROM languages RIGHT JOIN countries ON languages.code = countries.code RIGHT JOIN cities ON countries.code = cities.country_code ORDER BY city, language;"
-    state = prepare_state(x, x)
-    sel = check_node(state, "SelectStmt")
-    fc = check_field(sel, "from_clause")
-    l = check_field(fc, "left")
-    jt = check_field(l, "join_type")
-    has_equal_ast(jt)
-
-def test_bug_3():
-    x = "SELECT cities.name AS city, urbanarea_pop, countries.name AS country, indep_year, languages.name AS language, percent FROM languages RIGHT JOIN countries ON languages.code = countries.code RIGHT JOIN cities ON countries.code = cities.country_code ORDER BY city, language;"
-    state = prepare_state(x, x)
-    sel = check_node(state, "SelectStmt")
-    fc = check_field(sel, "from_clause")
-    l = check_field(fc, "left")
-    jt = check_field(l, "join_type")
-    has_equal_ast(jt)
-
-def test_bug_4():
-    x = """
-SELECT name, continent, inflation_rate
-FROM countries
-INNER JOIN economies
-ON countries.code = economies.code
-WHERE year = 2015
-    AND inflation_rate IN (
-        SELECT MAX(inflation_rate) AS max_inf
-        FROM (
-             SELECT name, continent, inflation_rate
-             FROM countries
-             INNER JOIN economies
-             ON countries.code = economies.code
-             WHERE year = 2015) AS subquery
-        GROUP BY continent);
-"""
-    state = prepare_state(x, x)
-    sel = check_node(state, "SelectStmt")
-    fc = check_field(sel, "from_clause")
-    jt = check_field(fc, "join_type")
-    wc = check_field(sel, "where_clause")
-    rw = check_field(wc, 'right')
-    subsel = check_node(rw, 'SelectStmt')
-    subfc = check_field(subsel, 'from_clause')
-    subsubsel = check_node(check_node(subfc, 'Unshaped'), 'SelectStmt')
-    subsubfc = check_field(subsubsel, "from_clause")
-    subsubjt = check_field(subsubfc, 'join_type')
-
-    for i in [fc, jt, wc, rw, subsel, subfc, subsubsel, subsubfc, subsubjt]:
-        has_equal_ast(i)
 
 def test_has_equal_ast_field_fail():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT name FROM Trips")
     sel = check_node(state, "SelectStmt", 0)
     tl = check_field(sel, "target_list", 0)
-    with pytest.raises(TF, match = 'Check the first entry in the target list of the `SELECT` statement. The checker expected to find `id` in there.') as exc_info: has_equal_ast(tl)
-    print_message(exc_info)
+    with pytest.raises(TF): has_equal_ast(tl)
 
 def test_has_equal_ast_manual_fail():
     query = "SELECT id, name FROM Trips"
@@ -140,9 +73,10 @@ def test_has_equal_ast_not_exact_fail():
     query = "SELECT id, name FROM Trips WHERE id < 100 AND name = 'greg'"
     state = prepare_state(query, query)
     child = check_node(state, "SelectStmt")
-    with pytest.raises(TF, match = 'Check the first `SELECT` statement. The checker expected to find `id < 999` in there.') as exc_info:
+    with pytest.raises(TF):
         has_equal_ast(child, sql="id < 999", start="expression", exact=False)
-    print_message(exc_info)
+
+# check_node ------------------------------------------------------------------
 
 def test_check_node_pass(ast_mod):
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
@@ -152,8 +86,7 @@ def test_check_node_pass(ast_mod):
 
 def test_check_node_fail():
     state = prepare_state("SELECT id, name FROM Trips", "INSERT INTO Trips VALUES (1)")
-    with pytest.raises(TF) as exc_info: check_node(state, "SelectStmt", 0)
-    print_message(exc_info)
+    with pytest.raises(TF): check_node(state, "SelectStmt", 0)
 
 def test_check_node_priority_pass(ast_mod):
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
@@ -165,9 +98,8 @@ def test_check_node_priority_fail():
     state = prepare_state("SELECT id + 1, name FROM Trips", "INSERT INTO Trips VALUES (1)")
     with pytest.raises(TF):
         check_node(state, "SelectStmt", 0, priority=0)
-    with pytest.raises(TF) as exc_info:
+    with pytest.raises(TF):
         check_node(state, "BinaryExpr", 0, priority = 99)
-    print_message(exc_info)
 
 def test_check_node_back_to_back():
     state = prepare_state("SELECT 1 + 2 + 3 FROM x", "SELECT 1 + 2 + 3 FROM x")
@@ -188,6 +120,8 @@ def test_check_node_antlr_exception_skips(dialect_name):
     select = check_node(state, "SelectStmt", 2)   # should be skipped
     assert select is state
 
+# check_field -----------------------------------------------------------------
+
 def test_check_field_pass():
     state = prepare_state("SELECT id FROM Trips WHERE id > 3", "SELECT id FROM Trips WHERE id>3")
     select = check_node(state, "SelectStmt", 0)
@@ -206,15 +140,21 @@ def test_check_field_index_pass():
 def test_check_field_index_fail():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
     select = check_node(state, "SelectStmt", 0)
-    with pytest.raises(TF) as exc_info: check_field(select, "target_list", 1)
-    print_message(exc_info)
-
+    with pytest.raises(TF): check_field(select, "target_list", 1)
 
 def test_check_field_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
-    select = check_field(state, "where", 0)   # should be skipped
+    select = check_field(state, "where", 0) # should be skipped
     assert select is state
+
+def test_check_field_index_none_fail():
+    state = prepare_state("SELECT a, b FROM b WHERE a < 10", "SELECT a FROM b")
+    sel = check_node(state, 'SelectStmt') 
+    with pytest.raises(TF):
+        check_field(sel, 'where_clause')
+
+# has_code --------------------------------------------------------------------
 
 @pytest.fixture
 def state_tst():
@@ -266,10 +206,3 @@ def test_has_parsed_ast():
     state_tst = prepare_state("SELECT * FROM x!!!", "SELECT * FROM x!!!")
     with pytest.raises(TF):
         has_parsed_ast(state_tst)
-
-def test_check_field_index_none_fail():
-    state = prepare_state("SELECT a, b FROM b WHERE a < 10", "SELECT a FROM b")
-    sel = check_node(state, 'SelectStmt') 
-    with pytest.raises(TF) as exc_info:
-        check_field(sel, 'where_clause')
-    print_message(exc_info)
