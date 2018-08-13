@@ -103,7 +103,7 @@ def test_test_exercise_fail(conn, sct):
         solution_result = sol_result,
         ex_type="NormalExercise",
         error=[]
-        )
+    )
 
     assert sct_payload.get('correct') is False
 

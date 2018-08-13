@@ -79,4 +79,3 @@ def test_is_equal():
     state = prepare_state({'a': [1, 2]}, {'a': [2, 1]})
     with pytest.raises(TF, match = "Have another look at your query result. Column `a` seems to be incorrect. Make sure you arranged the rows correctly."):
         cr.is_equal(cr.check_col(state, 'a'), ordered=True)
-
