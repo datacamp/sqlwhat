@@ -18,7 +18,7 @@ This article gives an overview of all AST-based checks, that are typically used 
 Navigating the tree
 ===================
 
-The tutorial gave a gentle introduction into how the AST of a SQL query can be 'walked' as it were, using ``check_field()`` and
+The tutorial gave a gentle introduction into how the AST of a SQL query can be 'walked' as it were, using ``check_edge()`` and
 ``check_node()``. In addition to the state they start from, these functions take a couple of different arguments:
 
 - ``name``: the name of the node or field you want to zoom in on,
@@ -47,15 +47,15 @@ The AST representation of this SQL query looks as follows:
 To zoom in on the sub-tree that corresponds to the ``ON`` part, we have to:
 
 - take the ``SelectStmt`` node (with ``check_node('SelectStmt')``)
-- walk down the ``from_clause`` edge (with ``check_field('from_clause')``)
-- walk down the ``cond`` edge (with ``check_field('cond')``)
+- walk down the ``from_clause`` edge (with ``check_edge('from_clause')``)
+- walk down the ``cond`` edge (with ``check_edge('cond')``)
 
 .. code::
 
     Ex(). \
         check_node('SelectStmt'). \
-        check_field('from_clause'). \
-        check_field('cond')
+        check_edge('from_clause'). \
+        check_edge('cond')
 
 This SCT will focus on the following part of the solution query:
 
@@ -81,7 +81,7 @@ The SCT will focus on the following part of the student query:
 Checking the tree
 =================
 
-Once you've used a combination of ``check_node()`` and ``check_field()`` to zoom in on a part of interest
+Once you've used a combination of ``check_node()`` and ``check_edge()`` to zoom in on a part of interest
 you can use ``has_equal_ast()`` to verify whether the elements correspond.
 
 Continuing from the ``INNER JOIN`` example, we can verify whether the snippets of SQL code that have been zoomed in have a matching AST representation:
@@ -90,8 +90,8 @@ Continuing from the ``INNER JOIN`` example, we can verify whether the snippets o
 
     Ex(). \
         check_node('SelectStmt'). \
-        check_field('from_clause'). \
-        check_field('cond'). \
+        check_edge('from_clause'). \
+        check_edge('cond'). \
         has_equal_ast()
 
 You can supplement this with a ``check_or()`` call and a manually specified ``sql`` snippet if you want to allow for multiple ways of specifying the condition:
@@ -100,8 +100,8 @@ You can supplement this with a ``check_or()`` call and a manually specified ``sq
 
     Ex(). \
         check_node('SelectStmt'). \
-        check_field('from_clause'). \
-        check_field('cond'). \
+        check_edge('from_clause'). \
+        check_edge('cond'). \
         check_or(
             has_equal_ast(),
             has_equal_ast(sql = "countries.code = cities.code")

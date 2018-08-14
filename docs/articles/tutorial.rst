@@ -25,13 +25,13 @@ The following SCT would verify this:
 
 .. code-block:: python
 
-    Ex().check_col('title').is_equal()
+    Ex().check_column('title').has_equal_value()
 
 Let's see what happens when the SCT runs:
 
 - ``Ex()`` returns the 'root state', which contains a reference to the student query, the solution query,
   the result of running the student's query, and the result of running the solution query.
-- ``check_col('title')`` looks at the result of running the student's query and the solution query, and verifies that they are there.
+- ``check_column('title')`` looks at the result of running the student's query and the solution query, and verifies that they are there.
 
   + If the student had submitted ``SELECT title, year FROM films``,
     the query result will contain the column ``title``, and the function will not fail.
@@ -39,9 +39,9 @@ Let's see what happens when the SCT runs:
     the query result will not contain the column ``title``,
     the function will fail, and sqlwhat will automatically generate a meaningful feedback message.
   
-  If ``check_col('title')`` runs without errors, it will return a sub-state of the root-state returned by ``Ex()``,
+  If ``check_column('title')`` runs without errors, it will return a sub-state of the root-state returned by ``Ex()``,
   that zooms in solely on the ``title`` column of the query result.
-  This means that ``Ex().check_col('title')`` will produce the same substate for the following student submissions:
+  This means that ``Ex().check_column('title')`` will produce the same substate for the following student submissions:
 
   .. code-block:: sql
 
@@ -49,7 +49,7 @@ Let's see what happens when the SCT runs:
         SELECT title, year FROM films
         SELECT * FROM films
 
-- ``is_equal()`` will consider the state produced by ``check_col('title')`` and verify whether
+- ``has_equal_value()`` will consider the state produced by ``check_column('title')`` and verify whether
   the contents of the columns match between student and solution query result.
   
   + If the student had submitted ``SELECT title FROM films``,
@@ -75,14 +75,14 @@ In line with Example 1, the following SCT would robustly verify the result of th
 
 .. code-block:: python
 
-    Ex().check_col('id').is_equal()
+    Ex().check_column('id').has_equal_value()
 
 If the student makes a mistake, this SCT will produce a feedback message in the direction of:
 "Check the result of your query. Column ``id`` seems to be incorrect.". Although this is valid feedback,
 you'll typically want to be more targeted about the actual mistake in the code of the student.
 This is where the AST-based checks come in.
 
-Where functions such as ``check_col()`` and ``is_equal()`` look at the `result` of your query,
+Where functions such as ``check_column()`` and ``has_equal_value()`` look at the `result` of your query,
 AST-based checks will look at the query `itself`.
 More specifically, they will look at the Abstract Syntax Tree representation of the query,
 which enables us to robustly look and check for certain patterns and constructs.
@@ -97,14 +97,14 @@ Notice how the statement is neatly chopped up into its consituents: the ``SELECT
 the ``target_list`` (which columns to select), the ``from_clause`` (from which table to select) and the ``where_clause`` (the condition that has to be satisfied).
 Next, the ``where_caluse`` is a ``BinaryExpr`` that is further chopped up.
 
-Similar to how ``check_col('title')`` zoomed in on only the ``title`` column of the student's and solution query result, you can use the ``.`` operator
+Similar to how ``check_column('title')`` zoomed in on only the ``title`` column of the student's and solution query result, you can use the ``.`` operator
 to chain together AST-verifying SCT functions that each zoom in on particular parts of the student's submission and the solution.
 
 Suppose you want to check whether students have correctly specified the table from which to select columns (the ``FROM artists`` part). This SCT script does that:
 
 .. code-block:: python
 
-    Ex().check_node("SelectStmt").check_field("from_clause").has_equal_ast()
+    Ex().check_node("SelectStmt").check_edge("from_clause").has_equal_ast()
 
 We'll now explain step by step what happens when a student submits the following (incorrect) code:
 
@@ -150,7 +150,7 @@ When the SCT executes:
      :align: center
      :scale: 80%
 
-- Next, ``check_field()`` chains off of the state produced by ``check_node()`` and zooms in on the ``from_clause`` branch of the AST:
+- Next, ``check_edge()`` chains off of the state produced by ``check_node()`` and zooms in on the ``from_clause`` branch of the AST:
 
     .. code-block:: sql
 
@@ -166,7 +166,7 @@ When the SCT executes:
      :align: center
      :width: 300px
 
-- Finally, ``has_equal_ast()`` chains off of the state produced by ``check_field()`` and
+- Finally, ``has_equal_ast()`` chains off of the state produced by ``check_edge()`` and
   checks whether the student submission and solution sub-ASTs correspond.
   As the solution expects ``artists`` while the student specified ``producers`` the SCT fails
   and sqlwhat will generate a meaningful feedback message.
@@ -174,7 +174,7 @@ When the SCT executes:
 .. note::
 
     - ``check_node()`` is used to select a `node` of the AST tree (a circle in the image).
-    - ``check_field()`` is used to walk down a `branch` of the AST tree (a line in the image).
+    - ``check_edge()`` is used to walk down a `branch` of the AST tree (a line in the image).
 
 Example 3: Combining result checks and AST checks
 =================================================
@@ -197,10 +197,10 @@ we can write the following SCT, that is both flexible:
 .. code-block:: python
 
     Ex().check_correct(
-        check_col('id').is_equal(),
+        check_column('id').has_equal_value(),
         check_node('SelectStmt').multi(
-            check_field('from_clause').has_equal_ast(),
-            check_field('where_clause').has_equal_ast()
+            check_edge('from_clause').has_equal_ast(),
+            check_edge('where_clause').has_equal_ast()
         )
     )
 
@@ -219,7 +219,7 @@ is executed that also starts from the state passed to ``check_correct()``. This 
 This SCT:
 
 - is flexible if the student got the right end result.
-  For all of the following queries, the `check_col('id').is_equal()` chain passes, so the `check_node()` chain does not run:
+  For all of the following queries, the `check_column('id').has_equal_value()` chain passes, so the `check_node()` chain does not run:
 
   .. code-block:: sql
 
