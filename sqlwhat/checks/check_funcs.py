@@ -7,7 +7,7 @@ def allow_error(state):
     state.reporter.allow_errors()
     return state
 
-def has_error(state, msg="Your code generated an error. Fix it and try again!"):
+def has_error(state, incorrect_msg="Your code generated an error. Fix it and try again!"):
     """Test whether submission caused a database error.
 
     Simply use ``Ex().has_error()`` in your SCT whenever you want to check for errors.
@@ -16,21 +16,21 @@ def has_error(state, msg="Your code generated an error. Fix it and try again!"):
     by using ``Ex().allow_error()``.
 
     Args:
-        msg: If specified, this overrides the automatically generated feedback message
-             in case the student's query did not return a result.
+        incorrect_msg: If specified, this overrides the automatically generated feedback message
+                       in case the student's query did not return a result.
     """
 
     if state.reporter.get_errors():
-        state.do_test(msg)
+        state.do_test(incorrect_msg)
 
     return state
 
-def has_result(state, msg="Your query did not return a result."):
+def has_result(state, incorrect_msg="Your query did not return a result."):
     """Checks if the student's query returned a result.
     
     Args:
-        msg: If specified, this overrides the automatically generated feedback message
-             in case the student's query did not return a result.
+        incorrect_msg: If specified, this overrides the automatically generated feedback message
+                       in case the student's query did not return a result.
     """
 
     # first check if there is no error
@@ -40,16 +40,16 @@ def has_result(state, msg="Your query did not return a result."):
         raise NameError("You are using has_result() to verify that the student query generated an error, but the solution query did not return a result either!")
 
     if not state.student_result:
-        state.do_test(msg)
+        state.do_test(incorrect_msg)
 
     return state
 
-def has_nrows(state, msg="Your query returned a table with {{n_stu}} row{{'s' if n_stu > 1 else ''}} while it should return a table with {{n_sol}} row{{'s' if n_sol > 1 else ''}}."):
+def has_nrows(state, incorrect_msg="Your query returned a table with {{n_stu}} row{{'s' if n_stu > 1 else ''}} while it should return a table with {{n_sol}} row{{'s' if n_sol > 1 else ''}}."):
     """Test whether the student and solution query results have equal numbers of rows.
     
     Args:
-        msg: If specified, this overrides the automatically generated feedback message
-             in case the number of rows in the student and solution query don't match.
+        incorrect_msg: If specified, this overrides the automatically generated feedback message
+                       in case the number of rows in the student and solution query don't match.
     """
 
     # check that query returned something
@@ -60,17 +60,17 @@ def has_nrows(state, msg="Your query returned a table with {{n_stu}} row{{'s' if
     n_sol = len(next(iter(state.solution_result.values())))
 
     if n_stu != n_sol:
-        _msg = state.build_message(msg, fmt_kwargs={'n_stu':n_stu,'n_sol':n_sol})
+        _msg = state.build_message(incorrect_msg, fmt_kwargs={'n_stu':n_stu,'n_sol':n_sol})
         state.do_test(_msg)
 
     return state
 
-def has_ncols(state, msg="Your query returned a table with {{n_stu}} column{{'s' if n_stu > 1 else ''}} while it should return a table with {{n_sol}} column{{'s' if n_sol > 1 else ''}}."):
+def has_ncols(state, incorrect_msg="Your query returned a table with {{n_stu}} column{{'s' if n_stu > 1 else ''}} while it should return a table with {{n_sol}} column{{'s' if n_sol > 1 else ''}}."):
     """Test whether the student and solution query results have equal numbers of columns.
 
     Args:
-        msg: If specified, this overrides the automatically generated feedback message
-             in case the number of columns in the student and solution query don't match.
+        incorrect_msg: If specified, this overrides the automatically generated feedback message
+                       in case the number of columns in the student and solution query don't match.
 
     :Example:
 
@@ -100,7 +100,7 @@ def has_ncols(state, msg="Your query returned a table with {{n_stu}} column{{'s'
     n_sol = len(state.solution_result)
 
     if n_stu != n_sol:
-        _msg = state.build_message(msg, fmt_kwargs={'n_stu':n_stu,'n_sol':n_sol})
+        _msg = state.build_message(incorrect_msg, fmt_kwargs={'n_stu':n_stu,'n_sol':n_sol})
         state.do_test(_msg)
 
     return state
@@ -111,7 +111,7 @@ def check_row(state, index,
     """Zoom in on a particular row in the query result, by index.
 
     After zooming in on a row, which is represented as a single-row query result,
-    you can use ``is_equal()`` to verify whether all columns in the zoomed in solution
+    you can use ``has_equal_value()`` to verify whether all columns in the zoomed in solution
     query result have a match in the student query result.
 
     Args:
@@ -165,13 +165,13 @@ def check_row(state, index,
         solution_result = { k: [v[index]] for k,v in sol_res.items() }
     )
 
-def check_col(state, name,
+def check_column(state, name,
               missing_msg=None,
               expand_msg=None):
     """Zoom in on a particular column in the query result, by name.
 
     After zooming in on a column, which is represented as a single-column query result,
-    you can use ``is_equal()`` to verify whether the column in the solution query result
+    you can use ``has_equal_value()`` to verify whether the column in the solution query result
     matches the column in student query result.
 
     Args:
@@ -192,10 +192,10 @@ def check_col(state, name,
         We can write the following SCTs: ::
 
             # fails, since no column named id in student result
-            Ex().check_col('id')
+            Ex().check_column('id')
 
             # passes, since a column named name is in student_result
-            Ex().check_col('name')
+            Ex().check_column('name')
 
     """
 
@@ -222,18 +222,18 @@ def check_col(state, name,
         solution_result = { name: sol_res[name] }
     )
 
-def check_solution_cols(state, allow_extra_cols=True, too_many_cols_msg=None, expand_msg=None):
+def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_msg=None):
     """Zoom in on the columns that are specified by the solution
     
-    Behind the scenes, this is using ``check_col()`` for every column that is in the solution query result.
+    Behind the scenes, this is using ``check_column()`` for every column that is in the solution query result.
     Afterwards, it's selecting only these columns from the student query result and stores them in a child
-    state that is returned, so you can use ``is_equal()`` on it.
+    state that is returned, so you can use ``has_equal_value()`` on it.
 
-    This function does not allow you to customize the messages for ``check_col()``. If you want to manually
-    set those, simply use ``check_col()`` explicitly.
+    This function does not allow you to customize the messages for ``check_column()``. If you want to manually
+    set those, simply use ``check_column()`` explicitly.
 
     Args:
-        allow_extra_cols: True by default, this determines whether students are allowed to have included
+        allow_extra: True by default, this determines whether students are allowed to have included
                      other columns in their query result.
         too_many_cols_msg: If specified, this overrides the automatically generated feedback message in
                            case ``allow_extra`` is False and the student's query returned extra columns when
@@ -250,7 +250,7 @@ def check_solution_cols(state, allow_extra_cols=True, too_many_cols_msg=None, ex
             SELECT artist_id as id, name FROM artists
 
             # sct
-            Ex().check_solution_cols()
+            Ex().check_all_columns()
 
             # passing submission
             SELECT artist_id as id, name FROM artists
@@ -269,12 +269,12 @@ def check_solution_cols(state, allow_extra_cols=True, too_many_cols_msg=None, ex
     child_sol_result = {}
 
     for col in state.solution_result:
-        child = check_col(state, col)
+        child = check_column(state, col)
         child_stu_result.update(**child.student_result)
         child_sol_result.update(**child.solution_result)
 
     cols_not_in_sol = list(set(state.student_result.keys()) - set(child_stu_result.keys()))
-    if not allow_extra_cols and len(cols_not_in_sol) > 0:
+    if not allow_extra and len(cols_not_in_sol) > 0:
         _msg = state.build_message("Your query result contains the column `{{col}}` but shouldn't.", fmt_kwargs = { 'col': cols_not_in_sol[0] })
         state.do_test(_msg)
 
@@ -286,11 +286,11 @@ def check_solution_cols(state, allow_extra_cols=True, too_many_cols_msg=None, ex
 
 round_seq = lambda seq, digits: [round(x, digits) if x is not None else x for x in seq]
 
-def is_equal(state, ordered=False, ndigits=None, incorrect_msg=None):
+def has_equal_value(state, ordered=False, ndigits=None, incorrect_msg=None):
     """Verify if a student and solution query result match up.
 
-    This function must always be used after 'zooming' in on certain columns or records (check_col, check_row or check_result).
-    ``is_equal`` then goes over all columns that are still left in the solution query result, and compares each column with the
+    This function must always be used after 'zooming' in on certain columns or records (check_column, check_row or check_result).
+    ``has_equal_value`` then goes over all columns that are still left in the solution query result, and compares each column with the
     corresponding column in the student query result.
 
     Args:
@@ -312,20 +312,20 @@ def is_equal(state, ordered=False, ndigits=None, incorrect_msg=None):
         We can write the following SCTs: ::
 
             # passes, as order is not important by default
-            Ex().check_col('name').is_equal()
+            Ex().check_column('name').has_equal_value()
 
             # fails, as order is deemed important
-            Ex().check_col('name').is_equal(ordered=True)
+            Ex().check_column('name').has_equal_value(ordered=True)
 
-            # check_col fails, as id is not in the student query result
-            Ex().check_col('id').is_equal()
+            # check_column fails, as id is not in the student query result
+            Ex().check_column('id').has_equal_value()
 
-            # check_solution_cols fails, as id not in the student query result
-            Ex().check_solution_cols().is_equal()
+            # check_all_columns fails, as id not in the student query result
+            Ex().check_all_columns().has_equal_value()
     """
 
     if not hasattr(state, 'parent'):
-        raise ValueError("You can only use is_equal() on the state resulting from check_col, check_row or check_result.")
+        raise ValueError("You can only use has_equal_value() on the state resulting from check_column, check_row or check_result.")
     
     if incorrect_msg is None: incorrect_msg="Column `{{col}}` seems to be incorrect.{{' Make sure you arranged the rows correctly.' if ordered else ''}}"
 
@@ -393,10 +393,10 @@ def lowercase(state):
         We can write the following SCTs: ::
 
             # fails, as id and ID have different case
-            Ex().check_col('id').is_equal()
+            Ex().check_column('id').has_equal_value()
 
             # passes, as lowercase() is being used
-            Ex().lowercase().check_col('id').is_equal()
+            Ex().lowercase().check_column('id').has_equal_value()
 
     """
     return state.to_child(
@@ -410,11 +410,11 @@ def check_result(state):
     ``check_result()``
 
     * uses ``lowercase()``, then
-    * runs ``check_solution_cols()`` on the state produced by ``lowercase()``, then
-    * runs ``is_equal`` on the state produced by ``check_solution_cols()``.
+    * runs ``check_all_columns()`` on the state produced by ``lowercase()``, then
+    * runs ``has_equal_value`` on the state produced by ``check_all_columns()``.
     """
 
     state1 = lowercase(state)
-    state2 = check_solution_cols(state1)
-    is_equal(state2)
+    state2 = check_all_columns(state1)
+    has_equal_value(state2)
     return state2

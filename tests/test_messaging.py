@@ -52,30 +52,30 @@ def test_check_row(stu, patt):
     state = prepare_state({'a': [1, 2] }, stu)
     with pytest.raises(TF, match = patt):
         ss = cr.check_row(state, 1)
-        cr.is_equal(ss)
+        cr.has_equal_value(ss)
 
 @pytest.mark.parametrize('stu, patt', [
     ({'b': [2]}, "We expected to find a column named `a` in the result of your query, but couldn't."),
     ({'a': [2]}, r"Have another look at your query result\. Column `a` seems to be incorrect\.$"),
 ])
-def test_check_col(stu, patt):
+def test_check_column(stu, patt):
     state = prepare_state({'a': [1] }, stu)
     with pytest.raises(TF, match = patt):
-        ss = cr.check_col(state, 'a')
-        cr.is_equal(ss)
+        ss = cr.check_column(state, 'a')
+        cr.has_equal_value(ss)
 
 @pytest.mark.parametrize('stu, patt', [
     ({'b': [2]}, "We expected to find a column named `a` in the result of your query, but couldn't."),
     ({'a': [2], 'b': [1]}, "Your query result contains the column `b` but shouldn't."),
     ({'a': [2]}, r"Have another look at your query result\. Column `a` seems to be incorrect\.$"),
 ])
-def test_check_solution_cols(stu, patt):
+def test_check_all_columns(stu, patt):
     state = prepare_state({'a': [1] }, stu)
     with pytest.raises(TF, match = patt):
-        ss = cr.check_solution_cols(state, allow_extra_cols=False)
-        cr.is_equal(ss)
+        ss = cr.check_all_columns(state, allow_extra=False)
+        cr.has_equal_value(ss)
 
-def test_is_equal():
+def test_has_equal_value():
     state = prepare_state({'a': [1, 2]}, {'a': [2, 1]})
     with pytest.raises(TF, match = "Have another look at your query result. Column `a` seems to be incorrect. Make sure you arranged the rows correctly."):
-        cr.is_equal(cr.check_col(state, 'a'), ordered=True)
+        cr.has_equal_value(cr.check_column(state, 'a'), ordered=True)

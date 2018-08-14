@@ -1,7 +1,7 @@
 import importlib
 import pytest
 
-from protowhat.checks.check_funcs import check_node, check_field, has_equal_ast, has_code, has_parsed_ast
+from protowhat.checks.check_funcs import check_node, check_edge, has_equal_ast, has_code, has_parsed_ast
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
@@ -47,7 +47,7 @@ def test_has_equal_ast_fail_quoted_column():
 def test_has_equal_ast_field_fail():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT name FROM Trips")
     sel = check_node(state, "SelectStmt", 0)
-    tl = check_field(sel, "target_list", 0)
+    tl = check_edge(sel, "target_list", 0)
     with pytest.raises(TF): has_equal_ast(tl)
 
 def test_has_equal_ast_manual_fail():
@@ -111,7 +111,7 @@ def test_check_node_back_to_back():
 def test_check_node_from_list():
     state = prepare_state("SELECT a, b, c FROM x", "SELECT a, b, c FROM x")
     sel = check_node(state, "SelectStmt", 0)
-    tl = check_field(sel, "target_list")
+    tl = check_edge(sel, "target_list")
     check_node(tl, "Identifier")
 
 def test_check_node_antlr_exception_skips(dialect_name):
@@ -120,39 +120,39 @@ def test_check_node_antlr_exception_skips(dialect_name):
     select = check_node(state, "SelectStmt", 2)   # should be skipped
     assert select is state
 
-# check_field -----------------------------------------------------------------
+# check_edge -----------------------------------------------------------------
 
-def test_check_field_pass():
+def test_check_edge_pass():
     state = prepare_state("SELECT id FROM Trips WHERE id > 3", "SELECT id FROM Trips WHERE id>3")
     select = check_node(state, "SelectStmt", 0)
-    check_field(select, "where_clause")
+    check_edge(select, "where_clause")
 
-def test_check_field_fail():
+def test_check_edge_fail():
     state = prepare_state("SELECT id FROM Trips WHERE id > 3", "SELECT id FROM Trips WHERE id>4")
     select = check_node(state, "SelectStmt", 0)
-    check_field(select, "where_clause")
+    check_edge(select, "where_clause")
 
-def test_check_field_index_pass():
+def test_check_edge_index_pass():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id, name FROM Trips")
     select = check_node(state, "SelectStmt", 0)
-    check_field(select, "target_list", 1)
+    check_edge(select, "target_list", 1)
 
-def test_check_field_index_fail():
+def test_check_edge_index_fail():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT id FROM Trips")
     select = check_node(state, "SelectStmt", 0)
-    with pytest.raises(TF): check_field(select, "target_list", 1)
+    with pytest.raises(TF): check_edge(select, "target_list", 1)
 
-def test_check_field_antlr_exception_skips(dialect_name):
+def test_check_edge_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
     assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
-    select = check_field(state, "where", 0) # should be skipped
+    select = check_edge(state, "where", 0) # should be skipped
     assert select is state
 
-def test_check_field_index_none_fail():
+def test_check_edge_index_none_fail():
     state = prepare_state("SELECT a, b FROM b WHERE a < 10", "SELECT a FROM b")
     sel = check_node(state, 'SelectStmt') 
     with pytest.raises(TF):
-        check_field(sel, 'where_clause')
+        check_edge(sel, 'where_clause')
 
 # has_code --------------------------------------------------------------------
 
@@ -171,23 +171,23 @@ def test_has_code_fixed_subset_fail(state_tst):
 
 def test_has_code_fixed_subset_pass(state_tst):
     select = check_node(state_tst, "SelectStmt", 0)
-    where = check_field(select, "where_clause")
+    where = check_edge(select, "where_clause")
     has_code(where, "id > 4", fixed=True)
 
 def test_has_code_fixed_subset_fail2(state_tst):
     select = check_node(state_tst, "SelectStmt", 0)
-    where = check_field(select, "where_clause")
+    where = check_edge(select, "where_clause")
     with pytest.raises(TF):
         has_code(where, "WHERE id > 4", fixed=True)
 
 def test_has_code_subset_re_pass(state_tst):
     select = check_node(state_tst, "SelectStmt", 0)
-    where = check_field(select, "where_clause")
+    where = check_edge(select, "where_clause")
     has_code(where, "id > [0-9]")
 
 def test_has_code_subset_re_pass2(state_tst):
     select = check_node(state_tst, "SelectStmt", 0)
-    where = check_field(select, "where_clause")
+    where = check_edge(select, "where_clause")
     with pytest.raises(TF):
         has_code(where, "id > [a-z]")
 

@@ -46,19 +46,19 @@ xfail_def = pytest.mark.xfail(reason="implement deferrel")
 @pytest.mark.parametrize('sct', [
     "Ex().check_node('SelectStmt')",
     "Ex().check_node('SelectStmt', priority=99)",
-    "Ex().check_node('SelectStmt').check_field('target_list')",
+    "Ex().check_node('SelectStmt').check_edge('target_list')",
     "Ex().has_code('SELECT')",
     "Ex().has_equal_ast()",
     "Ex().multi(has_code('SELECT'))",
     "Ex().check_or(has_code('SELECT'))",
     "Ex().check_correct(has_code('SELECT'), has_code('SEL'))",
     "Ex().check_correct(has_code('SELECT'), has_code('SEL').has_code('SEL'))",
-    "Ex().check_not(has_code('WHERE'), msg='do not write WHERE')",
+    "Ex().check_not(has_code('WHERE'), incorrect_msg='do not write WHERE')",
     "Ex().has_result()",
     "Ex().has_nrows()",
     "Ex().has_ncols()",
-    "Ex().check_col('id')",
-    "Ex().check_col('id').is_equal()"
+    "Ex().check_column('id')",
+    "Ex().check_column('id').has_equal_value()"
 ])
 def test_test_exercise_pass(conn, sct):
     result = {'id': [1], 'name': ['greg']}
@@ -78,7 +78,7 @@ def test_test_exercise_pass(conn, sct):
     assert sct_payload.get('correct') is True
 
 @pytest.mark.parametrize('sct', [
-    "Ex().check_node('SelectStmt').check_field('target_list').has_equal_ast()",
+    "Ex().check_node('SelectStmt').check_edge('target_list').has_equal_ast()",
     "Ex().has_code('id', fixed=True)",
     "Ex().has_equal_ast()",
     "Ex().multi(has_code('id'))",
@@ -86,8 +86,8 @@ def test_test_exercise_pass(conn, sct):
     "Ex().check_correct(has_code('id'), has_code('i'))",
     "Ex().has_nrows()",
     "Ex().has_ncols()",
-    "Ex().check_col('id')",
-    "Ex().check_col('name').is_equal()",
+    "Ex().check_column('id')",
+    "Ex().check_column('name').has_equal_value()",
 ])
 def test_test_exercise_fail(conn, sct):
     sol_result = {'id': [1], 'name': ['greg']}
@@ -109,7 +109,7 @@ def test_test_exercise_fail(conn, sct):
 
 @pytest.mark.parametrize('sct, passes, msg', [
     ('', False, 'Your code generated an error. Fix it and try again!'),
-    ('Ex().has_error(msg="wow")', False, 'wow'),
+    ('Ex().has_error(incorrect_msg="wow")', False, 'wow'),
     ('Ex().allow_error()', True, None)
 ])
 def test_error_handling(sct, passes, msg):

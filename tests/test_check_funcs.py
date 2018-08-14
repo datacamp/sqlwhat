@@ -108,20 +108,20 @@ def test_check_row_wrong_usage():
     ({'a': [1]}, {'a': [1]}, True),
     ({'a': [1], 'b': [2]}, {'a': [1]}, True)
 ])
-def test_check_col(stu, stu_sub, success):
+def test_check_column(stu, stu_sub, success):
     state = prepare_state({'a': [1]}, stu)
     if success:
-        x = cr.check_col(state, 'a')
+        x = cr.check_column(state, 'a')
         passes(x)
         assert x.solution_result == {'a': [1]}
         assert x.student_result == stu_sub
     else:
-        with pytest.raises(TF): cr.check_col(state, 'a')
+        with pytest.raises(TF): cr.check_column(state, 'a')
 
-def test_check_col_wrong_usage():
+def test_check_column_wrong_usage():
     state = prepare_state({'a': [1]}, {'a': [1]})
     with pytest.raises(BaseException):
-        cr.check_col(state, 'b')
+        cr.check_column(state, 'b')
 
 @pytest.mark.parametrize('stu, stu_sub, success', [
     ({}, None, False),
@@ -131,27 +131,27 @@ def test_check_col_wrong_usage():
     ({'a': [4], 'b': [5]}, {'a': [4], 'b': [5]}, True),
     ({'a': [1], 'b': [2], 'c': [3]}, {'a': [1], 'b': [2]}, True),
 ])
-def test_check_solution_cols(stu, stu_sub, success):
+def test_check_all_columns(stu, stu_sub, success):
     state = prepare_state({'a': [1], 'b': [2]}, stu)
     if success:
-        x = cr.check_solution_cols(state)
+        x = cr.check_all_columns(state)
         passes(x)
         assert x.solution_result == {'a': [1], 'b': [2]}
         assert x.student_result == stu_sub
     else:
-        with pytest.raises(TF): cr.check_solution_cols(state)
+        with pytest.raises(TF): cr.check_all_columns(state)
 
 @pytest.mark.parametrize('stu, success', [
     ({'a': [1], 'b': [2]}, True),
     ({'a': [4], 'b': [5]}, True),
     ({'A': [1], 'b': [2]}, False)
 ])
-def test_check_solution_cols_stricter(stu, success):
+def test_check_all_columns_stricter(stu, success):
     state = prepare_state({'a': [1], 'b': [2]}, stu)
     if success:
-        passes(cr.check_solution_cols(state, allow_extra_cols=False))
+        passes(cr.check_all_columns(state, allow_extra=False))
     else:
-        with pytest.raises(TF): cr.check_solution_cols(state, allow_extra_cols=False)
+        with pytest.raises(TF): cr.check_all_columns(state, allow_extra=False)
 
 @pytest.mark.parametrize('stu, success', [
     ({'a': [1]}, False),
@@ -161,14 +161,14 @@ def test_check_solution_cols_stricter(stu, success):
     ({'a': [2, 1]}, True),
     ({'a': [1, 2], 'b': [5, 6]}, True),
 ])
-def test_is_equal_basic(stu, success):
+def test_has_equal_value_basic(stu, success):
     state = prepare_state({'a': [1, 2], 'b': [3, 4]}, stu)
-    child = cr.check_col(state, 'a')
+    child = cr.check_column(state, 'a')
     if success:
-        passes(cr.is_equal(child))
+        passes(cr.has_equal_value(child))
     else:
         with pytest.raises(TF):
-            cr.is_equal(child)
+            cr.has_equal_value(child)
 
 @pytest.mark.parametrize('stu, success', [
     ({'a': [1]}, False),
@@ -177,33 +177,33 @@ def test_is_equal_basic(stu, success):
     ({'a': [2, 1]}, False),
     ({'a': [1, 2], 'b': [5, 6]}, True),
 ])
-def test_is_equal_ordered(stu, success):
+def test_has_equal_value_ordered(stu, success):
     state = prepare_state({'a': [1, 2], 'b': [3, 4]}, stu)
-    child = cr.check_col(state, 'a')
+    child = cr.check_column(state, 'a')
     if success:
-        passes(cr.is_equal(child, ordered=True))
+        passes(cr.has_equal_value(child, ordered=True))
     else:
         with pytest.raises(TF):
-            cr.is_equal(child, ordered=True)
+            cr.has_equal_value(child, ordered=True)
 
 @pytest.mark.parametrize('stu, success', [
     ({'a': [1.131]}, False),
     ({'a': ['abc']}, False),
     ({'a': [1.121]}, True),
 ])
-def test_is_equal_ndigits(stu, success):
+def test_has_equal_value_ndigits(stu, success):
     state = prepare_state({'a': [1.124]}, stu)
-    child = cr.check_col(state, 'a')
+    child = cr.check_column(state, 'a')
     if success:
-        passes(cr.is_equal(child, ndigits = 2))
+        passes(cr.has_equal_value(child, ndigits = 2))
     else:
         with pytest.raises(TF):
-            cr.is_equal(child, ndigits = 2)
+            cr.has_equal_value(child, ndigits = 2)
 
-def test_is_equal_wrong_usage():
+def test_has_equal_value_wrong_usage():
     state = prepare_state({}, {})
     with pytest.raises(ValueError):
-        cr.is_equal(state)
+        cr.has_equal_value(state)
 
 @pytest.mark.parametrize('sol_result,stu_result', [
     ( {'a': [2, 2, 1], 'b': [2, 1, 1]}, {'a': [2, 2, 1], 'b': [1, 2, 1]} ),
@@ -225,13 +225,13 @@ def test_lower_case():
 
     # fails if not using lowercase
     with pytest.raises(TF):
-        cr.check_col(state, 'a')
+        cr.check_column(state, 'a')
     
     # passes if lowercase is being used
     child = cr.lowercase(state)
-    child2 = cr.check_col(child, 'a')
+    child2 = cr.check_column(child, 'a')
     passes(child2)
-    passes(cr.is_equal(child2))
+    passes(cr.has_equal_value(child2))
 
 @pytest.mark.parametrize('stu, success', [
     ({'a': [1]}, False),

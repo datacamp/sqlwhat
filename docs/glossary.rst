@@ -29,10 +29,10 @@ Selecting a column
 
     # sct
     Ex().check_correct(
-        check_col('title').is_equal(),
+        check_column('title').has_equal_value(),
         check_node('SelectStmt').multi(
-            check_field('target_list', 0).has_equal_ast(),
-            check_field('from_clause').has_equal_ast()
+            check_edge('target_list', 0).has_equal_ast(),
+            check_edge('from_clause').has_equal_ast()
         )   
     )
 
@@ -59,10 +59,10 @@ Star argument
 
     # sct
     Ex().check_correct(
-        check_solution_cols().is_equal(),
+        check_all_columns().has_equal_value(),
         check_node('SelectStmt').multi(
             check_node('Star', missing_msg="Are you using `SELECT *` to select _all_ columns?"),
-            check_field('from_clause').has_equal_ast()
+            check_edge('from_clause').has_equal_ast()
         )
     )
 
@@ -90,13 +90,13 @@ Star argument
 
     # sct
     Ex().check_correct(
-        check_col('count').is_equal(),
+        check_column('count').has_equal_value(),
         check_node('SelectStmt').multi(
             check_node('Call').multi(
-                check_field('name').has_equal_ast(msg="Are you calling the `COUNT()` function?"),
-                check_field('args').has_equal_ast(msg='Are you using `COUNT(*)`?')
+                check_edge('name').has_equal_ast(),
+                check_edge('args').has_equal_ast()
             ),
-            check_field('from_clause').has_equal_ast()
+            check_edge('from_clause').has_equal_ast()
         )
     )
 
@@ -126,15 +126,15 @@ Star argument
     Ex().check_correct(
         has_nrows(),
         check_node('SelectStmt').multi(
-            check_field('from_clause').has_equal_ast(),
-            check_field('where_clause').has_equal_ast()
+            check_edge('from_clause').has_equal_ast(),
+            check_edge('where_clause').has_equal_ast()
         )
     )
 
     # Next check if right columns were included
     Ex().check_correct(
-        check_solution_cols().is_equal(),
-        check_node('SelectStmt').check_field('target_list').check_or(
+        check_all_columns().has_equal_value(),
+        check_node('SelectStmt').check_edge('target_list').check_or(
             has_equal_ast(),
             has_equal_ast(sql = "birthdate, name")
         )
@@ -152,14 +152,14 @@ Star argument
 .. code::
 
     # Check whether the right column was included
-    Ex().check_col('name')
+    Ex().check_column('name')
 
     Ex().check_correct(
         # Check whether the name column is correct (taking into account order)
-        check_col('name').is_equal(ordered=True),
+        check_column('name').has_equal_value(ordered=True),
         check_node('SelectStmt').multi(
-            check_field('from_clause').has_equal_ast(),
-            check_field('order_by_clause').has_equal_ast()
+            check_edge('from_clause').has_equal_ast(),
+            check_edge('order_by_clause').has_equal_ast()
         )
     )
 
@@ -178,11 +178,11 @@ Joins
     # First check if the joining went well (through checking the number of rows)
     Ex().check_correct(
         has_nrows(),
-        check_node('SelectStmt').check_field('from_clause').multi(
-            check_field('join_type').has_equal_ast(),
-            check_field('left').has_equal_ast(),
-            check_field('right').has_equal_ast(),
-            check_field('cond').check_or(
+        check_node('SelectStmt').check_edge('from_clause').multi(
+            check_edge('join_type').has_equal_ast(),
+            check_edge('left').has_equal_ast(),
+            check_edge('right').has_equal_ast(),
+            check_edge('cond').check_or(
                 has_equal_ast(),
                 # the other way around should also work
                 has_equal_ast(sql = 'countries.code = cities.country_code')
@@ -192,7 +192,7 @@ Joins
 
     # Check if all columns are included and correct
     Ex().check_correct(
-        check_solution_cols().is_equal(),
+        check_all_columns().has_equal_value(),
         check_node('SelectStmt').check_node('Star')
     )
 
