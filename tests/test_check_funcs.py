@@ -22,11 +22,11 @@ def prepare_state(sol_result, stu_result, error=None):
 def passes(x):
     assert isinstance(x, State)
 
-def test_check_error():
+def test_has_error():
     state = prepare_state({}, {}, ['an error'])
-    with pytest.raises(TF): cr.check_error(state)
+    with pytest.raises(TF): cr.has_error(state)
     state = prepare_state({'a': [1]}, {'a': [1]}, [])
-    passes(cr.check_error(state))
+    passes(cr.has_error(state))
 
 @pytest.mark.parametrize('stu, errors, success', [
     ({}, ['an error'], False),
