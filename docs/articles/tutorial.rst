@@ -173,9 +173,8 @@ When the SCT executes:
 
 .. note::
 
-    Notice that we are using two different functions here: ``check_node()`` and ``check_field()``.
-    As a rule, ``check_node()`` is used to select a `node` of the AST tree (a circle in the image).
-    while ``check_field()`` is used to walk down a `branch` of the AST tree (a line in the image).
+    - ``check_node()`` is used to select a `node` of the AST tree (a circle in the image).
+    - ``check_field()`` is used to walk down a `branch` of the AST tree (a line in the image).
 
 Example 3: Combining result checks and AST checks
 =================================================
