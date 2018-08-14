@@ -240,5 +240,7 @@ This SCT:
   Notice how for the last example here, all functions in the AST-based SCT chain passed.
   In this case, the more generic message is still thrown in the end.
 
+Have a look at the glossary for more examples of SCTs that nicely combine these two families of SCT functions.
+
 For other guidelines on writing good SCTs, check out the 'How to write good SCTs' section on DataCamp's
 `general SCT documentation page <https://authoring.datacamp.com/courses/exercises/technical-details/sct.html>`_.
