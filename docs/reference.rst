@@ -1,5 +1,5 @@
-Check query results
--------------------
+Result checks
+-------------
 
 .. automodule:: sqlwhat.checks.check_funcs
     :members:
@@ -10,20 +10,17 @@ AST Checks
 .. automodule:: protowhat.checks.check_funcs
     :members:
 
-Simple tests
-------------
-
-.. automodule:: protowhat.checks.check_simple
-    :members:
-
 Logic
 -------
+
+.. automethod:: protowhat.sct_syntax.Ex.__call__
 
 .. automodule:: protowhat.checks.check_logic
     :members:
 
-Ex()
-----
+Electives
+---------
 
-.. automethod:: protowhat.sct_syntax.Ex.__call__
+.. automodule:: protowhat.checks.check_simple
+    :members:
 

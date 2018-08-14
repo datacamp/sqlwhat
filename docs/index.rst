@@ -1,33 +1,40 @@
 sqlwhat
 -------
 
-``sqlwhat`` enables you to write Submission Correctness Tests (SCTs) for interactive SQL exercises on DataCamp.
+For an introduction to SCTs and how they use sqlwhat, visit the `README <https://github.com/datacamp/sqlwhat>`_.
 
-- If you are new to teaching on DataCamp, check out https://authoring.datacamp.com.
-- If you want to learn what SCTs are and how they work, visit `this article <https://authoring.datacamp.com/courses/exercises/technical-details/sct.html>`_ specifically.
+This documentation features:
 
-If you are new to writing SCTs for SQL exercises, start with the ``protowhat`` docs (`link <https://protowhat.readthedocs.io>`_)
-that explain the concept of state, SCT chaining, and how this relates to abstract syntax trees, in addition to providing documentation
-on all SCT functions that are shared with the ``shellwhat`` package (used for writing SCTs for Shell exercises).
+- A glossary with typical use-cases and corresponding SCT constructs.
+- Reference documentation of all actively maintained sqlwhat functions.
+- Some articles that gradually expose of sqlwhat's functionality and best practices.
 
-After consulting the resources above, you can continue with this site that features:
+If you are new to writing SCTs for Python exercises, start with the tutorial.
+The glossary is good to get a quick overview of how all functions play together after you have a basic understanding.
+The reference docs become useful when you grasp all concepts and want to look up details on how to call certain functions and specify custom feedback messages.
 
-- Articles that list best practices commonly used SCT patterns.
-- Reference documentation for all SCT functions that are specific to SQL exercises.
-
-Because SQL scripts aren't as free form as, say, Python scripts,
-you will find yourself using the AST-related SCT functions very often when checking SQL exercises.
-The `AST viewer <https://ast-viewer.datacamp.com>`_ is a great tool to
-understand how different SQL statements are parsed and will be very helpful in writing up your own SCTs.
+If you find yourself writing SCTs for more advanced SQL queries, you'll probably venture into SCT functions that verify the AST representation of SQL queries.
+When you do, make sure to keep the `AST viewer <https://ast-viewer.datacamp.com>`_ open; it is a great tool to
+understand how different SQL statements are parsed and how to write your SCTs.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Articles
+   :caption: Glossary
 
-   articles/glossary.rst
+   glossary
 
 .. toctree::
    :maxdepth: 2
    :caption: Reference
 
    reference
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Articles
+
+   articles/tutorial.rst
+   articles/result_checks.rst
+   articles/ast_checks.rst
+
+For details, questions and suggestions, `contact us <mailto:content-engineering@datacamp.com>`_.
