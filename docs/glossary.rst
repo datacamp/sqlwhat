@@ -13,8 +13,10 @@ is identical to the solution will evidently pass.
 
 All of these examples come from the `Intro to SQL for Data Science <https://https://www.datacamp.com/courses/intro-to-sql-for-data-science>`_
 and `Joining data in PostgreSQL <https://www.datacamp.com/courses/joining-data-in-postgresql>`_ courses. You can have a look at their
-respective GitHub sources `here <https://github.com/datacamp/courses-intro-to-sql>`_ (public) and
-`here <https://github.com/datacamp/courses-joining-data-in-postgresql>`_ (viewable by DataCamp employees only), respectively.
+respective GitHub sources:
+
+- https://github.com/datacamp/courses-intro-to-SQL (public)
+- https://github.com/datacamp/courses-joining-data-in-postgresql (DataCamp-only).
 
 
 Selecting a column

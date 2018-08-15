@@ -418,3 +418,89 @@ def check_result(state):
     state2 = check_all_columns(state1)
     has_equal_value(state2)
     return state2
+
+def check_query(state, query, selector, result,
+                error_msg="Running `{{query}}` after your submission generated an error.",
+                incorrect_msg="Running `{{query}}` after your submission didn't give the expected result."):
+    """Run arbitrary queries against to the DB connection to verify the database state.
+
+    For queries that do not return any output (INSERTs, UPDATEs, ...),
+    you cannot use functions like ``check_col()`` and ``is_equal()`` to verify the query result.
+
+    ``check_query()`` will rerun the student query in the transaction prepared by sqlbackend,
+    and immediately afterwards run a query that you specify in ``query``.
+    The result of this query, an ordered dictionary with tuples representing columns as values,
+    will be mutated with a unary function you provide in ``selector``,
+    after which it is compared to the target result you specify in ``result``.
+
+    Args:
+        query: A SQL query as a string that is executed after the student query is re-executed.
+        selector: A unary function that takes an OrderedDict (keys are column names as strings,
+                  values are column contents as tuples) and zooms in on the piece of interest.
+        result: The value that the 'selected part' of the query should match with.
+        error_msg: if specified, this overrides the automatically generated feedback
+                   message in case the query generated an error.
+        incorrect_msg: if specified, this overrides the automatically generated feedback
+                       message in case the selected part of the query result doesn't match with result.
+
+    :Example:
+
+        Suppose we are checking whether an INSERT happened correctly: ::
+
+            INSERT INTO company VALUES (2, 'filip', 28, 'sql-lane', 42)
+
+        We can write the following SCT: ::
+
+            Ex().check_query(query = 'SELECT COUNT(*) AS c FROM company',
+                             selector=lambda x: x['c'][0],
+                             result = 2)
+
+    """
+
+    if not callable(selector):
+        raise TypeError("The selector argument should be a unary function that selects the element of interest from the query result.")
+
+    msg_kwargs = { 'query': query }
+
+    # before redoing the query, 
+    # make sure that it didn't generate any errors
+    has_error(state)
+
+    # sqlbackend makes sure all queries are run in transactions.
+    # Rerun the student code first, after wich we run the provided query
+    _ = runQuery(state.student_conn, state.student_code)
+    query_result = runQuery(state.student_conn, query)
+
+    if query_result is None:
+        _msg = state.build_message(error_msg, fmt_kwargs = msg_kwargs)
+        state.do_test(_msg)
+
+    _msg = state.build_message(incorrect_msg, fmt_kwargs = msg_kwargs)
+
+    # the selector step can fail, so wrap in try-except
+    try:
+        query_result = selector(query_result)
+        if query_result != result:
+            state.do_test(_msg)
+    except:
+        state.do_test(_msg)
+
+    return state
+
+from collections import OrderedDict
+
+def runQuery(conn, code):
+    try:
+        if not code: return OrderedDict()
+        cursor = conn.connection.cursor()
+        cursor.execute(str(code))
+        try:
+            records = [list(record) for record in cursor.fetchall()]
+            columns = [i[0] for i in cursor.description]
+            result = OrderedDict(zip(columns, list(zip(*records))))
+        except Exception:
+            result = None
+        cursor.close()
+        return result
+    except Exception:
+        return None
