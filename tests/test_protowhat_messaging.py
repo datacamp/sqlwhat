@@ -102,7 +102,6 @@ def test_check_messaging(stu, path, msg):
         for step in path:
             state = step[0](state, *step[1])
 
-@pytest.mark.debug
 @pytest.mark.parametrize('stu, path, msg', [
     (
         'SELECT a FROM b ORDER BY b', 
