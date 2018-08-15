@@ -83,6 +83,13 @@ If you also want to run the backend tests, you need `psycopg2`. to install `psyc
 env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install --no-cache psycopg2
 ```
 
+Rules of testing
+================
+
+1. Running queries is the backend's job
+2. If a test doesn't run queries, it doesn't need the backend
+3. Very few tests should run queries
+
 Building Docs
 -------------
 
