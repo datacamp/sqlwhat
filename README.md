@@ -10,32 +10,27 @@
 - If you want to learn what SCTs are and how they work, visit [this article](https://authoring.datacamp.com/courses/exercises/technical-details/sct.html) specifically.
 - For more information about writing SCTs for SQL exercises, consult https://sqlwhat.readthedocs.io.
 
-Installing
-----------
+## Installing
 
 ```
 pip install sqlwhat     # install from pypi
 make install            # install from source
 ```
 
-Reference
----------
+## Reference
 
 * API Docs: https://sqlwhat.readthedocs.io
-* AST viewer: https://sqlwhat-viewer.herokuapp.com
-* Example DataCamp Course: https://github.com/datacamp/courses-sql-test
+* AST viewer: https://ast-viewer.datacamp.com
 * Extensions: https://github.com/datacamp/sqlwhat-ext
 
-Raising issues with how SQL is parsed
--------------------------------------
+## Raising issues with how SQL is parsed
 
 Please raise an issue on the respsective parser repo:
 
 * [antlr-tsql](https://github.com/datacamp/antlr-tsql)
 * [antlr-psql](https://github.com/datacamp/antlr-plsql)
 
-Basic Use
----------
+## Basic Use
 
 ```python
 from sqlwhat.State import State    # State holds info needed for tests
@@ -70,28 +65,27 @@ from sqlwhat.sct_syntax import Ex
 Ex(state).check_result()
 ```
 
-Running unit tests
-------------------
+## Running unit tests
 
 ```bash
 pytest -m "not backend"
 ```
 
-If you also want to run the backend tests, you need `psycopg2`. to install `psycopg2` in a virtualenv, I [needed to run](http://stackoverflow.com/a/39244687/1144523)..
+If you also want to run the backend tests, you need to set a `GITHUB_TOKEN` environment variable with access to the (private) `sqlbackend` repository.
+After this, you can:
 
 ```bash
-env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install --no-cache psycopg2
+make install
+pytest
 ```
 
-Rules of testing
-================
+### Rules of testing
 
 1. Running queries is the backend's job
 2. If a test doesn't run queries, it doesn't need the backend
 3. Very few tests should run queries
 
-Building Docs
--------------
+## Building Docs
 
 Install sqlwhat and run ..
 
