@@ -7,10 +7,10 @@ from protowhat.State import DummyParser
 from functools import wraps
 
 PARSER_MODULES = {
-        'postgresql': 'antlr_plsql.ast', 
-        'sqlite': 'antlr_plsql.ast',        # uses postgres parser for now
-        'mssql': 'antlr_tsql.ast'
-        }
+    'postgresql': 'antlr_plsql.ast',
+    'sqlite': 'antlr_plsql.ast', # uses postgres parser for now
+    'mssql': 'antlr_tsql.ast'
+}
 
 def lower_case(f):
     """Decorator specifically for turning mssql AST into lowercase"""

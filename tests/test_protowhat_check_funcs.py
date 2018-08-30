@@ -154,6 +154,15 @@ def test_check_edge_index_none_fail():
     with pytest.raises(TF):
         check_edge(sel, 'where_clause')
 
+# TODO this should be handled better in protowhat
+def test_where_brackets_with_has_code():
+    state = prepare_state("SELECT a FROM b WHERE c AND d", "SELECT a FROM b WHERE (d AND c)")
+    sel = check_node(state, 'SelectStmt')
+    wc = check_edge(sel, 'where_clause')
+    has_code(wc, 'd')
+    with pytest.raises(TF):
+        has_code(wc, 'not_there')
+
 # has_code --------------------------------------------------------------------
 
 @pytest.fixture
