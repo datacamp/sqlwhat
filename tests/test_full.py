@@ -61,27 +61,23 @@ def test_ex_check_query(pec, stu, passes):
     sct_payload = helper.run({
         'DC_PEC': pec,
         'DC_CODE': stu,
-        'DC_SCT': "Ex().check_query(query = 'SELECT COUNT(*) AS c FROM company', selector=lambda x: x['c'][0], result = 2)"
+        'DC_SOLUTION': "INSERT INTO company VALUES (2, 'filip', 28, 'sql-lane', 42)",
+        'DC_SCT': "Ex().check_query(query = 'SELECT COUNT(*) AS c FROM company').has_equal_value()"
     })
     assert sct_payload.get('correct') == passes
-    target = "Running <code>SELECT COUNT(*) AS c FROM company</code> after your submission didn't give the expected result."
+    target = "The autograder verified the result of running <code>SELECT COUNT(*) AS c FROM company</code> against the database. Column <code>c</code> seems to be incorrect."
     if not passes: assert sct_payload.get('message') == target
 
 @pytest.mark.backend
-def test_ex_check_query_error(pec):
-    sct_payload = helper.run({
-        'DC_PEC': pec,
-        'DC_CODE': "",
-        'DC_SCT': "Ex().check_query(query = 'SELECT', selector=lambda x:x, result = 0)"
-    })
-    assert not sct_payload.get('correct')
-    target = "Running <code>SELECT</code> after your submission generated an error."
-    assert sct_payload.get('message') == target
-
-def test_ex_check_query_wrong_usage(pec):
-    with pytest.raises(TypeError, match="The selector argument should be a unary function"):
+@pytest.mark.parametrize('query, patt', [
+     ("SELECT", "SELECT"),
+     ("SELECT * FROM nonexisting", r"SELECT \* FROM nonexisting")
+])
+def test_ex_check_query_wrong_usage(pec, query, patt):
+    with pytest.raises(Exception, match = r"Solution failed: Running `%s` after your submission generated an error\." % patt):
         helper.run({
             'DC_PEC': pec,
+            'DC_SCT': "Ex().check_query(query = '%s')" % query,
             'DC_CODE': '',
-            'DC_SCT': "Ex().check_query(query = '', selector=0, result = 2)"
+            'DC_SOLUTION': ''
         })
