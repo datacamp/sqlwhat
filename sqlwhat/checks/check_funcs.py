@@ -419,9 +419,7 @@ def check_result(state):
     has_equal_value(state2)
     return state2
 
-def check_query(state, query, selector, result,
-                error_msg="Running `{{query}}` after your submission generated an error.",
-                incorrect_msg="Running `{{query}}` after your submission didn't give the expected result."):
+def check_query(state, query, error_msg=None, expand_msg=None):
     """Run arbitrary queries against to the DB connection to verify the database state.
 
     For queries that do not return any output (INSERTs, UPDATEs, ...),
@@ -457,8 +455,8 @@ def check_query(state, query, selector, result,
 
     """
 
-    if not callable(selector):
-        raise TypeError("The selector argument should be a unary function that selects the element of interest from the query result.")
+    if error_msg is None: error_msg = "Running `{{query}}` after your submission generated an error."
+    if expand_msg is None: expand_msg = "The autograder verified the result of running `{{query}}` against the database. "
 
     msg_kwargs = { 'query': query }
 
@@ -466,28 +464,50 @@ def check_query(state, query, selector, result,
     # make sure that it didn't generate any errors
     has_error(state)
 
+    _msg = state.build_message(error_msg, fmt_kwargs = msg_kwargs)
+
+    # sqlbackend makes sure all queries are run in transactions.
+    # Rerun the solution code first, after which we run the provided query
+    with dbconn(state.solution_conn) as conn:
+        _ = runQuery(conn, state.solution_code)
+        sol_res = runQuery(conn, query)
+
+    if sol_res is None:
+        raise ValueError("Solution failed: " + _msg)
+
     # sqlbackend makes sure all queries are run in transactions.
     # Rerun the student code first, after wich we run the provided query
-    _ = runQuery(state.student_conn, state.student_code)
-    query_result = runQuery(state.student_conn, query)
+    with dbconn(state.student_conn) as conn:
+        _ = runQuery(conn, state.student_code)
+        stu_res = runQuery(conn, query)
 
-    if query_result is None:
-        _msg = state.build_message(error_msg, fmt_kwargs = msg_kwargs)
+    if stu_res is None:
         state.do_test(_msg)
 
-    _msg = state.build_message(incorrect_msg, fmt_kwargs = msg_kwargs)
+    return state.to_child(
+        append_message = { 'msg': expand_msg, 'kwargs': msg_kwargs },
+        student_result = stu_res,
+        solution_result = sol_res
+    )
 
-    # the selector step can fail, so wrap in try-except
-    try:
-        query_result = selector(query_result)
-        if query_result != result:
-            state.do_test(_msg)
-    except:
-        state.do_test(_msg)
-
-    return state
+# The functions below are almost exact copies of what is in sqlbackend
+# sqlwhat should not depend on sqlbackend,
+# as the former is open source and the latter is not.
 
 from collections import OrderedDict
+from contextlib import contextmanager
+
+@contextmanager
+def dbconn(engine):
+    conn = engine.connect()
+    trans = conn.begin()
+    yield conn
+    try:
+        trans.rollback()
+        conn.close()
+    except:
+        # we tried
+        pass
 
 def runQuery(conn, code):
     try:
