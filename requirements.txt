@@ -8,10 +8,11 @@ pytest==3.5.0
 codecov==2.0.15
 pytest-cov==2.5.1
 
-# deps of sqlbackend, needed for some tests
+# sqlbackend's dependencies (for tests)
 sqlalchemy==1.2.10
 python-dotenv==0.9.1
 psycopg2==2.7.5
+git+https://${GITHUB_TOKEN}@github.com/datacamp/sqlbackend.git/@v1.0.4
 
 # building documentation
 sphinx==1.7.4

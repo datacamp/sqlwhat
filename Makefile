@@ -4,7 +4,6 @@ all: clean test
 
 install:
 	env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
-	pip install git+https://$(GITHUB_TOKEN)@github.com/datacamp/sqlbackend.git/@v1.0.3
 	pip install -e .
 
 clean:
