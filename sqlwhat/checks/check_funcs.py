@@ -490,21 +490,20 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         solution_result = sol_res
     )
 
-# The functions below are almost exact copies of what is in sqlbackend
-# sqlwhat should not depend on sqlbackend,
-# as the former is open source and the latter is not.
+# The functions below are almost exact copies of what is in sqlbackend,
+# But already use a conn object inside a transaction (this is how sqlbackend calls test_exercise)
 
 from collections import OrderedDict
 from contextlib import contextmanager
 
 @contextmanager
-def dbconn(engine):
-    conn = engine.connect()
-    trans = conn.begin()
-    yield conn
+def dbconn(conn):
+    sub_conn = conn.connect()
+    trans = sub_conn.begin()
+    yield sub_conn
     try:
         trans.rollback()
-        conn.close()
+        sub_conn.close()
     except:
         # we tried
         pass
