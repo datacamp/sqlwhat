@@ -2,6 +2,16 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.1.0
+
+### Added
+
+- Function `check_query()` to execute arbitrary queries against the database to verify whether database state updates happened correctly.
+
+### Improved
+
+- CI now runs all tests, including the ones that need the (private) `sqlbackend`.
+
 ## 3.0.0
 
 **Contains breaking changes!**

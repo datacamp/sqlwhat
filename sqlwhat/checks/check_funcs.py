@@ -425,21 +425,21 @@ def check_query(state, query, error_msg=None, expand_msg=None):
     For queries that do not return any output (INSERTs, UPDATEs, ...),
     you cannot use functions like ``check_col()`` and ``is_equal()`` to verify the query result.
 
-    ``check_query()`` will rerun the student query in the transaction prepared by sqlbackend,
-    and immediately afterwards run a query that you specify in ``query``.
-    The result of this query, an ordered dictionary with tuples representing columns as values,
-    will be mutated with a unary function you provide in ``selector``,
-    after which it is compared to the target result you specify in ``result``.
+    ``check_query()`` will rerun the solution query in the transaction prepared by sqlbackend,
+    and immediately afterwards run the query specified in ``query``.
+
+    Next, it will also run this query after rerunning the student query in a transaction.
+
+    Finally, it produces a child state with these results, that you can then chain off of
+    with functions like ``check_column()`` and ``has_equal_value()``.
 
     Args:
         query: A SQL query as a string that is executed after the student query is re-executed.
-        selector: A unary function that takes an OrderedDict (keys are column names as strings,
-                  values are column contents as tuples) and zooms in on the piece of interest.
-        result: The value that the 'selected part' of the query should match with.
         error_msg: if specified, this overrides the automatically generated feedback
                    message in case the query generated an error.
-        incorrect_msg: if specified, this overrides the automatically generated feedback
-                       message in case the selected part of the query result doesn't match with result.
+        expand_msg: if specified, this overrides the automatically generated feedback 
+                    message that is prepended to feedback messages that are thrown
+                    further in the SCT chain.
 
     :Example:
 
@@ -449,9 +449,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
 
         We can write the following SCT: ::
 
-            Ex().check_query(query = 'SELECT COUNT(*) AS c FROM company',
-                             selector=lambda x: x['c'][0],
-                             result = 2)
+            Ex().check_query('SELECT COUNT(*) AS c FROM company').has_equal_value()
 
     """
 
