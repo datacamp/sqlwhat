@@ -463,12 +463,17 @@ def check_query(state, query, error_msg=None, expand_msg=None):
     has_error(state)
 
     _msg = state.build_message(error_msg, fmt_kwargs = msg_kwargs)
+    dialect = state.solution_conn.dialect.name
 
     # sqlbackend makes sure all queries are run in transactions.
     # Rerun the solution code first, after which we run the provided query
     with dbconn(state.solution_conn) as conn:
-        _ = runQuery(conn, state.solution_code)
-        sol_res = runQuery(conn, query)
+        # mssql: concat to preserve variables created in the query scope
+        if dialect == "mssql" :
+            sol_res = runQuery(conn, "\n".join([state.solution_code, query]))
+        else :
+            _ = runQuery(conn, state.solution_code)
+            sol_res = runQuery(conn, query)
 
     if sol_res is None:
         raise ValueError("Solution failed: " + _msg)
@@ -476,8 +481,12 @@ def check_query(state, query, error_msg=None, expand_msg=None):
     # sqlbackend makes sure all queries are run in transactions.
     # Rerun the student code first, after wich we run the provided query
     with dbconn(state.student_conn) as conn:
-        _ = runQuery(conn, state.student_code)
-        stu_res = runQuery(conn, query)
+        # mssql: concat to preserve variables created in the query scope
+        if dialect == "mssql" :
+            stu_res = runQuery(conn, "\n".join([state.student_code, query]))
+        else :
+            _ = runQuery(conn, state.student_code)
+            stu_res = runQuery(conn, query)
 
     if stu_res is None:
         state.do_test(_msg)
