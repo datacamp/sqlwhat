@@ -2,6 +2,12 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.2.0
+
+### Improved
+
+- `has_error()` renamed to `has_no_error()` for more intuitive reasoning.
+
 ## 3.1.0
 
 ### Added
