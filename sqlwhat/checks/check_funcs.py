@@ -7,10 +7,10 @@ def allow_error(state):
     state.reporter.allow_errors()
     return state
 
-def has_error(state, incorrect_msg="Your code generated an error. Fix it and try again!"):
-    """Test whether submission caused a database error.
+def has_no_error(state, incorrect_msg="Your code generated an error. Fix it and try again!"):
+    """Check whether the submission did not generate a runtime error.
 
-    Simply use ``Ex().has_error()`` in your SCT whenever you want to check for errors.
+    Simply use ``Ex().has_no_error()`` in your SCT whenever you want to check for errors.
     By default, after the entire SCT finished executing, ``sqlwhat`` will check
     for errors before marking the exercise as correct. You can disable this behavior
     by using ``Ex().allow_error()``.
@@ -34,7 +34,7 @@ def has_result(state, incorrect_msg="Your query did not return a result."):
     """
 
     # first check if there is no error
-    has_error(state)
+    has_no_error(state)
 
     if not state.solution_result:
         raise NameError("You are using has_result() to verify that the student query generated an error, but the solution query did not return a result either!")
@@ -460,7 +460,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
 
     # before redoing the query, 
     # make sure that it didn't generate any errors
-    has_error(state)
+    has_no_error(state)
 
     _msg = state.build_message(error_msg, fmt_kwargs = msg_kwargs)
 

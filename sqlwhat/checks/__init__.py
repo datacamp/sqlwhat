@@ -1,4 +1,4 @@
-from sqlwhat.checks.check_funcs import allow_error, has_error, \
+from sqlwhat.checks.check_funcs import allow_error, has_no_error, \
                                        has_result, has_nrows, has_ncols, \
                                        check_column, check_row, check_all_columns, \
                                        lowercase, has_equal_value, check_result, check_query

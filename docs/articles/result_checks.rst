@@ -8,14 +8,14 @@ As you could read in the tutorial, there are two families of SCT functions in sq
 
 This article gives an overview of all result-based checks, that are typically used as the first argument to ``check_correct()``.
 
-On the lowest level, you can have the SCT fail when the student query generated an error with ``has_error()``:
+On the lowest level, you can have the SCT fail when the student query generated an error with ``has_no_error()``:
 
 .. code::
 
-    Ex().has_error()
+    Ex().has_no_error()
 
 Next, you can verify whether the student query actually returned a result with ``has_result()``.
-Behind the scenes, this function first uses ``has_error()``: if the query resulted in an error, it cannot return a result:
+Behind the scenes, this function first uses ``has_no_error()``: if the query resulted in an error, it cannot return a result:
 
 .. code::
 

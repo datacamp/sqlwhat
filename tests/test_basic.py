@@ -109,7 +109,7 @@ def test_test_exercise_fail(conn, sct):
 
 @pytest.mark.parametrize('sct, passes, msg', [
     ('', False, 'Your code generated an error. Fix it and try again!'),
-    ('Ex().has_error(incorrect_msg="wow")', False, 'wow'),
+    ('Ex().has_no_error(incorrect_msg="wow")', False, 'wow'),
     ('Ex().allow_error()', True, None)
 ])
 def test_error_handling(sct, passes, msg):
