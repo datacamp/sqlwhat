@@ -1,7 +1,7 @@
 # pkg deps
 protowhat==1.1.2
-antlr-plsql==0.5.8
-antlr-tsql==0.9.2
+antlr-plsql==0.6.0
+antlr-tsql==0.10.0
 
 # test deps
 pytest==3.5.0
