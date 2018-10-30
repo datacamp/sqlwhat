@@ -116,7 +116,7 @@ def test_check_node_from_list():
 
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
-    assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
+    assert isinstance(state.student_ast, state.ast_dispatcher.ast.antlr_ast.AntlrException)
     select = check_node(state, "SelectStmt", 2)   # should be skipped
     assert select is state
 
@@ -144,7 +144,7 @@ def test_check_edge_index_fail():
 
 def test_check_edge_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
-    assert isinstance(state.student_ast, state.ast_dispatcher.ast.AntlrException)
+    assert isinstance(state.student_ast, state.ast_dispatcher.ast.antlr_ast.AntlrException)
     select = check_edge(state, "where", 0) # should be skipped
     assert select is state
 
