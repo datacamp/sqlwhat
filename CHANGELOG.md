@@ -2,6 +2,10 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.2.1
+
+- Update ANTLR dependencies
+
 ## 3.2.0
 
 ### Improved
@@ -29,4 +33,3 @@ All notable changes to the sqlwhat project will be documented in this file.
 - Complete rewrite of documentation, explaining both the result-based checks and AST-based checks
 - Improve coverage to 99% by adding tests on both functionality (pass/fail) and messaging.
 - Improve package structure and test structure in general
-
