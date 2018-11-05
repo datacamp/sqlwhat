@@ -62,7 +62,7 @@ def prepare_state(sol_code, stu_code, dialect='postgresql'):
     (
         'SELECT a FROM b WHERE c BETWEEN 1 AND 2',
         [[check_node, ['SelectStmt']], [check_node, ['BinaryExpr']], [check_edge, ['left']]],
-        'left operand of the binary expression `BETWEEN`' # using check_node instead _does_ generate something
+        'left operand of the binary expression `between`' # using check_node instead _does_ generate something
     ),
 ])
 def test_get_ast_path(query, path, target_desc):
