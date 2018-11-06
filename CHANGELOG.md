@@ -2,6 +2,10 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.3.0
+
+- Add optional `force_diagnose` parameter to `test_exercise` to force passing the `diagnose` tests in `check_correct`.
+
 ## 3.2.1
 
 - Update ANTLR dependencies
