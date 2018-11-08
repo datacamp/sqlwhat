@@ -4,6 +4,7 @@ all: clean test
 
 install:
 	env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
+	env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements-dc.txt
 	pip install -e .
 
 clean:
