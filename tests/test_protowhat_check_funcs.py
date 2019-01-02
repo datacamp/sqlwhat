@@ -22,7 +22,7 @@ def prepare_state(sol_code, stu_code, dialect='postgresql'):
         solution_code = sol_code,
         reporter = Reporter(),
         # args below should be ignored
-        pre_exercise_code = "NA", 
+        pre_exercise_code = "NA",
         student_result = [], solution_result = [],
         student_conn = None, solution_conn = None,
         ast_dispatcher = dispatcher)
@@ -53,7 +53,7 @@ def test_has_equal_ast_field_fail():
 def test_has_equal_ast_manual_fail():
     query = "SELECT id, name FROM Trips"
     state = prepare_state(query, query)
-    with pytest.raises(TF): 
+    with pytest.raises(TF):
         child = check_node(state, "SelectStmt")
         has_equal_ast(child, sql="SELECT * FROM Trips", start="subquery")
 
@@ -116,7 +116,7 @@ def test_check_node_from_list():
 
 def test_check_node_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
-    assert isinstance(state.student_ast, state.ast_dispatcher.ast.antlr_ast.AntlrException)
+    assert isinstance(state.student_ast, state.ast_dispatcher.ast.ParseError)
     select = check_node(state, "SelectStmt", 2)   # should be skipped
     assert select is state
 
@@ -144,13 +144,13 @@ def test_check_edge_index_fail():
 
 def test_check_edge_antlr_exception_skips(dialect_name):
     state = prepare_state("SELECT x FROM ___!", "SELECT x FROM ___!", dialect_name)
-    assert isinstance(state.student_ast, state.ast_dispatcher.ast.antlr_ast.AntlrException)
+    assert isinstance(state.student_ast, state.ast_dispatcher.ast.ParseError)
     select = check_edge(state, "where", 0) # should be skipped
     assert select is state
 
 def test_check_edge_index_none_fail():
     state = prepare_state("SELECT a, b FROM b WHERE a < 10", "SELECT a FROM b")
-    sel = check_node(state, 'SelectStmt') 
+    sel = check_node(state, 'SelectStmt')
     with pytest.raises(TF):
         check_edge(sel, 'where_clause')
 
