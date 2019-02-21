@@ -38,7 +38,7 @@ Let's see what happens when the SCT runs:
   + If the student had submitted ``SELECT year FROM films``,
     the query result will not contain the column ``title``,
     the function will fail, and sqlwhat will automatically generate a meaningful feedback message.
-  
+
   If ``check_column('title')`` runs without errors, it will return a sub-state of the root-state returned by ``Ex()``,
   that zooms in solely on the ``title`` column of the query result.
   This means that ``Ex().check_column('title')`` will produce the same substate for the following student submissions:
@@ -51,7 +51,7 @@ Let's see what happens when the SCT runs:
 
 - ``has_equal_value()`` will consider the state produced by ``check_column('title')`` and verify whether
   the contents of the columns match between student and solution query result.
-  
+
   + If the student had submitted ``SELECT title FROM films``,
     the query result of the student submission an the solution will exactly match, and the function will pass.
   + If the student had submitted ``SELECT title, year FROM films``,
@@ -128,7 +128,7 @@ When the SCT executes:
   This is the same tree as included earlier in this article.
   The AST for the student submission will look very similar.
 
-  .. image:: ast_example2.png
+  .. image:: ast_example.png
      :align: center
      :scale: 80%
 
@@ -155,7 +155,7 @@ When the SCT executes:
     .. code-block:: sql
 
         -- solution
-        artists 
+        artists
 
         -- student
         producers
@@ -224,11 +224,11 @@ This SCT:
   .. code-block:: sql
 
         SELECT id FROM artists WHERE id > 100
-        SELECT id, name FROM artists WHERE id > 100 AND id < 0  
+        SELECT id, name FROM artists WHERE id > 100 AND id < 0
         SELECT id FROM artists WHERE id > 100 ORDER BY id DESC
 
 - generates specific feedback if the student made a mistake:
-  Instead of the generic "Column ``id`` seems to be incorrect" message, there are more targeted messages: 
+  Instead of the generic "Column ``id`` seems to be incorrect" message, there are more targeted messages:
 
   .. code-block:: sql
 

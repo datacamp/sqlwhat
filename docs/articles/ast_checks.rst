@@ -108,10 +108,10 @@ You can supplement this with a ``check_or()`` call and a manually specified ``sq
         )
 
 Now, using either ``ON cities.code = countries.code`` or ``countries.code = cities.code`` will be accepted.
-    
+
 For a more complete and robust example of an ``INNER JOIN`` query, visit the glossary.
 
 In addition to ``has_equal_ast()``, you can also use ``has_code()`` to
 look at the actual code of a part of the SQL query and verify it with a regular expression,
-but you will rarely find rarely using it.
+but you will rarely find yourself using it.
 
