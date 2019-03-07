@@ -150,7 +150,7 @@ def test_check_node_back_to_back():
 def test_check_node_from_list():
     state = prepare_state("SELECT a, b, c FROM x", "SELECT a, b, c FROM x")
     sel = check_node(state, "SelectStmt", 0)
-    tl = check_edge(sel, "target_list")
+    tl = check_edge(sel, "target_list", None)
     check_node(tl, "Identifier")
 
 

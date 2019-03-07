@@ -31,7 +31,7 @@ def test_selector_standalone():
 def test_selector_on_self(ast):
     # Don't simplify terminals
     ast.Terminal.DEBUG = True
-    terminal = ast.Terminal.from_text('test')
+    terminal = ast.Terminal.from_text("test")
     sel = Selector(ast.Terminal)
     sel.visit(terminal)
     assert sel.out[0] == terminal
