@@ -52,8 +52,13 @@ def prepare_state(sol_code, stu_code, dialect="postgresql"):
         ),
         (
             "SELECT a FROM b",
-            [[check_node, ["SelectStmt"]], [check_edge, ["from_clause"]]],
+            [[check_node, ["SelectStmt"]], [check_edge, ["from_clause", None]]],
             "`FROM` clause of the `SELECT` statement",
+        ),
+        (
+            "SELECT a FROM b",
+            [[check_node, ["SelectStmt"]], [check_edge, ["from_clause"]]],
+            "first entry in the `FROM` clause of the `SELECT` statement",
         ),
         (
             "SELECT a FROM b",
@@ -74,9 +79,18 @@ def prepare_state(sol_code, stu_code, dialect="postgresql"):
             [
                 [check_node, ["SelectStmt"]],
                 [check_node, ["JoinExpr"]],
-                [check_edge, ["left"]],
+                [check_edge, ["left", None]],
             ],
             "left operand of the join expression",  # using check_node instead _does_ generate something
+        ),
+        (
+            "SELECT a FROM b INNER JOIN c HAVING(d)",
+            [
+                [check_node, ["SelectStmt"]],
+                [check_node, ["JoinExpr"]],
+                [check_edge, ["left"]],
+            ],
+            "first entry in the left operand of the join expression",  # using check_node instead _does_ generate something
         ),
         (
             "SELECT a FROM b WHERE c BETWEEN 1 AND 2",
@@ -92,9 +106,18 @@ def prepare_state(sol_code, stu_code, dialect="postgresql"):
             [
                 [check_node, ["SelectStmt"]],
                 [check_node, ["BinaryExpr"]],
-                [check_edge, ["left"]],
+                [check_edge, ["left", None]],
             ],
             "left operand of the binary expression `between`",  # using check_node instead _does_ generate something
+        ),
+        (
+            "SELECT a FROM b WHERE c BETWEEN 1 AND 2",
+            [
+                [check_node, ["SelectStmt"]],
+                [check_node, ["BinaryExpr"]],
+                [check_edge, ["left"]],
+            ],
+            "first entry in the left operand of the binary expression `between`",  # using check_node instead _does_ generate something
         ),
     ],
 )
@@ -136,10 +159,20 @@ def test_get_ast_path(query, path, target_desc):
             [
                 [check_node, ["SelectStmt"]],
                 [check_node, ["JoinExpr"]],
-                [check_edge, ["left"]],
+                [check_edge, ["left", None]],
                 [has_equal_ast, []],
             ],
             "Check the left operand of the join expression. The checker expected to find `b` in there.",
+        ),
+        (
+            "SELECT a FROM c INNER JOIN b HAVING(d)",
+            [
+                [check_node, ["SelectStmt"]],
+                [check_node, ["JoinExpr"]],
+                [check_edge, ["left"]],
+                [has_equal_ast, []],
+            ],
+            "Check the first entry in the left operand of the join expression. The checker expected to find `b` in there.",
         ),
         (
             # using check_edge('from_clause') instead of check_node('JoinExpr')
@@ -168,10 +201,19 @@ def test_check_messaging(stu, path, msg):
             "SELECT a FROM b ORDER BY b",
             [
                 [check_node, ["SelectStmt"]],
+                [check_edge, ["order_by_clause", None]],
+                [has_equal_ast, []],
+            ],
+            "Check the `ORDER BY` clause of the `SELECT` statement. Something is missing.",
+        ),
+        (
+            "SELECT a FROM b ORDER BY b",
+            [
+                [check_node, ["SelectStmt"]],
                 [check_edge, ["order_by_clause"]],
                 [has_equal_ast, []],
             ],
-            "Check the `ORDER BY` clause of the `SELECT` statement. The checker expected to find `ORDER BY c` in there.",
+            "Check the first entry in the `ORDER BY` clause of the `SELECT` statement. The checker expected to find `ORDER BY c` in there.",
         ),
         (
             "SELECT a FROM b ORDER BY b",
