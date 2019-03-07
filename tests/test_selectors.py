@@ -100,3 +100,20 @@ def test_dispatch_select(dispatcher, ast):
     tree = ast.parse("SELECT id FROM artists")
     selected = dispatcher("SelectStmt", 0, tree)
     assert type(selected) == ast.SelectStmt
+
+
+def test_selecting_base_nodes(ast):
+    query = "SELECT a FROM b"
+    antlr_tree = ast.parse_ast(ast.grammar, query, start="sql_script")
+    ast_tree = ast.process_tree(antlr_tree)
+
+    base_selector = Selector(ast.AstNode, "Query_block", strict=False, priority=3)
+    base_selector.visit(ast_tree)
+    found = base_selector.out
+    assert len(found) == 1
+    assert isinstance(found[0], ast.AstNode)
+    assert found[0].__class__.__name__ == "Query_block"
+
+    base_dispatch = Dispatcher(ast.AstNode, ast=ast)
+    select_stmt = base_dispatch("Query_block", 0, ast_tree, priority=3)
+    assert select_stmt == found[0]
