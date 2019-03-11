@@ -2,6 +2,11 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.5.0
+
+- Update parsing layer (antlr-x and protowhat)
+- `check_edge` default argument value change (see protowhat v1.5.0 release notes)
+
 ## 3.4.0
 
 - Update ANTLR dependencies
