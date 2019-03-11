@@ -1,19 +1,19 @@
 # pkg deps
-protowhat==1.4.0
-antlr-plsql==0.7.0
-antlr-tsql==0.11.0
+protowhat~=1.4.0
+antlr-plsql~=0.7.0
+antlr-tsql~=0.11.0
 
 # test deps
-pytest==3.5.0
-codecov==2.0.15
-pytest-cov==2.5.1
+pytest~=3.5.0
+codecov~=2.0.15
+pytest-cov~=2.5.1
 
 # sqlbackend's dependencies (for tests)
-sqlalchemy==1.2.10
-python-dotenv==0.9.1
-psycopg2==2.7.5
+sqlalchemy~=1.2.10
+python-dotenv~=0.9.1
+psycopg2~=2.7.5
 # git+https://${GITHUB_TOKEN}@github.com/datacamp/sqlbackend.git/@v1.0.4
 
 # building documentation
-sphinx==1.7.4
-sphinx_rtd_theme==v0.3.1
+sphinx~=1.7.4
+sphinx_rtd_theme~=v0.3.1
