@@ -32,7 +32,7 @@ def test_line_info(sql_cmd, start, pos):
         ast_dispatcher=Dispatcher.from_module(PARSER_MODULES["mssql"]),
     )
     try:
-        state.do_test("failure message")
+        state.report(Feedback("failure message"))
     except TF as tf:
         for ii, k in enumerate(pos_names):
             assert tf.payload[k] == pos[ii]
