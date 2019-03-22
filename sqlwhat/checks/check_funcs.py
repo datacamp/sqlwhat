@@ -1,3 +1,6 @@
+from protowhat.Feedback import Feedback
+
+
 def allow_error(state):
     """Allow submission to pass, even if it originally caused a database error.
 
@@ -24,7 +27,7 @@ def has_no_error(
     """
 
     if state.reporter.get_errors():
-        state.do_test(incorrect_msg)
+        state.report(Feedback(incorrect_msg))
 
     return state
 
@@ -46,7 +49,7 @@ def has_result(state, incorrect_msg="Your query did not return a result."):
         )
 
     if not state.student_result:
-        state.do_test(incorrect_msg)
+        state.report(Feedback(incorrect_msg))
 
     return state
 
@@ -73,7 +76,7 @@ def has_nrows(
         _msg = state.build_message(
             incorrect_msg, fmt_kwargs={"n_stu": n_stu, "n_sol": n_sol}
         )
-        state.do_test(_msg)
+        state.report(Feedback(_msg))
 
     return state
 
@@ -119,7 +122,7 @@ def has_ncols(
         _msg = state.build_message(
             incorrect_msg, fmt_kwargs={"n_stu": n_stu, "n_sol": n_sol}
         )
-        state.do_test(_msg)
+        state.report(Feedback(_msg))
 
     return state
 
@@ -180,7 +183,7 @@ def check_row(state, index, missing_msg=None, expand_msg=None):
 
     if index >= n_stu:
         _msg = state.build_message(missing_msg, fmt_kwargs=msg_kwargs)
-        state.do_test(_msg)
+        state.report(Feedback(_msg))
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
@@ -238,7 +241,7 @@ def check_column(state, name, missing_msg=None, expand_msg=None):
 
     if name not in stu_res:
         _msg = state.build_message(missing_msg, fmt_kwargs=msg_kwargs)
-        state.do_test(_msg)
+        state.report(Feedback(_msg))
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
@@ -310,7 +313,7 @@ def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_ms
             "Your query result contains the column `{{col}}` but shouldn't.",
             fmt_kwargs={"col": cols_not_in_sol[0]},
         )
-        state.do_test(_msg)
+        state.report(Feedback(_msg))
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": {}},
@@ -390,7 +393,7 @@ def has_equal_value(state, ordered=False, ndigits=None, incorrect_msg=None):
             _msg = state.build_message(
                 incorrect_msg, fmt_kwargs={"col": sol_col_name, "ordered": ordered}
             )
-            state.do_test(_msg)
+            state.report(Feedback(_msg))
 
     return state
 
@@ -531,7 +534,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         stu_res = runQuery(conn, query)
 
     if stu_res is None:
-        state.do_test(_msg)
+        state.report(Feedback(_msg))
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
