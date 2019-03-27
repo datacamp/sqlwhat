@@ -1,5 +1,5 @@
 from sqlwhat.test_exercise import test_exercise as te
-from helper import Connection
+from tests.helper import Connection
 import pytest
 
 

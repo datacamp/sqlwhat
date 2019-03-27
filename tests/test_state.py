@@ -2,7 +2,7 @@ from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
 from protowhat.Reporter import Reporter
 from protowhat.Test import TestFail as TF
-from helper import Connection
+from tests.helper import Connection
 import pytest
 
 
