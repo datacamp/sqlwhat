@@ -1,3 +1,8 @@
+from protowhat.Reporter import Reporter
+
+from sqlwhat.State import State
+
+
 def get_sct_payload(output):
     output = [out for out in output if out["type"] == "sct"]
     if len(output) > 0:
@@ -25,3 +30,22 @@ class Connection:
     def __init__(self, dialect_name):
         self.dialect = lambda: None
         self.dialect.name = dialect_name
+
+
+def prepare_state(sol_result, stu_result, error=None):
+    conn = Connection("postgresql")
+    return State(
+        student_code="",
+        solution_code="",
+        reporter=Reporter(error),
+        # args below should be ignored
+        pre_exercise_code="NA",
+        student_result=stu_result,
+        solution_result=sol_result,
+        student_conn=conn,
+        solution_conn=None,
+    )
+
+
+def passes(x):
+    assert isinstance(x, State)
