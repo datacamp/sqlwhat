@@ -98,7 +98,7 @@ def test_selector_head(ast):
 
 def test_dispatch_select(dispatcher, ast):
     tree = ast.parse("SELECT id FROM artists")
-    selected = dispatcher("SelectStmt", tree)[0]
+    selected = dispatcher.find("SelectStmt", tree)[0]
     assert type(selected) == ast.SelectStmt
 
 
@@ -115,5 +115,5 @@ def test_selecting_base_nodes(ast):
     assert found[0].__class__.__name__ == "Query_block"
 
     base_dispatch = Dispatcher(ast.AstNode, ast_mod=ast)
-    select_stmt = base_dispatch("Query_block", ast_tree, priority=3)[0]
+    select_stmt = base_dispatch.find("Query_block", ast_tree, priority=3)[0]
     assert select_stmt == found[0]
