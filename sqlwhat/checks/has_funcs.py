@@ -155,7 +155,7 @@ def has_equal_value(state, ordered=False, ndigits=None, incorrect_msg=None):
             Ex().check_all_columns().has_equal_value()
     """
 
-    if not hasattr(state, "parent"):
+    if not state.parent_state:
         raise ValueError(
             "You can only use has_equal_value() on the state resulting from check_column, check_row or check_result."
         )
