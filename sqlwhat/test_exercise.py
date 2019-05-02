@@ -29,7 +29,7 @@ def test_exercise(
         solution_conn=solution_conn,
         student_result=student_result,
         solution_result=solution_result,
-        reporter=Reporter(error),
+        reporter=Reporter(errors=error),
         force_diagnose=force_diagnose,
     )
 

@@ -53,7 +53,7 @@ def prepare_state(sol_result, stu_result, error=None):
     return State(
         student_code="",
         solution_code="",
-        reporter=Reporter(error),
+        reporter=Reporter(errors=error),
         # args below should be ignored
         pre_exercise_code="NA",
         student_result=stu_result,
