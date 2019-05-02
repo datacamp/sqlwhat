@@ -16,7 +16,6 @@ def dispatcher():
     return Dispatcher.from_module(ast())
 
 
-@pytest.mark.xfail
 def test_selector_standalone():
     from ast import Expr, Num  # use python's builtin ast library
 
@@ -51,6 +50,11 @@ def test_selector_on_script(ast):
     out = build_and_run("SELECT id FROM artists", ast.SelectStmt, ast)
     assert len(out) == 1
     assert type(out[0]) == ast.SelectStmt
+
+
+def test_selector_default_priority(ast):
+    out = build_and_run("SELECT id FROM artists", ast.Identifier, ast)
+    assert len(out) == 0
 
 
 def test_selector_set_high_priority(ast):
