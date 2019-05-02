@@ -1,4 +1,5 @@
 from protowhat.Feedback import Feedback
+from protowhat.sct_syntax import link_to_state
 
 from sqlwhat.checks import has_no_error, has_result, has_equal_value
 
@@ -243,8 +244,8 @@ def check_result(state):
     * runs ``has_equal_value`` on the state produced by ``check_all_columns()``.
     """
 
-    state1 = lowercase(state)
-    state2 = check_all_columns(state1)
+    state1 = link_to_state(lowercase)(state)
+    state2 = link_to_state(check_all_columns)(state1)
     has_equal_value(state2)
     return state2
 
@@ -253,7 +254,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
     """Run arbitrary queries against to the DB connection to verify the database state.
 
     For queries that do not return any output (INSERTs, UPDATEs, ...),
-    you cannot use functions like ``check_col()`` and ``is_equal()`` to verify the query result.
+    you cannot use functions like ``check_col()`` and ``has_equal_value()`` to verify the query result.
 
     ``check_query()`` will rerun the solution query in the transaction prepared by sqlbackend,
     and immediately afterwards run the query specified in ``query``.
