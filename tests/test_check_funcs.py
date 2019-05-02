@@ -1,8 +1,16 @@
 import pytest
 
-from sqlwhat import checks
 from protowhat.Test import TestFail as TF
-from tests.helper import prepare_state, passes
+from tests.helper import (
+    prepare_state,
+    passes,
+    check_row,
+    check_column,
+    check_all_columns,
+    check_result,
+    lowercase,
+    has_equal_value,
+)
 
 
 @pytest.mark.parametrize(
@@ -19,19 +27,19 @@ from tests.helper import prepare_state, passes
 def test_check_row(stu, stu_sub, success):
     state = prepare_state({"a": [1, 2, 3], "b": [4, 5, 6]}, stu)
     if success:
-        x = checks.check_row(state, 1)
+        x = check_row(state, 1)
         passes(x)
         assert x.solution_result == {"a": [2], "b": [5]}
         assert x.student_result == stu_sub
     else:
         with pytest.raises(TF):
-            checks.check_row(state, 1)
+            check_row(state, 1)
 
 
 def test_check_row_wrong_usage():
     state = prepare_state({"a": [1]}, {"a": [1]})
     with pytest.raises(BaseException):
-        checks.check_row(state, 1)
+        check_row(state, 1)
 
 
 @pytest.mark.parametrize(
@@ -48,19 +56,19 @@ def test_check_row_wrong_usage():
 def test_check_column(stu, stu_sub, success):
     state = prepare_state({"a": [1]}, stu)
     if success:
-        x = checks.check_column(state, "a")
+        x = check_column(state, "a")
         passes(x)
         assert x.solution_result == {"a": [1]}
         assert x.student_result == stu_sub
     else:
         with pytest.raises(TF):
-            checks.check_column(state, "a")
+            check_column(state, "a")
 
 
 def test_check_column_wrong_usage():
     state = prepare_state({"a": [1]}, {"a": [1]})
     with pytest.raises(BaseException):
-        checks.check_column(state, "b")
+        check_column(state, "b")
 
 
 @pytest.mark.parametrize(
@@ -77,13 +85,13 @@ def test_check_column_wrong_usage():
 def test_check_all_columns(stu, stu_sub, success):
     state = prepare_state({"a": [1], "b": [2]}, stu)
     if success:
-        x = checks.check_all_columns(state)
+        x = check_all_columns(state)
         passes(x)
         assert x.solution_result == {"a": [1], "b": [2]}
         assert x.student_result == stu_sub
     else:
         with pytest.raises(TF):
-            checks.check_all_columns(state)
+            check_all_columns(state)
 
 
 @pytest.mark.parametrize(
@@ -97,10 +105,10 @@ def test_check_all_columns(stu, stu_sub, success):
 def test_check_all_columns_stricter(stu, success):
     state = prepare_state({"a": [1], "b": [2]}, stu)
     if success:
-        passes(checks.check_all_columns(state, allow_extra=False))
+        passes(check_all_columns(state, allow_extra=False))
     else:
         with pytest.raises(TF):
-            checks.check_all_columns(state, allow_extra=False)
+            check_all_columns(state, allow_extra=False)
 
 
 def test_lower_case():
@@ -108,13 +116,13 @@ def test_lower_case():
 
     # fails if not using lowercase
     with pytest.raises(TF):
-        checks.check_column(state, "a")
+        check_column(state, "a")
 
     # passes if lowercase is being used
-    child = checks.lowercase(state)
-    child2 = checks.check_column(child, "a")
+    child = lowercase(state)
+    child2 = check_column(child, "a")
     passes(child2)
-    passes(checks.has_equal_value(child2))
+    passes(has_equal_value(child2))
 
 
 @pytest.mark.parametrize(
@@ -133,7 +141,7 @@ def test_lower_case():
 def test_check_result(stu, success):
     state = prepare_state({"a": [1, 2], "b": [3, 4]}, stu)
     if success:
-        passes(checks.check_result(state))
+        passes(check_result(state))
     else:
         with pytest.raises(TF):
-            checks.check_result(state)
+            check_result(state)

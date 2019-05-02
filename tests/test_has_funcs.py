@@ -1,17 +1,25 @@
 import pytest
 from protowhat.Test import TestFail as TF
 
-from sqlwhat import checks
 from sqlwhat.checks.has_funcs import sort_rows
-from tests.helper import prepare_state, passes
+from tests.helper import (
+    prepare_state,
+    passes,
+    has_no_error,
+    has_result,
+    has_nrows,
+    has_ncols,
+    has_equal_value,
+    check_column,
+)
 
 
 def test_has_no_error():
     state = prepare_state({}, {}, ["an error"])
     with pytest.raises(TF):
-        checks.has_no_error(state)
+        has_no_error(state)
     state = prepare_state({"a": [1]}, {"a": [1]}, [])
-    passes(checks.has_no_error(state))
+    passes(has_no_error(state))
 
 
 @pytest.mark.parametrize(
@@ -27,16 +35,16 @@ def test_has_no_error():
 def test_has_result(stu, errors, success):
     state = prepare_state({"a": [1, 2, 3]}, stu, errors)
     if success:
-        passes(checks.has_result(state))
+        passes(has_result(state))
     else:
         with pytest.raises(TF):
-            checks.has_result(state)
+            has_result(state)
 
 
 def test_has_result_wrong_usage():
     state = prepare_state({}, {})
     with pytest.raises(NameError):
-        checks.has_result(state)
+        has_result(state)
 
 
 @pytest.mark.parametrize(
@@ -52,10 +60,10 @@ def test_has_result_wrong_usage():
 def test_has_nrows(stu, success):
     state = prepare_state({"a": [1, 2, 3]}, stu)
     if success:
-        passes(checks.has_nrows(state))
+        passes(has_nrows(state))
     else:
         with pytest.raises(TF):
-            checks.has_nrows(state)
+            has_nrows(state)
 
 
 @pytest.mark.parametrize(
@@ -73,10 +81,10 @@ def test_has_nrows(stu, success):
 def test_has_ncols(stu, success):
     state = prepare_state({"a": [1, 2, 3], "b": [4, 5, 6]}, stu)
     if success:
-        passes(checks.has_ncols(state))
+        passes(has_ncols(state))
     else:
         with pytest.raises(TF):
-            checks.has_ncols(state)
+            has_ncols(state)
 
 
 @pytest.mark.parametrize(
@@ -92,12 +100,12 @@ def test_has_ncols(stu, success):
 )
 def test_has_equal_value_basic(stu, success):
     state = prepare_state({"a": [1, 2], "b": [3, 4]}, stu)
-    child = checks.check_column(state, "a")
+    child = check_column(state, "a")
     if success:
-        passes(checks.has_equal_value(child))
+        passes(has_equal_value(child))
     else:
         with pytest.raises(TF):
-            checks.has_equal_value(child)
+            has_equal_value(child)
 
 
 @pytest.mark.parametrize(
@@ -112,12 +120,12 @@ def test_has_equal_value_basic(stu, success):
 )
 def test_has_equal_value_ordered(stu, success):
     state = prepare_state({"a": [1, 2], "b": [3, 4]}, stu)
-    child = checks.check_column(state, "a")
+    child = check_column(state, "a")
     if success:
-        passes(checks.has_equal_value(child, ordered=True))
+        passes(has_equal_value(child, ordered=True))
     else:
         with pytest.raises(TF):
-            checks.has_equal_value(child, ordered=True)
+            has_equal_value(child, ordered=True)
 
 
 @pytest.mark.parametrize(
@@ -126,18 +134,18 @@ def test_has_equal_value_ordered(stu, success):
 )
 def test_has_equal_value_ndigits(stu, success):
     state = prepare_state({"a": [1.124]}, stu)
-    child = checks.check_column(state, "a")
+    child = check_column(state, "a")
     if success:
-        passes(checks.has_equal_value(child, ndigits=2))
+        passes(has_equal_value(child, ndigits=2))
     else:
         with pytest.raises(TF):
-            checks.has_equal_value(child, ndigits=2)
+            has_equal_value(child, ndigits=2)
 
 
 def test_has_equal_value_wrong_usage():
     state = prepare_state({}, {})
     with pytest.raises(ValueError):
-        checks.has_equal_value(state)
+        has_equal_value(state)
 
 
 @pytest.mark.parametrize(

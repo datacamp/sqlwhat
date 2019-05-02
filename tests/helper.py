@@ -1,6 +1,22 @@
 from protowhat.Reporter import Reporter
+from protowhat.sct_syntax import link_to_state
 
 from sqlwhat.State import State
+from sqlwhat.checks import (
+    check_row,
+    check_column,
+    check_all_columns,
+    check_result,
+    lowercase,
+    has_equal_value,
+    has_no_error, has_result, has_nrows, has_ncols)
+
+check_row = link_to_state(check_row)
+check_column = link_to_state(check_column)
+check_all_columns = link_to_state(check_all_columns)
+check_result = link_to_state(check_result)
+lowercase = link_to_state(lowercase)
+has_equal_value = link_to_state(has_equal_value)
 
 
 def get_sct_payload(output):
@@ -49,3 +65,9 @@ def prepare_state(sol_result, stu_result, error=None):
 
 def passes(x):
     assert isinstance(x, State)
+
+
+has_no_error = link_to_state(has_no_error)
+has_result = link_to_state(has_result)
+has_nrows = link_to_state(has_nrows)
+has_ncols = link_to_state(has_ncols)

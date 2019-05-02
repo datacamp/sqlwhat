@@ -1,6 +1,7 @@
 import importlib
 import pytest
 
+from protowhat.sct_syntax import link_to_state
 from protowhat.checks.check_funcs import (
     check_node,
     check_edge,
@@ -12,6 +13,11 @@ from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
 from protowhat.Test import TestFail as TF
+
+
+check_node = link_to_state(check_node)
+check_edge = link_to_state(check_edge)
+has_equal_ast = link_to_state(has_equal_ast)
 
 
 def print_message(exc):

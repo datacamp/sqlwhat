@@ -1,12 +1,20 @@
 import importlib
 import pytest
 
-import sqlwhat.checks as checks
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
 from protowhat.Test import TestFail as TF
-from tests.helper import Connection
+from tests.helper import (
+    Connection,
+    has_result,
+    has_nrows,
+    has_ncols,
+    check_row,
+    has_equal_value,
+    check_column,
+    check_all_columns,
+)
 
 
 def prepare_state(sol_result, stu_result):
@@ -27,7 +35,7 @@ def prepare_state(sol_result, stu_result):
 def test_has_result():
     state = prepare_state({"a": [1, 2, 3]}, {})
     with pytest.raises(TF, match="Your query did not return a result."):
-        checks.has_result(state)
+        has_result(state)
 
 
 # Check funcs -----------------------------------------------------------------
@@ -44,7 +52,7 @@ def test_has_nrows(stu, patt):
             patt
         ),
     ):
-        checks.has_nrows(state)
+        has_nrows(state)
 
 
 @pytest.mark.parametrize(
@@ -59,7 +67,7 @@ def test_has_ncols(stu, patt):
             patt
         ),
     ):
-        checks.has_ncols(state)
+        has_ncols(state)
 
 
 @pytest.mark.parametrize(
@@ -78,8 +86,8 @@ def test_has_ncols(stu, patt):
 def test_check_row(stu, patt):
     state = prepare_state({"a": [1, 2]}, stu)
     with pytest.raises(TF, match=patt):
-        ss = checks.check_row(state, 1)
-        checks.has_equal_value(ss)
+        ss = check_row(state, 1)
+        has_equal_value(ss)
 
 
 @pytest.mark.parametrize(
@@ -98,8 +106,8 @@ def test_check_row(stu, patt):
 def test_check_column(stu, patt):
     state = prepare_state({"a": [1]}, stu)
     with pytest.raises(TF, match=patt):
-        ss = checks.check_column(state, "a")
-        checks.has_equal_value(ss)
+        ss = check_column(state, "a")
+        has_equal_value(ss)
 
 
 @pytest.mark.parametrize(
@@ -122,8 +130,8 @@ def test_check_column(stu, patt):
 def test_check_all_columns(stu, patt):
     state = prepare_state({"a": [1]}, stu)
     with pytest.raises(TF, match=patt):
-        ss = checks.check_all_columns(state, allow_extra=False)
-        checks.has_equal_value(ss)
+        ss = check_all_columns(state, allow_extra=False)
+        has_equal_value(ss)
 
 
 def test_has_equal_value():
@@ -132,4 +140,4 @@ def test_has_equal_value():
         TF,
         match="Have another look at your query result. Column `a` seems to be incorrect. Make sure you arranged the rows correctly.",
     ):
-        checks.has_equal_value(checks.check_column(state, "a"), ordered=True)
+        has_equal_value(check_column(state, "a"), ordered=True)
