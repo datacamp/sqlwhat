@@ -25,7 +25,7 @@ def check_row(state, index, missing_msg=None, expand_msg=None):
         index: index of the row to zoom in on (zero-based indexed).
         missing_msg: if specified, this overrides the automatically generated feedback
                      message in case the row is missing in the student query result.
-        expand_msg: if specified, this overrides the automatically generated feedback 
+        expand_msg: if specified, this overrides the automatically generated feedback
                     message that is prepended to feedback messages that are thrown
                     further in the SCT chain.
 
@@ -70,7 +70,7 @@ def check_row(state, index, missing_msg=None, expand_msg=None):
 
     if index >= n_stu:
         _msg = state.build_message(missing_msg, fmt_kwargs=msg_kwargs)
-        state.report(Feedback(_msg))
+        state.report(_msg)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
@@ -90,7 +90,7 @@ def check_column(state, name, missing_msg=None, expand_msg=None):
         name: name of the column to zoom in on.
         missing_msg: if specified, this overrides the automatically generated feedback
                      message in case the column is missing in the student query result.
-        expand_msg: if specified, this overrides the automatically generated feedback 
+        expand_msg: if specified, this overrides the automatically generated feedback
                     message that is prepended to feedback messages that are thrown
                     further in the SCT chain.
 
@@ -128,7 +128,7 @@ def check_column(state, name, missing_msg=None, expand_msg=None):
 
     if name not in stu_res:
         _msg = state.build_message(missing_msg, fmt_kwargs=msg_kwargs)
-        state.report(Feedback(_msg))
+        state.report(_msg)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
@@ -139,7 +139,7 @@ def check_column(state, name, missing_msg=None, expand_msg=None):
 
 def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_msg=None):
     """Zoom in on the columns that are specified by the solution
-    
+
     Behind the scenes, this is using ``check_column()`` for every column that is in the solution query result.
     Afterwards, it's selecting only these columns from the student query result and stores them in a child
     state that is returned, so you can use ``has_equal_value()`` on it.
@@ -153,7 +153,7 @@ def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_ms
         too_many_cols_msg: If specified, this overrides the automatically generated feedback message in
                            case ``allow_extra`` is False and the student's query returned extra columns when
                            comparing the so the solution query result.
-        expand_msg: if specified, this overrides the automatically generated feedback 
+        expand_msg: if specified, this overrides the automatically generated feedback
                     message that is prepended to feedback messages that are thrown
                     further in the SCT chain.
 
@@ -200,7 +200,7 @@ def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_ms
             "Your query result contains the column `{{col}}` but shouldn't.",
             fmt_kwargs={"col": cols_not_in_sol[0]},
         )
-        state.report(Feedback(_msg))
+        state.report(_msg)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": {}},
@@ -211,7 +211,7 @@ def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_ms
 
 def lowercase(state):
     """Convert all column names to their lower case versions to improve robustness
-    
+
     :Example:
 
         Suppose we are testing the following SELECT statements
@@ -236,7 +236,7 @@ def lowercase(state):
 
 def check_result(state):
     """High level function which wraps other SCTs for checking results.
-    
+
     ``check_result()``
 
     * uses ``lowercase()``, then
@@ -268,7 +268,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         query: A SQL query as a string that is executed after the student query is re-executed.
         error_msg: if specified, this overrides the automatically generated feedback
                    message in case the query generated an error.
-        expand_msg: if specified, this overrides the automatically generated feedback 
+        expand_msg: if specified, this overrides the automatically generated feedback
                     message that is prepended to feedback messages that are thrown
                     further in the SCT chain.
 
@@ -313,7 +313,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         stu_res = runQuery(conn, query)
 
     if stu_res is None:
-        state.report(Feedback(_msg))
+        state.report(_msg)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},

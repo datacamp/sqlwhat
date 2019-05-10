@@ -68,6 +68,13 @@ def test_has_equal_ast_fail_quoted_column():
         has_equal_ast(state=state)
 
 
+def test_has_equal_ast_field_success():
+    state = prepare_state("SELECT name FROM Trips", "SELECT name FROM Trips")
+    sel = check_node(state, "SelectStmt", 0)
+    tl = check_edge(sel, "target_list", 0)
+    has_equal_ast(tl)
+
+
 def test_has_equal_ast_field_fail():
     state = prepare_state("SELECT id, name FROM Trips", "SELECT name FROM Trips")
     sel = check_node(state, "SelectStmt", 0)
