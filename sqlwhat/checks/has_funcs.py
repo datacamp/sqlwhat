@@ -17,7 +17,7 @@ def has_no_error(
     """
 
     if state.reporter.get_errors():
-        state.report(Feedback(incorrect_msg))
+        state.report(incorrect_msg)
 
     return state
 
@@ -39,7 +39,7 @@ def has_result(state, incorrect_msg="Your query did not return a result."):
         )
 
     if not state.student_result:
-        state.report(Feedback(incorrect_msg))
+        state.report(incorrect_msg)
 
     return state
 
@@ -66,7 +66,7 @@ def has_nrows(
         _msg = state.build_message(
             incorrect_msg, fmt_kwargs={"n_stu": n_stu, "n_sol": n_sol}
         )
-        state.report(Feedback(_msg))
+        state.report(_msg)
 
     return state
 
@@ -112,7 +112,7 @@ def has_ncols(
         _msg = state.build_message(
             incorrect_msg, fmt_kwargs={"n_stu": n_stu, "n_sol": n_sol}
         )
-        state.report(Feedback(_msg))
+        state.report(_msg)
 
     return state
 
@@ -128,7 +128,7 @@ def has_equal_value(state, ordered=False, ndigits=None, incorrect_msg=None):
         ordered: if set to False, the default, all rows are sorted (according
                  to the first column and the following columns as tie breakers).
                  if set to True, the order of rows in student and solution query have to match.
-        digits: if specified, number of decimals to use when comparing column values.
+        ndigits: if specified, number of decimals to use when comparing column values.
         incorrect_msg: if specified, this overrides the automatically generated feedback
                        message in case a column in the student query result does not match
                        a column in the solution query result.
@@ -185,7 +185,7 @@ def has_equal_value(state, ordered=False, ndigits=None, incorrect_msg=None):
             _msg = state.build_message(
                 incorrect_msg, fmt_kwargs={"col": sol_col_name, "ordered": ordered}
             )
-            state.report(Feedback(_msg))
+            state.report(_msg)
 
     return state
 
