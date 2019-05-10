@@ -2,6 +2,12 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.6.0
+
+- Expose `_debug` function
+- Update protowhat
+- Update ANTLR dependencies
+
 ## 3.5.0
 
 - Update parsing layer (antlr-x and protowhat)
