@@ -4,6 +4,9 @@ Result checks
 .. automodule:: sqlwhat.checks.check_funcs
     :members:
 
+.. automodule:: sqlwhat.checks.has_funcs
+    :members:
+
 AST Checks
 ----------
 
