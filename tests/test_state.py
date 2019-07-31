@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
 from protowhat.Reporter import Reporter
@@ -68,3 +70,27 @@ def test_multiple_state_init(conn):
         solution_conn=None,
         reporter=Reporter(),
     )
+
+
+def test_get_dispatcher_oracle():
+    # Given
+    conn2 = MagicMock()
+    dialect = MagicMock()
+    conn2.dialect = dialect
+    dialect.name = "oracle"
+    state = State(
+        student_code="SELECT * FROM company",
+        solution_code="SELECT * FROM company",
+        pre_exercise_code="",
+        student_result={"id": [1], "name": ["greg"]},
+        solution_result={"id": [1], "name": ["greg"]},
+        student_conn=conn2,
+        solution_conn=None,
+        reporter=Reporter(),
+    )
+
+    # When
+    output = state.get_dispatcher()
+
+    # Then
+    assert output.ast_mod.grammar.__spec__.name == 'antlr_plsql.antlr_py'
