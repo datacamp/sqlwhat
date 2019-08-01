@@ -1,5 +1,6 @@
 from protowhat.Feedback import Feedback
 from protowhat.sct_syntax import link_to_state
+from protowhat.checks.check_simple import allow_errors
 
 from sqlwhat.checks import has_no_error, has_result, has_equal_value
 
@@ -7,10 +8,12 @@ from sqlwhat.checks import has_no_error, has_result, has_equal_value
 def allow_error(state):
     """Allow submission to pass, even if it originally caused a database error.
 
-    Simply use ``Ex().allow_error()`` in your SCT if the intent of the exercise to
+    This function has been renamed.
+
+    Use ``Ex().allow_errors()`` in your SCT if the intent of the exercise is to
     generate an error.
     """
-    state.reporter.allow_errors()
+    allow_errors(state)
     return state
 
 

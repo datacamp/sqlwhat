@@ -29,9 +29,6 @@ def lower_case(f):
 
 
 class State(BaseState):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def get_dispatcher(self):
         if not self.student_conn:
             return DummyDispatcher()
