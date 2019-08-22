@@ -292,3 +292,9 @@ def test_has_parsed_ast():
     state_tst = prepare_state("SELECT * FROM x!!!", "SELECT * FROM x!!!")
     with pytest.raises(TF):
         has_parsed_ast(state_tst)
+
+
+def test_has_code_comment_only():
+    state_tst = prepare_state("/*blabla*/", "/*blabla*/")
+    with pytest.raises(TF):
+        result = has_code(state_tst, "blabla", fixed=True)
