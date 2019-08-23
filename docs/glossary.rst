@@ -2,13 +2,13 @@ Glossary
 --------
 
 This article lists some example solutions. For each of these solutions, an SCT
-is included, as well as some example student submissions that would pass and fail. In all of these, a submission that
-is identical to the solution will evidently pass.
+is included, as well as some example student submissions that would pass and fail.
+In all of these, a submission that is identical to the solution will evidently pass.
 
-.. note:: 
+.. note::
 
     These SCT examples are not golden bullets that are perfect for your situation.
-    Depending on the exercise, you may want to focus on certain parts of a statement, or be 
+    Depending on the exercise, you may want to focus on certain parts of a statement, or be
     more accepting for different alternative answers.
 
 All of these examples come from the `Intro to SQL for Data Science <https://https://www.datacamp.com/courses/intro-to-sql-for-data-science>`_
@@ -35,7 +35,7 @@ Selecting a column
         check_node('SelectStmt').multi(
             check_edge('target_list', 0).has_equal_ast(),
             check_edge('from_clause').has_equal_ast()
-        )   
+        )
     )
 
 .. code-block:: sql

@@ -1,7 +1,7 @@
 # pkg deps
-protowhat~=1.8.0
-antlr-plsql~=0.8.3
-antlr-tsql~=0.12.5
+protowhat~=1.11.1
+antlr-plsql~=0.8.4
+antlr-tsql~=0.12.6
 
 # test deps
 pytest~=3.5.0
