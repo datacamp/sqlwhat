@@ -1,5 +1,5 @@
 # pkg deps
-protowhat~=1.11.1
+protowhat~=1.13.0
 antlr-plsql~=0.8.4
 antlr-tsql~=0.12.6
 
