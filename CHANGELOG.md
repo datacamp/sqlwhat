@@ -2,6 +2,10 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.8.1
+
+- Update antlr-plsql
+
 ## 3.8.0
 
 - Reuse protowhat functionality
