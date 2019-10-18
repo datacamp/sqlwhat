@@ -1,1 +1,0 @@
-git+https://${GITHUB_TOKEN}@github.com/datacamp/sqlbackend.git@v1.1.0
