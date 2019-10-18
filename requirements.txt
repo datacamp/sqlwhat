@@ -1,6 +1,6 @@
 # pkg deps
 protowhat~=1.13.0
-antlr-plsql~=0.9.0
+antlr-plsql~=0.9.1
 antlr-tsql~=0.12.6
 
 # test deps
