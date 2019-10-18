@@ -2,6 +2,16 @@
 
 All notable changes to the sqlwhat project will be documented in this file.
 
+## 3.8.0
+
+- Reuse protowhat functionality
+- Remove backend dependency in tests
+- Update dependencies
+
+## 3.7.0
+
+- Add Oracle support
+
 ## 3.6.0
 
 - Expose `_debug` function
