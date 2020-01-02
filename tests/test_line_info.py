@@ -1,4 +1,5 @@
-from protowhat.Test import Feedback, TestFail as TF
+from protowhat.failure import TestFail as TF
+from protowhat.Feedback import Feedback
 from protowhat.Reporter import Reporter
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES

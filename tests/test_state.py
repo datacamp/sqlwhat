@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from sqlwhat.sct_syntax import Ex
 from sqlwhat.State import State
 from protowhat.Reporter import Reporter
-from protowhat.Test import TestFail as TF
+from protowhat.failure import TestFail as TF
 from tests.helper import Connection
 import pytest
 

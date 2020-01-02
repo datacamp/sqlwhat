@@ -1,5 +1,5 @@
 from sqlwhat.State import State
-from protowhat.Test import TestFail
+from protowhat.failure import TestFail
 from protowhat.Reporter import Reporter
 from sqlwhat.sct_syntax import SCT_CTX
 
