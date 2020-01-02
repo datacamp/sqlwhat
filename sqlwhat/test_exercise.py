@@ -1,5 +1,5 @@
 from sqlwhat.State import State
-from protowhat.failure import TestFail
+from protowhat.failure import TestFail, InstructorError
 from protowhat.Reporter import Reporter
 from sqlwhat.sct_syntax import SCT_CTX
 
@@ -21,6 +21,8 @@ def test_exercise(
     """
     """
 
+    reporter = Reporter(errors=error)
+
     state = State(
         student_code=student_code,
         solution_code=solution_code,
@@ -29,7 +31,7 @@ def test_exercise(
         solution_conn=solution_conn,
         student_result=student_result,
         solution_result=solution_result,
-        reporter=Reporter(errors=error),
+        reporter=reporter,
         force_diagnose=force_diagnose,
     )
 
@@ -37,7 +39,10 @@ def test_exercise(
 
     try:
         exec(sct, SCT_CTX)
-    except TestFail as tf:
-        return tf.payload
+    except (TestFail, InstructorError) as e:
+        if isinstance(e, InstructorError):
+            # TODO: decide based on context
+            raise e
+        return reporter.build_failed_payload(e.feedback)
 
-    return state.reporter.build_final_payload()
+    return reporter.build_final_payload()
