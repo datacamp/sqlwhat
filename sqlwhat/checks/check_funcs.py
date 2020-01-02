@@ -1,4 +1,5 @@
 from protowhat.Feedback import Feedback
+from protowhat.failure import debugger
 from protowhat.sct_syntax import link_to_state
 from protowhat.checks.check_simple import allow_errors
 
@@ -72,8 +73,7 @@ def check_row(state, index, missing_msg=None, expand_msg=None):
         )
 
     if index >= n_stu:
-        _msg = state.build_message(missing_msg, fmt_kwargs=msg_kwargs)
-        state.report(_msg)
+        state.report(missing_msg, msg_kwargs)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
@@ -130,8 +130,7 @@ def check_column(state, name, missing_msg=None, expand_msg=None):
         raise BaseException("name %s not in solution column names" % name)
 
     if name not in stu_res:
-        _msg = state.build_message(missing_msg, fmt_kwargs=msg_kwargs)
-        state.report(_msg)
+        state.report(missing_msg, msg_kwargs)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
@@ -199,11 +198,10 @@ def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_ms
         set(state.student_result.keys()) - set(child_stu_result.keys())
     )
     if not allow_extra and len(cols_not_in_sol) > 0:
-        _msg = state.build_message(
+        state.report(
             "Your query result contains the column `{{col}}` but shouldn't.",
-            fmt_kwargs={"col": cols_not_in_sol[0]},
+            {"col": cols_not_in_sol[0]},
         )
-        state.report(_msg)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": {}},
@@ -298,8 +296,6 @@ def check_query(state, query, error_msg=None, expand_msg=None):
     # make sure that it didn't generate any errors
     has_no_error(state)
 
-    _msg = state.build_message(error_msg, fmt_kwargs=msg_kwargs)
-
     # sqlbackend makes sure all queries are run in transactions.
     # Rerun the solution code first, after which we run the provided query
     with dbconn(state.solution_conn) as conn:
@@ -307,7 +303,8 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         sol_res = runQuery(conn, query)
 
     if sol_res is None:
-        raise ValueError("Solution failed: " + _msg)
+        with debugger(state):
+            state.report("Solution failed: " + error_msg)
 
     # sqlbackend makes sure all queries are run in transactions.
     # Rerun the student code first, after wich we run the provided query
@@ -316,7 +313,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         stu_res = runQuery(conn, query)
 
     if stu_res is None:
-        state.report(_msg)
+        state.report(error_msg, msg_kwargs)
 
     return state.to_child(
         append_message={"msg": expand_msg, "kwargs": msg_kwargs},
