@@ -36,4 +36,4 @@ def test_line_info(sql_cmd, start, pos):
         state.report("failure message")
     except TF as tf:
         for ii, k in enumerate(pos_names):
-            assert tf.payload[k] == pos[ii]
+            assert tf.feedback.get_highlight()[k] == pos[ii]
