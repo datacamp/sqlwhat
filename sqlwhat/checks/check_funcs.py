@@ -1,4 +1,4 @@
-from protowhat.Feedback import Feedback
+from protowhat.Feedback import Feedback, FeedbackComponent
 from protowhat.failure import debugger
 from protowhat.sct_syntax import link_to_state
 from protowhat.checks.check_simple import allow_errors
@@ -76,7 +76,7 @@ def check_row(state, index, missing_msg=None, expand_msg=None):
         state.report(missing_msg, msg_kwargs)
 
     return state.to_child(
-        append_message={"msg": expand_msg, "kwargs": msg_kwargs},
+        append_message=FeedbackComponent(expand_msg, msg_kwargs),
         student_result={k: [v[index]] for k, v in stu_res.items()},
         solution_result={k: [v[index]] for k, v in sol_res.items()},
     )
@@ -133,7 +133,7 @@ def check_column(state, name, missing_msg=None, expand_msg=None):
         state.report(missing_msg, msg_kwargs)
 
     return state.to_child(
-        append_message={"msg": expand_msg, "kwargs": msg_kwargs},
+        append_message=FeedbackComponent(expand_msg, msg_kwargs),
         student_result={name: stu_res[name]},
         solution_result={name: sol_res[name]},
     )
@@ -204,7 +204,7 @@ def check_all_columns(state, allow_extra=True, too_many_cols_msg=None, expand_ms
         )
 
     return state.to_child(
-        append_message={"msg": expand_msg, "kwargs": {}},
+        append_message=FeedbackComponent(expand_msg),
         student_result=child_stu_result,
         solution_result=child_sol_result,
     )
@@ -316,7 +316,7 @@ def check_query(state, query, error_msg=None, expand_msg=None):
         state.report(error_msg, msg_kwargs)
 
     return state.to_child(
-        append_message={"msg": expand_msg, "kwargs": msg_kwargs},
+        append_message=FeedbackComponent(expand_msg, msg_kwargs),
         student_result=stu_res,
         solution_result=sol_res,
     )

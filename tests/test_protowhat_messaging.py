@@ -148,7 +148,7 @@ def test_get_ast_path(query, path, target_desc):
                 [check_edge, ["left"]],
                 [has_equal_ast, []],
             ],
-            "Check the Script. Could not find the first `SELECT` statement.",
+            "Could not find the first `SELECT` statement.",
         ),
         (
             "SELECT a FROM c",
