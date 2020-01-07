@@ -12,8 +12,8 @@ def ast():
 
 
 @pytest.fixture
-def dispatcher():
-    return Dispatcher.from_module(ast())
+def dispatcher(ast):
+    return Dispatcher.from_module(ast)
 
 
 def test_selector_standalone():
