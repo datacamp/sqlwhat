@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from sqlwhat.sct_syntax import Ex
+from sqlwhat.sct_context import Ex
 from sqlwhat.State import State
 from protowhat.Reporter import Reporter
 from protowhat.failure import TestFail as TF
