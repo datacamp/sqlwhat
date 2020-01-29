@@ -4,7 +4,7 @@ import pytest
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
-from protowhat.Test import TestFail as TF
+from protowhat.failure import TestFail as TF
 from tests.helper import (
     Connection,
     has_result,

@@ -68,14 +68,6 @@ Ex(state).check_result()
 ## Running unit tests
 
 ```bash
-pytest -m "not backend"
-```
-
-If you also want to run the backend tests, you need to set a `GITHUB_TOKEN` environment variable with access to the (private) `sqlbackend` repository.
-After this, you can:
-
-```bash
-make install
 pytest
 ```
 

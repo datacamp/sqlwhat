@@ -1,4 +1,5 @@
-from protowhat.Test import Feedback, TestFail as TF
+from protowhat.failure import TestFail as TF
+from protowhat.Feedback import Feedback
 from protowhat.Reporter import Reporter
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
@@ -35,4 +36,4 @@ def test_line_info(sql_cmd, start, pos):
         state.report("failure message")
     except TF as tf:
         for ii, k in enumerate(pos_names):
-            assert tf.payload[k] == pos[ii]
+            assert tf.feedback.get_highlight()[k] == pos[ii]

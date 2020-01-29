@@ -1,5 +1,5 @@
 import pytest
-from protowhat.Test import TestFail as TF
+from protowhat.failure import TestFail as TF
 
 from sqlwhat.checks.has_funcs import sort_rows
 from tests.helper import (

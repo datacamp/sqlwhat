@@ -1,6 +1,6 @@
 import pytest
 
-from protowhat.Test import TestFail as TF
+from protowhat.failure import TestFail as TF
 from tests.helper import (
     prepare_state,
     passes,
