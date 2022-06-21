@@ -1,3 +1,6 @@
+> :warning: **This repo has outdated tokens in its travisci config** 
+> To make new releases for this project it needs to be moved to circleci
+
 # sqlwhat
 
 [![Build Status](https://travis-ci.org/datacamp/sqlwhat.svg?branch=master)](https://travis-ci.org/datacamp/sqlwhat)
