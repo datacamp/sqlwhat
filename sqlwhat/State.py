@@ -11,6 +11,7 @@ PARSER_MODULES = {
     "sqlite": "antlr_plsql.ast",  # uses postgres parser for now
     "oracle": "antlr_plsql.ast",  # uses postgres parser for now
     "mssql": "antlr_tsql.ast",
+    "snowflake": "antlr_plsql.ast",  # uses postgres parser for now
 }
 
 
