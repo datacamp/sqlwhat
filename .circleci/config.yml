@@ -23,8 +23,8 @@ jobs:
           command: |
             python setup.py sdist bdist_wheel
             pip install pipenv
-            pipenv install twine
-            pipenv run twine upload --verbose --repository pypi dist/*
+            pip install twine
+            twine upload --verbose --repository pypi dist/*
 
 workflows:
   build:
