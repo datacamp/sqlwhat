@@ -1,0 +1,43 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@1.2
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/python:3.5
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run tests
+          command: pytest --cov=sqlwhat
+  publish:
+    docker:
+      - image: cimg/python:3.5
+    steps:
+      - checkout
+      - run:
+          command: |
+            python setup.py sdist bdist_wheel
+            pip install pipenv
+            pipenv install twine
+            pipenv run twine upload --verbose --repository pypi dist/*
+
+workflows:
+  build:
+    jobs:
+      - build-and-test:
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
+      - publish:
+          requires:
+            - build-and-test
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
