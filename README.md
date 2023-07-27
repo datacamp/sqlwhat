@@ -1,6 +1,5 @@
 # sqlwhat
 
-[![codecov](https://codecov.io/gh/datacamp/sqlwhat/branch/master/graph/badge.svg)](https://codecov.io/gh/datacamp/sqlwhat)
 [![Build Status](https://app.circleci.com/pipelines/github/datacamp/sqlwhat?branch=master)](https://app.circleci.com/pipelines/github/datacamp/sqlwhat)
 [![PyPI version](https://badge.fury.io/py/sqlwhat.svg)](https://badge.fury.io/py/sqlwhat)
 
