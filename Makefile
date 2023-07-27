@@ -11,5 +11,4 @@ clean:
 	rm -rf sqlwhat.egg-info
 
 test: clean
-	pytest --cov=sqlwhat
-	codecov
+	pytest
