@@ -63,10 +63,7 @@ def has_nrows(
     n_sol = len(next(iter(state.solution_result.values())))
 
     if n_stu != n_sol:
-        _msg = state.build_message(
-            incorrect_msg, fmt_kwargs={"n_stu": n_stu, "n_sol": n_sol}
-        )
-        state.report(_msg)
+        state.report(incorrect_msg, {"n_stu": n_stu, "n_sol": n_sol})
 
     return state
 
@@ -109,10 +106,7 @@ def has_ncols(
     n_sol = len(state.solution_result)
 
     if n_stu != n_sol:
-        _msg = state.build_message(
-            incorrect_msg, fmt_kwargs={"n_stu": n_stu, "n_sol": n_sol}
-        )
-        state.report(_msg)
+        state.report(incorrect_msg, {"n_stu": n_stu, "n_sol": n_sol})
 
     return state
 
@@ -182,10 +176,7 @@ def has_equal_value(state, ordered=False, ndigits=None, incorrect_msg=None):
                 pass
 
         if sol_col_vals != stu_col_vals:
-            _msg = state.build_message(
-                incorrect_msg, fmt_kwargs={"col": sol_col_name, "ordered": ordered}
-            )
-            state.report(_msg)
+            state.report(incorrect_msg, {"col": sol_col_name, "ordered": ordered})
 
     return state
 

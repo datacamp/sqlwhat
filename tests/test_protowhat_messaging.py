@@ -12,7 +12,7 @@ from protowhat.checks.check_funcs import (
 from protowhat.selectors import Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 from protowhat.Reporter import Reporter
-from protowhat.Test import TestFail as TF
+from protowhat.failure import TestFail as TF
 
 
 check_node = link_to_state(check_node)
@@ -148,7 +148,7 @@ def test_get_ast_path(query, path, target_desc):
                 [check_edge, ["left"]],
                 [has_equal_ast, []],
             ],
-            "Check the Script. Could not find the first `SELECT` statement.",
+            "Could not find the first `SELECT` statement.",
         ),
         (
             "SELECT a FROM c",

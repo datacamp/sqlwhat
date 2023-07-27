@@ -2,7 +2,7 @@ from protowhat.selectors import Selector, Dispatcher
 from sqlwhat.State import State, PARSER_MODULES
 import importlib
 from protowhat.Reporter import Reporter
-from protowhat.Test import TestFail as TF
+from protowhat.failure import TestFail as TF
 import pytest
 
 
@@ -12,8 +12,8 @@ def ast():
 
 
 @pytest.fixture
-def dispatcher():
-    return Dispatcher.from_module(ast())
+def dispatcher(ast):
+    return Dispatcher.from_module(ast)
 
 
 def test_selector_standalone():
