@@ -12,6 +12,7 @@ PARSER_MODULES = {
     "oracle": "antlr_plsql.ast",  # uses postgres parser for now
     "mssql": "antlr_tsql.ast",
     "snowflake": "antlr_plsql.ast",  # uses postgres parser for now
+    "bigquery": "antlr_plsql.ast",  # uses postgres parser for now
 }
 
 
