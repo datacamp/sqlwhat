@@ -2,6 +2,7 @@
 
 [![Build Status](https://app.circleci.com/pipelines/github/datacamp/sqlwhat?branch=master)](https://app.circleci.com/pipelines/github/datacamp/sqlwhat)
 [![PyPI version](https://badge.fury.io/py/sqlwhat.svg)](https://badge.fury.io/py/sqlwhat)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdatacamp%2Fsqlwhat.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdatacamp%2Fsqlwhat?ref=badge_shield)
 
 `sqlwhat` enables you to write Submission Correctness Tests (SCTs) for interactive SQL exercises on DataCamp.
 
@@ -92,3 +93,7 @@ Install sqlwhat and run ..
 cd docs
 make html
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdatacamp%2Fsqlwhat.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdatacamp%2Fsqlwhat?ref=badge_large)
